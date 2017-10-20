@@ -35,15 +35,9 @@
     <description>Mock implementations of SlingHttpServletRequest, SlingHttpServletResponse and related classes.</description>
 
     <scm>
-        <connection>
-            scm:svn:http://svn.apache.org/repos/asf/sling/trunk/bundles/extensions/servlet-helpers
-        </connection>
-        <developerConnection>
-            scm:svn:https://svn.apache.org/repos/asf/sling/trunk/bundles/extensions/servlet-helpers
-        </developerConnection>
-        <url>
-            http://svn.apache.org/viewvc/sling/trunk/bundles/extensions/servlet-helpers
-        </url>
+        <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-servlet-helpers.git</conncetion>
+        <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-servlet-helpers.git</developerConnection>
+        <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-servlet-helpers.git</url>
     </scm>
 
     <build>
