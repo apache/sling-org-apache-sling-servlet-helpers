@@ -23,13 +23,13 @@
     <parent>
         <groupId>org.apache.sling</groupId>
         <artifactId>sling</artifactId>
-        <version>30</version>
+        <version>26</version>
         <relativePath />
     </parent>
 
     <artifactId>org.apache.sling.servlet-helpers</artifactId>
     <packaging>bundle</packaging>
-    <version>1.1.3-SNAPSHOT</version>
+    <version>1.0.3-SNAPSHOT</version>
 
     <name>Apache Sling Servlet Helpers</name>
     <description>Mock implementations of SlingHttpServletRequest, SlingHttpServletResponse and related classes.</description>
@@ -55,6 +55,7 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
+            <version>3.0.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
