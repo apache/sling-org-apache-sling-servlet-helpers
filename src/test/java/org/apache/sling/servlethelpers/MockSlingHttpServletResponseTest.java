@@ -80,8 +80,8 @@ public class MockSlingHttpServletResponseTest {
         response.addDateHeader("header3", System.currentTimeMillis());
 
         assertEquals(3, response.getHeaderNames().size());
-        assertTrue(response.containsHeader("header1"));
-        assertEquals("value1", response.getHeader("header1"));
+        assertTrue(response.containsHeader("Header1"));
+        assertEquals("value1", response.getHeader("headeR1"));
         assertEquals("5", response.getHeader("header2"));
         assertNotNull(response.getHeader("header3"));
 
@@ -90,7 +90,7 @@ public class MockSlingHttpServletResponseTest {
 
         assertEquals(3, response.getHeaderNames().size());
 
-        Collection<String> header1Values = response.getHeaders("header1");
+        Collection<String> header1Values = response.getHeaders("Header1");
         assertEquals(1, header1Values.size());
         assertEquals("value2", header1Values.iterator().next());
 

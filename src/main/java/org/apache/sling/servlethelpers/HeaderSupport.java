@@ -100,7 +100,7 @@ class HeaderSupport {
 
     private void removeHeaders(String name) {
         for (int i = this.headers.size() - 1; i >= 0; i--) {
-            if (StringUtils.equals(this.headers.get(i).getKey(), name)) {
+            if (StringUtils.equalsIgnoreCase(this.headers.get(i).getKey(), name)) {
                 headers.remove(i);
             }
         }
@@ -140,7 +140,7 @@ class HeaderSupport {
     public Collection<String> getHeaders(String name) {
         List<String> values = new ArrayList<String>();
         for (HeaderValue entry : headers) {
-            if (StringUtils.equals(entry.getKey(), name)) {
+            if (StringUtils.equalsIgnoreCase(entry.getKey(), name)) {
                 values.add(entry.getValue());
             }
         }

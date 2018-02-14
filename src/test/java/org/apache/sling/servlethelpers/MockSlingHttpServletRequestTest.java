@@ -252,12 +252,12 @@ public class MockSlingHttpServletRequestTest {
         request.addIntHeader("header2", 5);
         request.addDateHeader("header3", dateValue);
 
-        assertEquals("value1", request.getHeader("header1"));
-        assertEquals(5, request.getIntHeader("header2"));
+        assertEquals("value1", request.getHeader("Header1"));
+        assertEquals(5, request.getIntHeader("headeR2"));
         assertEquals(dateValue, request.getDateHeader("header3"));
 
         request.setHeader("header1", "value2");
-        request.addIntHeader("header2", 10);
+        request.addIntHeader("Header2", 10);
 
         Enumeration<String> header1Values = request.getHeaders("header1");
         assertEquals("value2", header1Values.nextElement());
