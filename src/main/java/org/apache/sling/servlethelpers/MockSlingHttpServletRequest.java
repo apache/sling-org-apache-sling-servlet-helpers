@@ -33,6 +33,7 @@ import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -107,6 +108,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     private boolean getReaderCalled;
 
     private MockRequestDispatcherFactory requestDispatcherFactory;
+	private String responseContentType;
     
     protected static final ResourceBundle EMPTY_RESOURCE_BUNDLE = new ListResourceBundle() {
         @Override
@@ -753,12 +755,17 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     @Override
     public String getResponseContentType() {
-        throw new UnsupportedOperationException();
+        return responseContentType;
     }
+    
+    public void setResponseContentType(String responseContentType) {
+        this.responseContentType = responseContentType;
+    }
+
 
     @Override
     public Enumeration<String> getResponseContentTypes() {
-        throw new UnsupportedOperationException();
+        return Collections.enumeration(Collections.singleton(responseContentType));
     }
 
     @Override
