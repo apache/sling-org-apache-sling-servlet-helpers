@@ -33,6 +33,7 @@ public class MockRequestPathInfo implements RequestPathInfo {
     private String resourcePath;
     private String selectorString;
     private String suffix;
+    private Resource suffixResource;
 
     @Override
     public String getExtension() {
@@ -79,10 +80,13 @@ public class MockRequestPathInfo implements RequestPathInfo {
         this.suffix = suffix;
     }
 
-    // --- unsupported operations ---
+    public void setSuffixResource(final Resource suffixResource) {
+        this.suffixResource = suffixResource;
+    }
+
     @Override
     public Resource getSuffixResource() {
-        throw new UnsupportedOperationException();
+        return this.suffixResource;
     }
 
 }
