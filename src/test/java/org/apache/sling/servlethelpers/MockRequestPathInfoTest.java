@@ -21,7 +21,10 @@ package org.apache.sling.servlethelpers;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
 
+import org.apache.sling.api.resource.Resource;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -63,6 +66,14 @@ public class MockRequestPathInfoTest {
         assertNull(this.requestPathInfo.getSuffix());
         this.requestPathInfo.setSuffix("/suffix");
         assertEquals("/suffix", this.requestPathInfo.getSuffix());
+    }
+
+    @Test
+    public void testSuffixResource() {
+        assertNull(this.requestPathInfo.getSuffixResource());
+        Resource mockResource = mock(Resource.class);
+        this.requestPathInfo.setSuffixResource(mockResource);
+        assertSame(mockResource, this.requestPathInfo.getSuffixResource());
     }
 
 }
