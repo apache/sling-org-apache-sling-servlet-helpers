@@ -29,7 +29,7 @@
 
     <artifactId>org.apache.sling.servlet-helpers</artifactId>
     <packaging>bundle</packaging>
-    <version>1.1.7-SNAPSHOT</version>
+    <version>1.1.8</version>
 
     <name>Apache Sling Servlet Helpers</name>
     <description>Mock implementations of SlingHttpServletRequest, SlingHttpServletResponse and related classes.</description>
@@ -38,7 +38,7 @@
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-servlet-helpers.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-servlet-helpers.git</developerConnection>
         <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-servlet-helpers.git</url>
-      <tag>HEAD</tag>
+      <tag>org.apache.sling.servlet-helpers-1.1.8</tag>
   </scm>
 
     <build>
