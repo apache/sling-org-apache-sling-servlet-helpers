@@ -442,4 +442,15 @@ public class MockSlingHttpServletRequestTest {
         assertNull(request.getPathInfo());
     }
 
+    @Test
+    public void testGetSuffixResource() {
+        assertNull(request.getRequestPathInfo().getSuffixResource());
+        
+        ((MockRequestPathInfo)request.getRequestPathInfo()).setSuffix("/suffix");
+        Resource resource = mock(Resource.class);
+        when(resourceResolver.getResource("/suffix")).thenReturn(resource);
+        
+        assertSame(resource, request.getRequestPathInfo().getSuffixResource());
+    }
+
 }

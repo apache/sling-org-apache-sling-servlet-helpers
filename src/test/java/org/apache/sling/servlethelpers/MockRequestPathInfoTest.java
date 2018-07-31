@@ -21,17 +21,29 @@ package org.apache.sling.servlethelpers;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
+@RunWith(MockitoJUnitRunner.class)
 public class MockRequestPathInfoTest {
 
     private MockRequestPathInfo requestPathInfo;
+    
+    @Mock
+    private ResourceResolver resourceResolver;
 
     @Before
     public void setUp() throws Exception {
-        this.requestPathInfo = new MockRequestPathInfo();
+        this.requestPathInfo = new MockRequestPathInfo(resourceResolver);
     }
 
     @Test
@@ -63,6 +75,17 @@ public class MockRequestPathInfoTest {
         assertNull(this.requestPathInfo.getSuffix());
         this.requestPathInfo.setSuffix("/suffix");
         assertEquals("/suffix", this.requestPathInfo.getSuffix());
+    }
+
+    @Test
+    public void testGetSuffixResource() {
+        assertNull(this.requestPathInfo.getSuffixResource());
+        
+        this.requestPathInfo.setSuffix("/suffix");
+        Resource resource = mock(Resource.class);
+        when(resourceResolver.getResource("/suffix")).thenReturn(resource);
+        
+        assertSame(resource, this.requestPathInfo.getSuffixResource());
     }
 
 }

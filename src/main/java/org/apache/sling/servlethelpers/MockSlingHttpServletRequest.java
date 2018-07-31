@@ -130,7 +130,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     }
 
     protected MockRequestPathInfo newMockRequestPathInfo() {
-        return new MockRequestPathInfo();
+        return new MockRequestPathInfo(this.resourceResolver);
     }
 
     @Override

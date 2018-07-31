@@ -21,6 +21,7 @@ package org.apache.sling.servlethelpers;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.request.RequestPathInfo;
 import org.apache.sling.api.resource.Resource;
+import org.apache.sling.api.resource.ResourceResolver;
 import org.osgi.annotation.versioning.ConsumerType;
 
 /**
@@ -33,6 +34,20 @@ public class MockRequestPathInfo implements RequestPathInfo {
     private String resourcePath;
     private String selectorString;
     private String suffix;
+    
+    private final ResourceResolver resourceResolver;
+    
+    /**
+     * @deprecated Use @link {@link #MockRequestPathInfo(ResourceResolver)} instead. 
+     */
+    @Deprecated
+    public MockRequestPathInfo() {
+        this(null);
+    }
+
+    public MockRequestPathInfo(ResourceResolver resourceResolver) {
+        this.resourceResolver = resourceResolver;
+    }
 
     @Override
     public String getExtension() {
@@ -79,10 +94,15 @@ public class MockRequestPathInfo implements RequestPathInfo {
         this.suffix = suffix;
     }
 
-    // --- unsupported operations ---
     @Override
     public Resource getSuffixResource() {
-        throw new UnsupportedOperationException();
+        if (this.resourceResolver == null) {
+            throw new UnsupportedOperationException("No resource resolver available.");
+        }
+        if (suffix == null) {
+            return null;
+        }
+        return this.resourceResolver.getResource(suffix);
     }
 
 }
