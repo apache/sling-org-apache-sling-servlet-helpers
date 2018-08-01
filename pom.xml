@@ -97,4 +97,7 @@
 
     </dependencies>
 
+    <properties>
+        <sling.java.version>8</sling.java.version>
+    </properties>
 </project>

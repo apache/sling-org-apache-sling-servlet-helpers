@@ -18,18 +18,19 @@
  */
 package org.apache.sling.servlethelpers;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Enumeration;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
-import java.util.TimeZone;
 import java.util.Vector;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,12 +41,7 @@ import org.apache.commons.lang3.math.NumberUtils;
  */
 class HeaderSupport {
 
-    private static final String RFC_1123_DATE_PATTERN = "EEE, dd MMM yyyy HH:mm:ss z";
-    private static final DateFormat RFC1123_DATE_FORMAT = new SimpleDateFormat(RFC_1123_DATE_PATTERN, Locale.US);
-    private static final TimeZone TIMEZONE_GMT = TimeZone.getTimeZone("GMT");
-    static {
-        RFC1123_DATE_FORMAT.setTimeZone(TIMEZONE_GMT);
-    }
+    private static final DateTimeFormatter RFC_1123_DATE_TIME = DateTimeFormatter.RFC_1123_DATE_TIME;
 
     private List<HeaderValue> headers = new ArrayList<HeaderValue>();
 
@@ -78,9 +74,11 @@ class HeaderSupport {
     }
 
     public void addDateHeader(String name, long date) {
-        Calendar calendar = Calendar.getInstance(TIMEZONE_GMT, Locale.US);
-        calendar.setTimeInMillis(date);
-        headers.add(new HeaderValue(name, formatDate(calendar)));
+        addDateHeader(name, new Date(date).toInstant());
+    }
+
+    public void addDateHeader(String name, Instant date) {
+        headers.add(new HeaderValue(name, date.atOffset(ZoneOffset.UTC).format(RFC_1123_DATE_TIME)));
     }
 
     public void setHeader(String name, String value) {
@@ -129,11 +127,7 @@ class HeaderSupport {
         if (StringUtils.isEmpty(value)) {
             return 0L;
         } else {
-            try {
-                return parseDate(value).getTimeInMillis();
-            } catch (ParseException ex) {
-                return 0L;
-            }
+            return parseDate(value).getTimeInMillis();
         }
     }
 
@@ -163,13 +157,8 @@ class HeaderSupport {
         return new Vector<String>(collection).elements();
     }
 
-    private static synchronized String formatDate(Calendar date) {
-        return RFC1123_DATE_FORMAT.format(date.getTime());
-    }
-
-    private static synchronized Calendar parseDate(String dateString) throws ParseException {
-        RFC1123_DATE_FORMAT.parse(dateString);
-        return RFC1123_DATE_FORMAT.getCalendar();
+    private static synchronized Calendar parseDate(String dateString) {
+        return GregorianCalendar.from(ZonedDateTime.parse(dateString, RFC_1123_DATE_TIME));
     }
 
 }
