@@ -305,6 +305,8 @@ public class MockSlingHttpServletRequestTest {
 
         assertNull(request.getRequestParameter("unknown"));
         assertNull(request.getRequestParameters("unknown"));
+
+        assertEquals("param1", ((MockRequestParameter)request.getRequestParameter("param1")).getName());
     }
 
     @Test
