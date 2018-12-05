@@ -43,6 +43,7 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
     private String characterEncoding;
     private int contentLength;
     private int status = HttpServletResponse.SC_OK;
+    private String statusMessage;
     private int bufferSize = 1024 * 8;
     private boolean isCommitted;
     private Locale locale = Locale.US;
@@ -91,6 +92,7 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
     @Override
     public void setStatus(int sc, String sm) {
         setStatus(sc);
+        this.statusMessage = sm;
     }
 
     @Override
@@ -106,6 +108,7 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
     @Override
     public void sendError(int sc, String msg) {
         setStatus(sc);
+        this.statusMessage = msg;
     }
 
     @Override
@@ -259,6 +262,10 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
         this.locale = loc;
     }
 
+    public String geStatusMessage() {
+        return statusMessage;
+    }
+    
     // --- unsupported operations ---
     @Override
     public String encodeRedirectUrl(String url) {

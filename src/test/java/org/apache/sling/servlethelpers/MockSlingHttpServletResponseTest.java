@@ -118,6 +118,13 @@ public class MockSlingHttpServletResponseTest {
     }
 
     @Test
+    public void testSendErrorWithMEssage() throws Exception {
+        response.sendError(HttpServletResponse.SC_NOT_FOUND, "my error message");
+        assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
+        assertEquals("my error message", response.geStatusMessage());
+    }
+
+    @Test
     public void testSetStatus() throws Exception {
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 
@@ -126,6 +133,13 @@ public class MockSlingHttpServletResponseTest {
 
         response.reset();
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
+    }
+
+    @Test
+    public void testSetStatusWithMEssage() throws Exception {
+        response.setStatus(HttpServletResponse.SC_ACCEPTED, "my status message");
+        assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
+        assertEquals("my status message", response.geStatusMessage());
     }
 
     @Test
