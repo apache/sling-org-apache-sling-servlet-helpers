@@ -22,6 +22,7 @@ import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -158,7 +159,12 @@ class HeaderSupport {
     }
 
     private static synchronized Calendar parseDate(String dateString) {
-        return GregorianCalendar.from(ZonedDateTime.parse(dateString, RFC_1123_DATE_TIME));
+        try {
+            return GregorianCalendar.from(ZonedDateTime.parse(dateString, RFC_1123_DATE_TIME));
+        }
+        catch (DateTimeParseException ex) {
+            throw new IllegalArgumentException("Invalid date value: " + dateString, ex);
+        }
     }
 
 }

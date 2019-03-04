@@ -269,6 +269,13 @@ public class MockSlingHttpServletRequestTest {
         assertFalse(header2Values.hasMoreElements());
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidDateHeader() {
+        request.addHeader("header1", "thisIsNotADate");
+        // make sure IllegalArgumentException is thrown as defined by the HttpServletRequest API
+        request.getDateHeader("header1");
+    }
+
     @Test
     public void testCookies() {
         assertNull(request.getCookies());
