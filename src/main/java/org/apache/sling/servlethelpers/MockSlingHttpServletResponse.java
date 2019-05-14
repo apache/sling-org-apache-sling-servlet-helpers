@@ -262,7 +262,7 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
         this.locale = loc;
     }
 
-    public String geStatusMessage() {
+    public String getStatusMessage() {
         return statusMessage;
     }
     
