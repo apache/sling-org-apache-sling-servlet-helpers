@@ -121,7 +121,8 @@ public class MockSlingHttpServletResponseTest {
     public void testSendErrorWithMEssage() throws Exception {
         response.sendError(HttpServletResponse.SC_NOT_FOUND, "my error message");
         assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
-        assertEquals("my error message", response.geStatusMessage());
+        assertEquals("my error message", response.geStatusMessage());	// This version has been depracated.
+        assertEquals("my error message", response.getStatusMessage());
     }
 
     @Test
