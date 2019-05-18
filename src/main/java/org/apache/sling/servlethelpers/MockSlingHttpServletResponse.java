@@ -262,8 +262,21 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
         this.locale = loc;
     }
 
-    public String geStatusMessage() {
+    /**
+     * @return status message that was set using {@link #setStatus(int, String)} or {@link #sendError(int, String)}
+     */
+    public String getStatusMessage() {
         return statusMessage;
+    }
+    
+    /**
+     * @deprecated As of package version 1.6, use {@link #getStatusMessage()} instead.
+     * 
+     * @return status message that was set using {@link #setStatus(int, String)} or {@link #sendError(int, String)}
+     */
+    @Deprecated
+    public String geStatusMessage() {
+        return this.getStatusMessage();
     }
     
     // --- unsupported operations ---
