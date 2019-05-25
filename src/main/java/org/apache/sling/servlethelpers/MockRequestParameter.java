@@ -32,6 +32,9 @@ class MockRequestParameter implements RequestParameter {
     private String name;
     private String encoding = "UTF-8";
     private String value;
+    private String contentType;
+    private boolean isFormField;
+    private String filename;
 
     private byte[] content;
 
@@ -39,7 +42,29 @@ class MockRequestParameter implements RequestParameter {
         this.name = name;
         this.value = value;
         this.content = null;
+        this.contentType = "text/plain";
+        this.isFormField = true;
+        this.filename = null;
     }
+    
+    public MockRequestParameter(String name, byte[] content, String contentType) {
+        this.name = name;
+        this.value = null;
+        this.content = content;
+        this.contentType = contentType;
+        this.isFormField = false;
+        this.filename = null;
+    }
+    
+    public MockRequestParameter(String name, byte[] content, String contentType, String filename) {
+        this.name = name;
+        this.value = null;
+        this.content = content;
+        this.contentType = contentType;
+        this.isFormField = false;
+        this.filename = filename;
+    }
+    
     void setName(String name) {
         this.name = name;
     }
@@ -57,20 +82,20 @@ class MockRequestParameter implements RequestParameter {
     }
 
     public byte[] get() {
-        if (content == null) {
+        if (this.content == null && this.value != null) {
             try {
-                content = getString().getBytes(getEncoding());
+            	this.content = getString().getBytes(getEncoding());
             } catch (Exception e) {
                 // UnsupportedEncodingException, IllegalArgumentException
-                content = getString().getBytes();
+            	this.content = getString().getBytes();
             }
         }
-        return content;
+        return this.content;
     }
 
     public String getContentType() {
-        // none known for www-form-encoded parameters
-        return null;
+        // text/plain for www-form-encoded parameters
+        return this.contentType;
     }
 
     public InputStream getInputStream() {
@@ -78,8 +103,7 @@ class MockRequestParameter implements RequestParameter {
     }
 
     public String getFileName() {
-        // no original file name
-        return null;
+        return this.filename;
     }
 
     public long getSize() {
@@ -87,7 +111,7 @@ class MockRequestParameter implements RequestParameter {
     }
 
     public String getString() {
-        return value;
+        return this.value == null && this.content != null? new String(this.content) : this.value;
     }
 
     public String getString(String encoding) throws UnsupportedEncodingException {
@@ -95,8 +119,7 @@ class MockRequestParameter implements RequestParameter {
     }
 
     public boolean isFormField() {
-        // www-form-encoded are always form fields
-        return true;
+        return this.isFormField;
     }
 
     public String toString() {

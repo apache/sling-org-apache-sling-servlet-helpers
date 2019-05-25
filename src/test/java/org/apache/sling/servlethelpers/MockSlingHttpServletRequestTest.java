@@ -47,6 +47,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.sling.api.request.RequestDispatcherOptions;
+import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
@@ -317,6 +318,47 @@ public class MockSlingHttpServletRequestTest {
     }
 
     @Test
+    public void testFormRequestParameters() throws Exception {
+    	request.addRequestParameter("param1", "value1");
+    	request.addRequestParameter("param2", "value2".getBytes("UTF-8"), "application/xml");
+    	request.addRequestParameter("param3", "value3".getBytes("UTF-8"), "application/json", "param3.json");
+    	request.addRequestParameter("param4", "value4a".getBytes("UTF-8"), "application/xml");
+    	request.addRequestParameter("param4", "value4b".getBytes("UTF-8"), "application/json");
+    	
+    	RequestParameter param1 = request.getRequestParameter("param1");
+    	assertEquals("value1", param1.getString());
+    	assertArrayEquals("value1".getBytes(), param1.get());
+    	assertEquals("text/plain", param1.getContentType());
+    	assertArrayEquals("value1".getBytes(), param1.get());
+    	
+    	RequestParameter param2 = request.getRequestParameter("param2");
+    	assertEquals("value2", param2.getString());
+    	assertEquals("application/xml", param2.getContentType());
+    	assertArrayEquals("value2".getBytes(), param2.get());
+    	
+    	RequestParameter param3 = request.getRequestParameter("param3");
+    	assertEquals("value3", param3.getString());
+    	assertEquals("application/json", param3.getContentType());
+    	assertArrayEquals("value3".getBytes(), param3.get());
+    	assertEquals("param3.json", param3.getFileName());
+    	
+    	RequestParameter param4 = request.getRequestParameter("param4");
+    	assertEquals("value4a", param4.getString());
+    	assertEquals("application/xml", param4.getContentType());
+    	assertArrayEquals("value4a".getBytes(), param4.get());
+
+    	RequestParameter[] param4array = request.getRequestParameters("param4");
+    	assertEquals(2, param4array.length);
+    	assertEquals("value4a", param4array[0].getString());
+    	assertEquals("value4b", param4array[1].getString());
+    	assertEquals("application/xml", param4array[0].getContentType());
+    	assertEquals("application/json", param4array[1].getContentType());
+    	assertArrayEquals("value4a".getBytes(), param4array[0].get());
+    	assertArrayEquals("value4b".getBytes(), param4array[1].get());
+    	
+    }
+
+    @Test
     public void testContentTypeCharset() throws Exception {
         assertNull(request.getContentType());
         assertNull(request.getCharacterEncoding());
@@ -462,4 +504,5 @@ public class MockSlingHttpServletRequestTest {
         assertSame(resource, request.getRequestPathInfo().getSuffixResource());
     }
 
+    
 }
