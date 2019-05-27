@@ -83,7 +83,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     private final ResourceResolver resourceResolver;
     private final RequestPathInfo requestPathInfo;
     private Map<String, Object> attributeMap = new HashMap<String, Object>();
-    private Map<String, MockRequestParameter[]> parameterMap = new LinkedHashMap<String, MockRequestParameter[]>();
+    private Map<String, MockRequestParameter[]> parameterMap = new LinkedHashMap<>();
     private HttpSession session;
     private Resource resource;
     private String authType;
@@ -198,7 +198,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     @Override
     public Map<String, String[]> getParameterMap() {
-    	LinkedHashMap<String, String[]> result = new LinkedHashMap<String, String[]>();
+    	LinkedHashMap<String, String[]> result = new LinkedHashMap<>();
     	for(Entry<String, MockRequestParameter[]> entry : this.parameterMap.entrySet()) {
     		MockRequestParameter[] values = entry.getValue();
     		String[] resultValues = new String[values.length];
@@ -260,28 +260,28 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         }
     }
 
-    private String formatQueryString(Map<String, MockRequestParameter[]> map) throws UnsupportedEncodingException {
+    private static String formatQueryString(Map<String, MockRequestParameter[]> map) throws UnsupportedEncodingException {
         StringBuilder querystring = new StringBuilder();
-        for (Map.Entry<String, MockRequestParameter[]> entry : this.parameterMap.entrySet()) {
+        for (Map.Entry<String, MockRequestParameter[]> entry : map.entrySet()) {
             if (entry.getValue() != null) {
-                for (MockRequestParameter value : entry.getValue()) {
-                    if (querystring.length() != 0) {
-                        querystring.append('&');
-                    }
-                    querystring.append(URLEncoder.encode(entry.getKey(), CharEncoding.UTF_8));
-                    querystring.append('=');
-                    if (value.getString() != null) {
-                        querystring.append(URLEncoder.encode(value.getString(), CharEncoding.UTF_8));
-                    }
-                }
+                formatQueryStringParameter(querystring, entry);
             }
         }
-        if (querystring.length() > 0) {
-            return querystring.toString();
-        } else {
-            return null;
-        }
+        return querystring.length() > 0 ? querystring.toString() : null; 
     }
+
+	private static void formatQueryStringParameter(StringBuilder querystring, Map.Entry<String, MockRequestParameter[]> entry) throws UnsupportedEncodingException {
+		for (MockRequestParameter value : entry.getValue()) {
+		    if (querystring.length() != 0) {
+		        querystring.append('&');
+		    }
+		    querystring.append(URLEncoder.encode(entry.getKey(), CharEncoding.UTF_8));
+		    querystring.append('=');
+		    if (value.getString() != null) {
+		        querystring.append(URLEncoder.encode(value.getString(), CharEncoding.UTF_8));
+		    }
+		}
+	}
 
     @Override
     public Locale getLocale() {
