@@ -41,6 +41,7 @@ import java.util.List;
 import java.util.ListResourceBundle;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
 import javax.servlet.AsyncContext;
@@ -82,7 +83,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     private final ResourceResolver resourceResolver;
     private final RequestPathInfo requestPathInfo;
     private Map<String, Object> attributeMap = new HashMap<String, Object>();
-    private Map<String, String[]> parameterMap = new LinkedHashMap<String, String[]>();
+    private Map<String, MockRequestParameter[]> parameterMap = new LinkedHashMap<>();
     private HttpSession session;
     private Resource resource;
     private String authType;
@@ -108,8 +109,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     private boolean getReaderCalled;
 
     private MockRequestDispatcherFactory requestDispatcherFactory;
-	private String responseContentType;
-    
+    private String responseContentType;
+
     protected static final ResourceBundle EMPTY_RESOURCE_BUNDLE = new ListResourceBundle() {
         @Override
         protected Object[][] getContents() {
@@ -150,7 +151,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         }
         return this.session;
     }
-    
+
     @Override
     public RequestPathInfo getRequestPathInfo() {
         return this.requestPathInfo;
@@ -188,21 +189,26 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     @Override
     public String getParameter(String name) {
-        Object object = this.parameterMap.get(name);
-        if (object instanceof String) {
-            return (String) object;
-        } else if (object instanceof String[]) {
-            String[] values = (String[]) object;
-            if (values.length > 0) {
-                return values[0];
-            }
+        MockRequestParameter[] params = this.parameterMap.get(name);
+        if (params != null && params.length > 0) {
+            return params[0].getString();
         }
         return null;
     }
 
     @Override
     public Map<String, String[]> getParameterMap() {
-        return this.parameterMap;
+        LinkedHashMap<String, String[]> result = new LinkedHashMap<>();
+        for (Entry<String, MockRequestParameter[]> entry : this.parameterMap.entrySet()) {
+            MockRequestParameter[] values = entry.getValue();
+            String[] resultValues = new String[values.length];
+            for (int i = 0; i < values.length; i++) {
+                resultValues[i] = values[i].getString();
+            }
+            result.put(entry.getKey(), resultValues);
+        }
+
+        return result;
     }
 
     @SuppressWarnings("unchecked")
@@ -213,11 +219,13 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     @Override
     public String[] getParameterValues(String name) { // NOPMD
-        Object object = this.parameterMap.get(name);
-        if (object instanceof String) {
-            return new String[] { (String) object };
-        } else if (object instanceof String[]) {
-            return (String[]) object;
+        MockRequestParameter[] param = this.parameterMap.get(name);
+        if (param != null) {
+            String[] values = new String[param.length];
+            for (int i = 0; i < param.length; i++) {
+                values[i] = param[i].getString();
+            }
+            return values;
         }
         return null; // NOPMD
     }
@@ -231,9 +239,16 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
             String key = entry.getKey();
             Object value = entry.getValue();
             if (value instanceof String[]) {
-                this.parameterMap.put(key, (String[]) value);
+                String[] array = (String[]) value;
+                MockRequestParameter[] values = new MockRequestParameter[array.length];
+                for (int i = 0; i < array.length; i++) {
+                    values[i] = new MockRequestParameter(key, array[i]);
+                }
+                this.parameterMap.put(key, values);
+            } else if (value instanceof MockRequestParameter[]) {
+                this.parameterMap.put(key, (MockRequestParameter[]) value);
             } else if (value != null) {
-                this.parameterMap.put(key, new String[] { value.toString() });
+                this.addRequestParameter(key, value.toString());
             } else {
                 this.parameterMap.put(key, null);
             }
@@ -245,26 +260,26 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         }
     }
 
-    private String formatQueryString(Map<String, String[]> map) throws UnsupportedEncodingException {
+    private static String formatQueryString(Map<String, MockRequestParameter[]> map) throws UnsupportedEncodingException {
         StringBuilder querystring = new StringBuilder();
-        for (Map.Entry<String, String[]> entry : this.parameterMap.entrySet()) {
+        for (Map.Entry<String, MockRequestParameter[]> entry : map.entrySet()) {
             if (entry.getValue() != null) {
-                for (String value : entry.getValue()) {
-                    if (querystring.length() != 0) {
-                        querystring.append('&');
-                    }
-                    querystring.append(URLEncoder.encode(entry.getKey(), CharEncoding.UTF_8));
-                    querystring.append('=');
-                    if (value != null) {
-                        querystring.append(URLEncoder.encode(value, CharEncoding.UTF_8));
-                    }
-                }
+                formatQueryStringParameter(querystring, entry);
             }
         }
-        if (querystring.length() > 0) {
-            return querystring.toString();
-        } else {
-            return null;
+        return querystring.length() > 0 ? querystring.toString() : null;
+    }
+
+    private static void formatQueryStringParameter(StringBuilder querystring, Map.Entry<String, MockRequestParameter[]> entry) throws UnsupportedEncodingException {
+        for (MockRequestParameter value : entry.getValue()) {
+            if (querystring.length() != 0) {
+                querystring.append('&');
+            }
+            querystring.append(URLEncoder.encode(entry.getKey(), CharEncoding.UTF_8));
+            querystring.append('=');
+            if (value.getString() != null) {
+                querystring.append(URLEncoder.encode(value.getString(), CharEncoding.UTF_8));
+            }
         }
     }
 
@@ -272,13 +287,13 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     public Locale getLocale() {
         return locale;
     }
-    
+
     /**
      * @param loc Request locale
      */
     public void setLocale(Locale loc) {
         this.locale = loc;
-    }    
+    }
 
     @Override
     public String getContextPath() {
@@ -304,7 +319,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         }
     }
 
-    private void parseQueryString(Map<String, String[]> map, String query) throws UnsupportedEncodingException {
+    private void parseQueryString(Map<String, MockRequestParameter[]> map, String query) throws UnsupportedEncodingException {
         Map<String, List<String>> queryPairs = new LinkedHashMap<String, List<String>>();
         String[] pairs = query.split("&");
         for (String pair : pairs) {
@@ -313,13 +328,18 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
             if (!queryPairs.containsKey(key)) {
                 queryPairs.put(key, new ArrayList<String>());
             }
-            String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1),
-                    CharEncoding.UTF_8) : null;
+            String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), CharEncoding.UTF_8) : null;
             queryPairs.get(key).add(value);
         }
         map.clear();
         for (Map.Entry<String, List<String>> entry : queryPairs.entrySet()) {
-            map.put(entry.getKey(), entry.getValue().toArray(new String[entry.getValue().size()]));
+            List<String> valueList = entry.getValue();
+            int numEntries = valueList.size();
+            MockRequestParameter[] values = new MockRequestParameter[numEntries];
+            for (int i = 0; i < numEntries; i++) {
+                values[i] = new MockRequestParameter(entry.getKey(), valueList.get(i));
+            }
+            map.put(entry.getKey(), values);
         }
     }
 
@@ -396,7 +416,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Add header, keep existing ones with same name.
-     * @param name Header name
+     * 
+     * @param name  Header name
      * @param value Header value
      */
     public void addHeader(String name, String value) {
@@ -405,7 +426,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Add header, keep existing ones with same name.
-     * @param name Header name
+     * 
+     * @param name  Header name
      * @param value Header value
      */
     public void addIntHeader(String name, int value) {
@@ -414,6 +436,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Add header, keep existing ones with same name.
+     * 
      * @param name Header name
      * @param date Header value
      */
@@ -423,7 +446,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Set header, overwrite existing ones with same name.
-     * @param name Header name
+     * 
+     * @param name  Header name
      * @param value Header value
      */
     public void setHeader(String name, String value) {
@@ -432,7 +456,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Set header, overwrite existing ones with same name.
-     * @param name Header name
+     * 
+     * @param name  Header name
      * @param value Header value
      */
     public void setIntHeader(String name, int value) {
@@ -441,6 +466,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Set header, overwrite existing ones with same name.
+     * 
      * @param name Header name
      * @param date Header value
      */
@@ -460,6 +486,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Set cookie
+     * 
      * @param cookie Cookie
      */
     public void addCookie(Cookie cookie) {
@@ -478,9 +505,9 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     @Override
     public RequestParameter getRequestParameter(String name) {
-        String value = getParameter(name);
-        if (value != null) {
-            return new MockRequestParameter(name, value);
+        MockRequestParameter[] params = this.parameterMap.get(name);
+        if (params != null && params.length > 0) {
+            return params[0];
         }
         return null;
     }
@@ -488,7 +515,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     @Override
     public RequestParameterMap getRequestParameterMap() {
         MockRequestParameterMap map = new MockRequestParameterMap();
-        for (Map.Entry<String,String[]> entry : getParameterMap().entrySet()) {
+        for (Map.Entry<String, String[]> entry : getParameterMap().entrySet()) {
             map.put(entry.getKey(), getRequestParameters(entry.getKey()));
         }
         return map;
@@ -496,15 +523,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     @Override
     public RequestParameter[] getRequestParameters(String name) {
-        String[] values = getParameterValues(name);
-        if (values == null) {
-            return null;
-        }
-        RequestParameter[] requestParameters = new RequestParameter[values.length];
-        for (int i = 0; i < values.length; i++) {
-            requestParameters[i] = new MockRequestParameter(name, values[i]);
-        }
-        return requestParameters;
+        return this.parameterMap.get(name);
     }
 
     // part of Sling API 2.7
@@ -514,6 +533,54 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
             params.addAll(Arrays.asList(requestParameters));
         }
         return params;
+    }
+
+    /**
+     * Add a request parameter that consists of a simple name/value pair. This
+     * emulates a simple form field.
+     * 
+     * @param name  field name
+     * @param value field value
+     */
+    public void addRequestParameter(String name, String value) {
+        MockRequestParameter mockRequestParameter = new MockRequestParameter(name, value);
+        addMockRequestParameter(name, mockRequestParameter);
+    }
+
+    /**
+     * Add a request parameter that emulates a file upload field.
+     * 
+     * @param name        field name
+     * @param content     file content
+     * @param contentType mime type of content in the field
+     */
+    public void addRequestParameter(String name, byte[] content, String contentType) {
+        MockRequestParameter mockRequestParameter = new MockRequestParameter(name, content, contentType);
+        addMockRequestParameter(name, mockRequestParameter);
+    }
+
+    /**
+     * Add a request parameter that emulates a file upload field with a filename
+     * associated with it.
+     * 
+     * @param name        field name
+     * @param content     file content
+     * @param contentType mime type of content in the field
+     * @param filename    filename associated with content
+     */
+    public void addRequestParameter(String name, byte[] content, String contentType, String filename) {
+        MockRequestParameter mockRequestParameter = new MockRequestParameter(name, content, contentType, filename);
+        addMockRequestParameter(name, mockRequestParameter);
+    }
+
+    private void addMockRequestParameter(String name, MockRequestParameter mockRequestParameter) {
+        if (this.parameterMap.containsKey(name)) {
+            List<MockRequestParameter> list = new ArrayList<>(Arrays.asList(this.parameterMap.get(name)));
+            list.add(mockRequestParameter);
+            this.parameterMap.put(name, list.toArray(new MockRequestParameter[0]));
+        } else {
+            this.parameterMap.put(name, new MockRequestParameter[] { mockRequestParameter });
+        }
     }
 
     @Override
@@ -531,11 +598,10 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         if (this.contentType == null) {
             return null;
         } else {
-            return this.contentType
-                    + (StringUtils.isNotBlank(characterEncoding) ? CHARSET_SEPARATOR + characterEncoding : "");
+            return this.contentType + (StringUtils.isNotBlank(characterEncoding) ? CHARSET_SEPARATOR + characterEncoding : "");
         }
     }
-    
+
     public void setContentType(String type) {
         this.contentType = type;
         if (StringUtils.contains(this.contentType, CHARSET_SEPARATOR)) {
@@ -552,23 +618,27 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         getInputStreamCalled = true;
         return new ServletInputStream() {
             private final InputStream is = content == null ? new ByteArrayInputStream(new byte[0]) : new ByteArrayInputStream(content);
+
             @Override
             public int read() throws IOException {
                 return is.read();
             }
+
             @Override
             public boolean isReady() {
                 return true;
             }
+
             @Override
             public boolean isFinished() {
                 throw new UnsupportedOperationException();
             }
+
             @Override
             public void setReadListener(ReadListener readListener) {
                 throw new UnsupportedOperationException();
             }
-        };  
+        };
     }
 
     @Override
@@ -578,7 +648,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         }
         return content.length;
     }
-    
+
     public void setContent(byte[] content) {
         this.content = content;
     }
@@ -588,7 +658,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         if (requestDispatcherFactory == null) {
             throw new IllegalStateException("Please provdide a MockRequestDispatcherFactory (setRequestDispatcherFactory).");
         }
-        return requestDispatcherFactory.getRequestDispatcher(path,  null);
+        return requestDispatcherFactory.getRequestDispatcher(path, null);
     }
 
     @Override
@@ -596,7 +666,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         if (requestDispatcherFactory == null) {
             throw new IllegalStateException("Please provdide a MockRequestDispatcherFactory (setRequestDispatcherFactory).");
         }
-        return requestDispatcherFactory.getRequestDispatcher(path,  options);
+        return requestDispatcherFactory.getRequestDispatcher(path, options);
     }
 
     @Override
@@ -614,7 +684,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         }
         return requestDispatcherFactory.getRequestDispatcher(resource, options);
     }
-    
+
     public void setRequestDispatcherFactory(MockRequestDispatcherFactory requestDispatcherFactory) {
         this.requestDispatcherFactory = requestDispatcherFactory;
     }
@@ -667,9 +737,9 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     @Override
     public String getPathInfo() {
         if (this.pathInfo != null) {
-            return this.pathInfo; 
+            return this.pathInfo;
         }
-        
+
         RequestPathInfo requestPathInfo = this.getRequestPathInfo();
 
         if (StringUtils.isEmpty(requestPathInfo.getResourcePath())) {
@@ -696,7 +766,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
         return pathInfo.toString();
     }
-    
+
     public void setPathInfo(String pathInfo) {
         this.pathInfo = pathInfo;
     }
@@ -727,8 +797,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         requestUrl.append(this.getScheme());
         requestUrl.append("://");
         requestUrl.append(getServerName());
-        if ((StringUtils.equals(this.getScheme(), "http") && this.getServerPort() != 80) ||
-                (StringUtils.equals(this.getScheme(), "https") && this.getServerPort() != 443)) {
+        if ((StringUtils.equals(this.getScheme(), "http") && this.getServerPort() != 80) || (StringUtils.equals(this.getScheme(), "https") && this.getServerPort() != 443)) {
             requestUrl.append(':');
             requestUrl.append(getServerPort());
         }
@@ -757,11 +826,10 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     public String getResponseContentType() {
         return responseContentType;
     }
-    
+
     public void setResponseContentType(String responseContentType) {
         this.responseContentType = responseContentType;
     }
-
 
     @Override
     public Enumeration<String> getResponseContentTypes() {
