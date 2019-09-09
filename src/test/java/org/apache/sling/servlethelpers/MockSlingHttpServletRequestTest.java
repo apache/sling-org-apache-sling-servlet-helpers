@@ -173,7 +173,7 @@ public class MockSlingHttpServletRequestTest {
 
     @Test
     public void testContextPath() {
-        assertNull(request.getContextPath());
+        assertEquals("", request.getContextPath());
         request.setContextPath("/ctx");
         assertEquals("/ctx", request.getContextPath());
     }

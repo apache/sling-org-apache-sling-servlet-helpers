@@ -87,7 +87,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     private HttpSession session;
     private Resource resource;
     private String authType;
-    private String contextPath;
+    private String contextPath = "";
     private String queryString;
     private String scheme = "http";
     private String serverName = "localhost";
