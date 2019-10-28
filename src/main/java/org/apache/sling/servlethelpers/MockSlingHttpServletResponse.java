@@ -278,7 +278,12 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
     public String geStatusMessage() {
         return this.getStatusMessage();
     }
-    
+
+    @Override
+    public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
+        return AdaptableUtil.adaptToWithoutCaching(this, type);
+    }
+
     // --- unsupported operations ---
     @Override
     public String encodeRedirectUrl(String url) {

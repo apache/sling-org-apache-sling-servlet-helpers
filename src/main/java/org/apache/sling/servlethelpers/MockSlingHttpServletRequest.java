@@ -815,6 +815,11 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         this.authType = authType;
     }
 
+    @Override
+    public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
+        return AdaptableUtil.adaptToWithoutCaching(this, type);
+    }
+
     // --- unsupported operations ---
 
     @Override

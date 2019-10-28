@@ -21,6 +21,7 @@ package org.apache.sling.servlethelpers;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -39,6 +40,7 @@ import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
+import java.util.UUID;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.http.Cookie;
@@ -46,16 +48,21 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
+import org.apache.sling.api.adapter.AdapterManager;
+import org.apache.sling.api.adapter.SlingAdaptable;
 import org.apache.sling.api.request.RequestDispatcherOptions;
 import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockSlingHttpServletRequestTest {
@@ -64,14 +71,22 @@ public class MockSlingHttpServletRequestTest {
     private ResourceResolver resourceResolver;
     @Mock
     private Resource resource;
+    @Mock
+    private AdapterManager adapterManager;
 
     private MockSlingHttpServletRequest request;
 
     @Before
     public void setUp() throws Exception {
         request = new MockSlingHttpServletRequest(resourceResolver);
+        SlingAdaptable.setAdapterManager(adapterManager);
     }
-    
+
+    @After
+    public void tearDown() throws Exception {
+        SlingAdaptable.unsetAdapterManager(adapterManager);
+    }
+
     @Test
     public void testResourceResolver() {
         assertSame(resourceResolver, request.getResourceResolver());
@@ -504,5 +519,21 @@ public class MockSlingHttpServletRequestTest {
         assertSame(resource, request.getRequestPathInfo().getSuffixResource());
     }
 
-    
+    @Test
+    public void testAdaptTo() {
+        when(adapterManager.getAdapter(request, String.class)).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return UUID.randomUUID().toString();
+            }
+        });
+
+        // make sure adaptTo results are not cached; each invocation should produce a different result
+        String result1 = request.adaptTo(String.class);
+        assertNotNull(result1);
+
+        String result2 = request.adaptTo(String.class);
+        assertNotEquals(result1,  result2);
+    }
+
 }

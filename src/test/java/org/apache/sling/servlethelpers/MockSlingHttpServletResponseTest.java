@@ -21,28 +21,49 @@ package org.apache.sling.servlethelpers;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.UUID;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.CharEncoding;
+import org.apache.sling.api.adapter.AdapterManager;
+import org.apache.sling.api.adapter.SlingAdaptable;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 
+@RunWith(MockitoJUnitRunner.class)
 public class MockSlingHttpServletResponseTest {
 
     private MockSlingHttpServletResponse response;
 
+    @Mock
+    private AdapterManager adapterManager;
+
     @Before
     public void setUp() throws Exception {
         this.response = new MockSlingHttpServletResponse();
+        SlingAdaptable.setAdapterManager(adapterManager);
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        SlingAdaptable.unsetAdapterManager(adapterManager);
     }
 
     @Test
@@ -198,6 +219,23 @@ public class MockSlingHttpServletResponseTest {
         assertEquals(Locale.US, response.getLocale());
         response.setLocale(Locale.GERMAN);
         assertEquals(Locale.GERMAN, response.getLocale());
+    }
+
+    @Test
+    public void testAdaptTo() {
+        when(adapterManager.getAdapter(response, String.class)).thenAnswer(new Answer<String>() {
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return UUID.randomUUID().toString();
+            }
+        });
+
+        // make sure adaptTo results are not cached; each invocation should produce a different result
+        String result1 = response.adaptTo(String.class);
+        assertNotNull(result1);
+
+        String result2 = response.adaptTo(String.class);
+        assertNotEquals(result1,  result2);
     }
 
 }
