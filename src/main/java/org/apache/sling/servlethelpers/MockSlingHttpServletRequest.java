@@ -820,13 +820,6 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         return AdaptableUtil.adaptToWithoutCaching(this, type);
     }
 
-    // --- unsupported operations ---
-
-    @Override
-    public RequestProgressTracker getRequestProgressTracker() {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public String getResponseContentType() {
         return responseContentType;
@@ -839,6 +832,38 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     @Override
     public Enumeration<String> getResponseContentTypes() {
         return Collections.enumeration(Collections.singleton(responseContentType));
+    }
+
+    @Override
+    public BufferedReader getReader() {
+        if (getInputStreamCalled) {
+            throw new IllegalStateException();
+        }
+        getReaderCalled = true;
+        if (this.content == null) {
+            return new BufferedReader(new StringReader(""));
+        } else {
+            String content;
+            try {
+                if (characterEncoding == null) {
+                    content = new String(this.content, Charset.defaultCharset());
+                } else {
+                    content = new String(this.content, characterEncoding);
+                }
+            } catch (UnsupportedEncodingException e) {
+                content = new String(this.content, Charset.defaultCharset());
+            }
+            return new BufferedReader(new StringReader(content));
+        }
+
+    }
+
+
+    // --- unsupported operations ---
+
+    @Override
+    public RequestProgressTracker getRequestProgressTracker() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -904,30 +929,6 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     @Override
     public String getProtocol() {
         throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public BufferedReader getReader() {
-        if (getInputStreamCalled) {
-            throw new IllegalStateException();
-        }
-        getReaderCalled = true;
-        if (this.content == null) {
-            return new BufferedReader(new StringReader(""));
-        } else {
-            String content;
-            try {
-                if (characterEncoding == null) {
-                    content = new String(this.content, Charset.defaultCharset());
-                } else {
-                    content = new String(this.content, characterEncoding);
-                }
-            } catch (UnsupportedEncodingException e) {
-                content = new String(this.content, Charset.defaultCharset());
-            }
-            return new BufferedReader(new StringReader(content));
-        }
-
     }
 
     @Override
