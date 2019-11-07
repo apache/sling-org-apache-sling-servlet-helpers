@@ -1010,5 +1010,9 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     public long getContentLengthLong() {
         throw new UnsupportedOperationException();
     }
+    
+    public void newTestMethod() {
+        // do nothing
+    }
 
 }
