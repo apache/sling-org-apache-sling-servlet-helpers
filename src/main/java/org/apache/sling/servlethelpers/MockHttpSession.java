@@ -26,7 +26,7 @@ import java.util.UUID;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.collections.IteratorUtils;
+import org.apache.commons.collections4.IteratorUtils;
 import org.osgi.annotation.versioning.ConsumerType;
 
 /**
@@ -62,7 +62,6 @@ public class MockHttpSession implements HttpSession {
         return this.attributeMap.get(name);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public Enumeration<String> getAttributeNames() {
         checkInvalidatedState();
