@@ -921,7 +921,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     @Override
     public Enumeration<Locale> getLocales() {
-        throw new UnsupportedOperationException();
+        return Collections.enumeration(Collections.singleton(getLocale()));
     }
 
     @Override
