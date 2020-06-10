@@ -6,7 +6,8 @@
 
 This module is part of the [Apache Sling](https://sling.apache.org) project.
 
-It provides mock implementations of the `SlingHttpServletRequest`, `SlingHttpServletRepsonse` and related classes.
+It provides helper mock implementations of the `SlingHttpServletRequest`, `SlingHttpServletRepsonse` and related classes, along
+with helpers for internal Sling requests described below.
 
 These helpers can be used for **testing**, like the [Sling Mocks](https://sling.apache.org/documentation/development/sling-mock.html) do.
 
@@ -14,23 +15,29 @@ They are also useful for **internal requests using the `SlingRequestProcessor` s
 [GraphQL Core](https://github.com/apache/sling-org-apache-sling-graphql-core/) module which uses
 that technique to retrieve GraphQL schemas using the powerful Sling request processing mechanisms.
 
-## How about a fluent API?
+## InternalRequest helpers
 
-Internal requests using the `SlingRequestProcessor` service currently require a lot of boilerplate
-code, which we could remove by creating a fluent interface that manages the required request and response
-objects under the hood.
+The `InternalRequest` class uses either a `SlingRequestProcessor` to execute internal requests using
+the full Sling request processing pipeline, or a `ServletResolver` to resolve and call a Servlet or Script
+directly. 
 
-Maybe something like:
+The direct mode is more efficient but less faithful to the way HTTP requests are processed, as it bypasses
+all Servlet Filters, in particular.
 
-    InternalRequest
-      .get(SlingRequestProcessor, ResourceResolver)
-      .forPath("/yocats")
-      .withSelectors("farenheit", "451")
-      .withExtension("json")
+In both cases, the standard Sling Servlet/Script resolution mechanism is used, which can be useful to execute
+scripts that are resolved based on the current resource type, for non-HTTP operations. Inventing HTTP method
+names for this is fine and allows for reusing this powerful resolution mechanism in other contexts.
+
+Here's an example using this `InternalRequest` helper - see the test code for more.
+
+    OutputStream os = InternalRequest
+      .servletRequest(resourceResolver, servletResolver, "/some/path")
+      .withResourceType("website/article/news")
+      .withResourceSuperType("website/article")
+      .withSelectors("print", "a4")
+      .withExtension("pdf")
       .execute()
       .checkStatus(200)
-      .checkContentType("application/json")
-      .getContentAsStream();
-      
-This is just an idea so far...patches welcome, and maybe such an API doesn't belong in this module, but 
-would just use its helpers.
+      .checkResponseContentType("application/pdf")
+      .getResponse()
+      .getOutputStream()
