@@ -18,12 +18,17 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -54,6 +59,9 @@ public abstract class InternalRequest {
     private String requestMethod;
     private String resourceType;
     private String resourceSuperType;
+    private String contentType;
+    private Reader bodyReader;
+    private Map<String, Object> parameters = new HashMap<>();
     private final ResourceResolver resourceResolver;
     private MockSlingHttpServletRequest request;
     private MockSlingHttpServletResponse response;
@@ -101,6 +109,18 @@ public abstract class InternalRequest {
         return this;
     }
 
+    /** Set the HTTP request method to use - defaults to GET */
+    public InternalRequest withContentType(String contentType) {
+        this.contentType = contentType;
+        return this;
+    }
+
+    /** Use the supplied Reader as the request's body content */
+    public InternalRequest withBody(Reader bodyContent) {
+        bodyReader = bodyContent;
+        return this;
+    }
+
     /** Sets the sling:resourceSuperType of the fake Resource used to resolve
      *  the Script or Servlet to use for the internal request */
     public InternalRequest withResourceSuperType(String resourceSuperType) {
@@ -136,6 +156,24 @@ public abstract class InternalRequest {
         return this;
     }
 
+    /** Set a request parameter */
+    public InternalRequest withParameter(String key, Object value) {
+        if(key != null && value != null) {
+            parameters.put(key, value);
+        } else {
+            throw new IllegalArgumentException("Null key or value");
+        }
+        return this;
+    }
+
+    /** Add the supplied request parameters to the current ones */
+    public InternalRequest withParameters(Map<String, Object> additionalParameters) {
+        if(additionalParameters != null) {
+            parameters.putAll(additionalParameters);
+        };
+        return this;
+    }
+
     /** Call the other execute() method, expecting a response with status 200 OK */
     public InternalRequest execute() throws IOException {
         return execute(HttpServletResponse.SC_OK);
@@ -163,9 +201,21 @@ public abstract class InternalRequest {
                 rpi.setSelectorString(selectorString);
                 return rpi;
             }
+
+            @Override
+            public BufferedReader getReader() {
+                if(bodyReader != null) {
+                    return new BufferedReader(bodyReader);
+                } else {
+                    return super.getReader();
+                }
+            }
         };
         request.setMethod(requestMethod);
+        request.setContentType(contentType);
         request.setResource(new MockResource(resourceResolver, path, resourceType, resourceSuperType));
+        request.setParameterMap(parameters);
+
         response = new MockSlingHttpServletResponse();
         try {
             delegateExecute(request, response, resourceResolver);

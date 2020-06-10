@@ -18,8 +18,13 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestPathInfo;
@@ -59,8 +64,24 @@ class RequestInfoServlet extends SlingAllMethodsServlet {
             response.sendError(451);
             return;
         }
-        response.setContentType(PREFIX + request.getContentType());
+
+        final SortedMap<String, String> sorted = new TreeMap<>();
+        request.getParameterMap().entrySet().stream()
+            .forEach(e -> {
+                sorted.put(e.getKey(), Arrays.asList(e.getValue()).toString());
+            });
+
         response.getWriter().write(resolutionInfo);
+        response.getWriter().write(" CT_" + request.getContentType());
+        response.getWriter().write(" P_" + sorted);
+        final BufferedReader body = request.getReader();
+        if(body != null) {
+            response.getWriter().write(" B_");
+            IOUtils.copy(body, response.getWriter());
+        }
+        response.getWriter().flush();
+
+        response.setContentType(PREFIX + request.getContentType());
         response.setContentType("CT_" + request.getContentType());
     }
 }

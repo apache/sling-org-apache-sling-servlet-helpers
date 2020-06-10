@@ -24,6 +24,9 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -48,33 +51,75 @@ public class ServletInternalRequestTest {
     @Test
     public void minimalParameters() throws IOException {
         assertEquals(
-            "M_GET PI_/monday RPI_EXT_null RPI_SEL_null RPI_P_/monday RT_null RST_null RRA_RR_attribute", 
+            "M_GET PI_/monday RPI_EXT_null RPI_SEL_null RPI_P_/monday RT_null RST_null RRA_RR_attribute CT_null P_{} B_",
             request("/monday").execute().getResponseAsString());
     }
 
     @Test
     public void allOptions() throws IOException {
+        final Map<String, Object> params = new HashMap<>();
+        params.put("A", "alpha");
+        params.put("B", "bravo");
+
         final String content = request("/451")
             .withResourceType("quincy")
             .withResourceSuperType("jones")
             .withSelectors("leo", "nardo")
             .withExtension("davinci")
+            .withParameter("K", "willBeOverwritten")
+            .withParameter("K", "kilo")
+            .withParameters(params)
+            .withContentType("the/type")
             .execute()
-            .checkResponseContentType("CT_null")
+            .checkResponseContentType("CT_the/type")
             .getResponseAsString();
 
         // Verify that the servlet that got called (our RequestInfoServlet)
         // got all the objects and values that influence servlet/script resolution
         assertEquals(
-            "M_GET PI_/451.leo.nardo.davinci RPI_EXT_davinci RPI_SEL_leo.nardo RPI_P_/451 RT_quincy RST_jones RRA_RR_attribute",
+            "M_GET PI_/451.leo.nardo.davinci RPI_EXT_davinci RPI_SEL_leo.nardo RPI_P_/451 RT_quincy RST_jones RRA_RR_attribute CT_the/type P_{A=[alpha], B=[bravo], K=[kilo]} B_",
             content);
     }
 
     @Test
-    public void postMethod() throws IOException {
+    public void postMethodWithBody() throws IOException {
         assertEquals(
-            "M_POST PI_/tuesday RPI_EXT_null RPI_SEL_null RPI_P_/tuesday RT_null RST_null RRA_RR_attribute", 
-            request("/tuesday").withRequestMethod("post").execute().getResponseAsString());
+            "M_POST PI_/tuesday RPI_EXT_null RPI_SEL_null RPI_P_/tuesday RT_null RST_null RRA_RR_attribute CT_null P_{} B_the body",
+            request("/tuesday")
+                .withRequestMethod("post")
+                .withBody(new StringReader("the body"))
+                .execute()
+                .getResponseAsString()
+        );
+    }
+
+    @Test
+    public void nullBody() throws IOException {
+        request("/nullbody")
+            .withRequestMethod("post")
+            .withBody(null)
+            .execute();
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void nullParamKey() throws IOException {
+        request("/nullparamKey").withParameter(null, "value");
+    }
+
+    @Test(expected=IllegalArgumentException.class)
+    public void nullParamValue() throws IOException {
+        request("/nullparamValue").withParameter("key", null);
+    }
+
+    @Test
+    public void nullParamsAreIgnored() throws IOException {
+        assertEquals(
+            "M_GET PI_/nullparams RPI_EXT_null RPI_SEL_null RPI_P_/nullparams RT_null RST_null RRA_RR_attribute CT_null P_{} B_",
+            request("/nullparams")
+                .withParameters(null)
+                .execute()
+                .getResponseAsString()
+        );
     }
 
     @Test(expected = IOException.class)
@@ -113,7 +158,7 @@ public class ServletInternalRequestTest {
     public void nullSelectors() throws IOException {
         final String [] theyAreNull = null;
         assertEquals(
-            "M_GET PI_/nothing RPI_EXT_null RPI_SEL_null RPI_P_/nothing RT_null RST_null RRA_RR_attribute", 
+            "M_GET PI_/nothing RPI_EXT_null RPI_SEL_null RPI_P_/nothing RT_null RST_null RRA_RR_attribute CT_null P_{} B_",
             request("/nothing").withSelectors(theyAreNull).execute().getResponseAsString()
         );
     }
