@@ -11,7 +11,7 @@ with helpers for internal Sling requests described below.
 
 These helpers can be used for **testing**, like the [Sling Mocks](https://sling.apache.org/documentation/development/sling-mock.html) do.
 
-They are also useful for **internal requests using the `SlingRequestProcessor` service**, like in the
+They are also useful for **executing internal requests**, like in the
 [GraphQL Core](https://github.com/apache/sling-org-apache-sling-graphql-core/) module which uses
 that technique to retrieve GraphQL schemas using the powerful Sling request processing mechanisms.
 
