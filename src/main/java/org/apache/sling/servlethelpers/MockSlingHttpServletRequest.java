@@ -856,13 +856,12 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     }
 
-
-    // --- unsupported operations ---
-
     @Override
     public RequestProgressTracker getRequestProgressTracker() {
-        throw new UnsupportedOperationException();
+        return new MockRequestProgressTracker();
     }
+
+    // --- unsupported operations ---
 
     @Override
     public String getPathTranslated() {
