@@ -24,9 +24,9 @@ import java.io.Reader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.OptionalInt;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -245,16 +245,12 @@ public abstract class InternalRequest {
             return this;
         }
 
-        boolean ok = false;
-        final int actualStatus = response.getStatus();
-        for(int expected : acceptableValues) {
-            if(actualStatus == expected) {
-                ok = true;
-                break;
-            }
-        }
-        if(!ok) {
-            throw new IOException("Unexpected response status " + actualStatus + " expected one of " + Arrays.asList(acceptableValues));
+        final int actualStatus = getStatus();
+        final OptionalInt found = Arrays.stream(acceptableValues).filter(expected -> expected == actualStatus).findFirst();
+        if(!found.isPresent()) {
+            final StringBuilder sb = new StringBuilder();
+            Arrays.stream(acceptableValues).forEach(val -> sb.append(sb.length() == 0 ? "" : ",").append(val));
+            throw new IOException("Unexpected response status " + actualStatus + ", expected one of '" + sb + "'");
         }
          return this;
     }

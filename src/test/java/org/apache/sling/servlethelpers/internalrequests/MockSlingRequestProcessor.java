@@ -31,8 +31,13 @@ import org.apache.sling.engine.SlingRequestProcessor;
 class MockSlingRequestProcessor implements SlingRequestProcessor {
 
     @Override
-    public void processRequest(HttpServletRequest request, HttpServletResponse response, ResourceResolver resourceResolver) 
+    public void processRequest(HttpServletRequest httpRequest, HttpServletResponse response, ResourceResolver resourceResolver)
         throws ServletException, IOException {
-        new RequestInfoServlet((SlingHttpServletRequest)request).service(request, response);
+            final SlingHttpServletRequest request = (SlingHttpServletRequest)httpRequest;
+            if(request.getResource() != null && "NOSERVLET".equals(request.getResource().getResourceType())) {
+                response.sendError(404);
+            } else {
+                new RequestInfoServlet((SlingHttpServletRequest)request).service(request, response);
+            }
     }
 }

@@ -27,6 +27,8 @@ import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.sling.api.resource.ResourceResolver;
 import org.junit.Before;
 import org.junit.Test;
@@ -126,8 +128,13 @@ public class ServletInternalRequestTest {
     }
 
     @Test(expected = IOException.class)
-    public void servletException() throws IOException {
+    public void servletIOException() throws IOException {
         request("/never").withRequestMethod("EXCEPTION").execute();
+    }
+
+    @Test(expected = IOException.class)
+    public void servletServletException() throws IOException {
+        request("/never").withRequestMethod("SERVLET-EXCEPTION").execute();
     }
 
     @Test
@@ -216,4 +223,10 @@ public class ServletInternalRequestTest {
     public void forgotToExecute() throws IOException {
         request("/response").getResponseAsString();
     }
+
+    @Test
+    public void noServletReturns404() throws IOException {
+        request("/noservlet").withResourceType("NOSERVLET").execute().checkStatus(HttpServletResponse.SC_NOT_FOUND);
+    }
+
 }

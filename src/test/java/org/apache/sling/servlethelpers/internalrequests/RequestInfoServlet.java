@@ -24,6 +24,8 @@ import java.util.Arrays;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.servlet.ServletException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -56,9 +58,12 @@ class RequestInfoServlet extends SlingAllMethodsServlet {
     }
 
     @Override
-    public void service(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
+    public void service(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException,ServletException {
         if(request.getMethod().equals("EXCEPTION")) {
             throw new IOException("Failing as designed");
+        }
+        if(request.getMethod().equals("SERVLET-EXCEPTION")) {
+            throw new ServletException("Failing as designed");
         }
         if(request.getMethod().equals("STATUS")) {
             response.setContentType("farenheit");
