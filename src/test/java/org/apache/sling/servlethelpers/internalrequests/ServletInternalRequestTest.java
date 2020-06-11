@@ -229,4 +229,15 @@ public class ServletInternalRequestTest {
         request("/noservlet").withResourceType("NOSERVLET").execute().checkStatus(HttpServletResponse.SC_NOT_FOUND);
     }
 
+    @Test
+    public void checkStatusCodeReturn() throws IOException {
+        InternalRequest call = request("/noservlet").withResourceType("NOSERVLET").execute().checkStatus(HttpServletResponse.SC_NOT_FOUND);
+        assertEquals("Unexpected Status Code", HttpServletResponse.SC_NOT_FOUND, call.getStatus());
+    }
+
+    @Test
+    public void checkMultipleStatusCodeReturn() throws IOException {
+        InternalRequest call = request("/response").execute().checkStatus(HttpServletResponse.SC_OK, HttpServletResponse.SC_NOT_FOUND);
+        assertEquals("Unexpected Status Code", HttpServletResponse.SC_OK, call.getStatus());
+    }
 }
