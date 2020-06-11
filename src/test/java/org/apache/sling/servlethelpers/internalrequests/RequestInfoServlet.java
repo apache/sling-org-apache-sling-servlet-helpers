@@ -61,6 +61,7 @@ class RequestInfoServlet extends SlingAllMethodsServlet {
             throw new IOException("Failing as designed");
         }
         if(request.getMethod().equals("STATUS")) {
+            response.setContentType("farenheit");
             response.sendError(451);
             return;
         }

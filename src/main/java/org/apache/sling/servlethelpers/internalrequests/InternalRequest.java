@@ -26,9 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -61,6 +61,7 @@ public abstract class InternalRequest {
     private String resourceSuperType;
     private String contentType;
     private Reader bodyReader;
+    private boolean explicitStatusCheck;
     private Map<String, Object> parameters = new HashMap<>();
     private final ResourceResolver resourceResolver;
     private MockSlingHttpServletRequest request;
@@ -68,6 +69,7 @@ public abstract class InternalRequest {
 
     public static final String DEFAULT_METHOD = "GET";
 
+    /** Clients use the static builder methods to create instances of this class */
     protected InternalRequest(ResourceResolver resourceResolver, String path) {
         this.resourceResolver = resourceResolver;
         this.path = path;
@@ -174,11 +176,6 @@ public abstract class InternalRequest {
         return this;
     }
 
-    /** Call the other execute() method, expecting a response with status 200 OK */
-    public InternalRequest execute() throws IOException {
-        return execute(HttpServletResponse.SC_OK);
-    }
-
     /** Execute the internal request. Can be called right after
      *  creating it, if not options need to be set.
      * 
@@ -188,7 +185,7 @@ public abstract class InternalRequest {
      * 
      *  @param expectedResponseStatus a negative value means "do not check the status"
      */
-    public final InternalRequest execute(int expectedResponseStatus) throws IOException {
+    public final InternalRequest execute() throws IOException {
         if(request != null) {
             throw new IOException("Request was already executed");
         }
@@ -222,11 +219,6 @@ public abstract class InternalRequest {
         } catch(ServletException sx) {
             throw new IOException("ServletException in execute()", sx);
         }
-
-        if(expectedResponseStatus > 0 && (expectedResponseStatus != response.getStatus())) {
-            throw new IOException("Expected response status " + expectedResponseStatus + " but got " + response.getStatus());
-        }
-
         return this;
     }
 
@@ -236,6 +228,45 @@ public abstract class InternalRequest {
     protected void assertRequestExecuted() throws IOException {
         if(request == null) {
             throw new IOException("Request hasn't been executed");
+        }
+    }
+
+    /** After executing the request, checks that the request status is one of the supplied values.
+     *  If this not called before methods that access the response, a check for a 200 OK status
+     *  is done automatically, to make sure client's don't forget to check it.
+     *  @param acceptableValues providing no values means "don't care"
+     *  @throws IOException if status doesn't match any of these values
+     */
+    public InternalRequest checkStatus(int ... acceptableValues) throws IOException {
+        assertRequestExecuted();
+        explicitStatusCheck = true;
+
+        if(acceptableValues == null || acceptableValues.length == 0) {
+            return this;
+        }
+
+        boolean ok = false;
+        final int actualStatus = response.getStatus();
+        for(int expected : acceptableValues) {
+            if(actualStatus == expected) {
+                ok = true;
+                break;
+            }
+        }
+        if(!ok) {
+            throw new IOException("Unexpected response status " + actualStatus + " expected one of " + Arrays.asList(acceptableValues));
+        }
+         return this;
+    }
+
+    /** If response status hasn't been explicitly checked, ensure it's 200 */
+    private void maybeCheckOkStatus() throws IOException {
+        if(!explicitStatusCheck) {
+            try {
+                checkStatus(HttpServletResponse.SC_OK);
+            } finally {
+                explicitStatusCheck = false;
+            }
         }
     }
 
@@ -252,11 +283,20 @@ public abstract class InternalRequest {
         return this;
     }
 
+    /** Return the response status. The execute method must be called before this one.
+     *  @throws IOException if the request hasn't been executed yet
+     */
+    public int getStatus() throws IOException {
+        assertRequestExecuted();
+        return response.getStatus();
+    }
+
     /** Return the response object. The execute method must be called before this one.
      *  @throws IOException if the request hasn't been executed yet
      */
     public SlingHttpServletResponse getResponse() throws IOException {
         assertRequestExecuted();
+        maybeCheckOkStatus();
         return response;
     }
 
@@ -265,6 +305,7 @@ public abstract class InternalRequest {
      */
     public String getResponseAsString() throws IOException {
         assertRequestExecuted();
+        maybeCheckOkStatus();
         return response.getOutputAsString();
     }
 }

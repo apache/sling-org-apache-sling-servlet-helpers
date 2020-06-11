@@ -19,7 +19,6 @@
 package org.apache.sling.servlethelpers.internalrequests;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -27,8 +26,6 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.api.resource.ResourceResolver;
 import org.junit.Before;
@@ -71,6 +68,7 @@ public class ServletInternalRequestTest {
             .withParameters(params)
             .withContentType("the/type")
             .execute()
+            .checkStatus(200)
             .checkResponseContentType("CT_the/type")
             .getResponseAsString();
 
@@ -134,9 +132,9 @@ public class ServletInternalRequestTest {
 
     @Test
     public void non200Status() throws IOException {
-        final InternalRequest req = request("/never").withRequestMethod("STATUS");
+        final InternalRequest req = request("/never").withRequestMethod("STATUS").execute();
         try {
-            req.execute();
+            req.checkStatus(200);
             fail("Expecting status check to fail");
         } catch(IOException asExpected) {
         }
@@ -145,12 +143,48 @@ public class ServletInternalRequestTest {
 
     @Test
     public void specificStatus() throws IOException {
-        request("/never").withRequestMethod("STATUS").execute(451);
+        request("/never").withRequestMethod("STATUS").execute().checkStatus(451);
+    }
+
+    @Test
+    public void specificStatusOutOfSeveral() throws IOException {
+        request("/never").withRequestMethod("STATUS").execute().checkStatus(41, 42, 451, 1234);
+    }
+
+    @Test
+    public void implicitStatusCheck() throws IOException {
+        final InternalRequest r = request("/ignore").withRequestMethod("STATUS").execute();
+
+        final String msg = "Expecting an IOException - status wasn't checked and not 200";
+
+        // These shouldn't fail, even if we haven't checked the status
+        r.getStatus();
+        r.checkResponseContentType("farenheit");
+
+        // But other methods that access the response fail if we haven't checked the status before
+        // and it's not 200
+        try {
+            r.getResponseAsString();
+            fail(msg);
+        } catch(IOException asExpected) {
+        }
+
+        try {
+            r.getResponse();
+            fail(msg);
+        } catch(IOException asExpected) {
+        }
     }
 
     @Test
     public void ignoreNon200Status() throws IOException {
-        final HttpServletResponse r = request("/ignore").withRequestMethod("STATUS").execute(-1).getResponse();
+        final InternalRequest r = request("/ignore").withRequestMethod("STATUS").execute().checkStatus();
+        assertEquals(451, r.getStatus());
+    }
+
+    @Test
+    public void ignoreNon200StatusWithNull() throws IOException {
+        final InternalRequest r = request("/ignoreAgain").withRequestMethod("STATUS").execute().checkStatus(null);
         assertEquals(451, r.getStatus());
     }
 
@@ -175,7 +209,7 @@ public class ServletInternalRequestTest {
 
     @Test
     public void responseProvided() throws IOException {
-        assertNotNull(request("/response").execute().getResponse());
+        assertEquals(200, request("/response").execute().getResponse().getStatus());
     }
 
     @Test(expected=IOException.class)
