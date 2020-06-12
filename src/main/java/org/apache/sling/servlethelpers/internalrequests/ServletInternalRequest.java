@@ -41,6 +41,7 @@ class ServletInternalRequest extends InternalRequest {
     protected void delegateExecute(SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
     throws ServletException, IOException {
         final Servlet s = servletResolver.resolveServlet(request);
+        log.debug("ServletResolver provides servlet '{}'", s);
         if(s == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND, "Servlet not found by " + getClass().getName());
         } else {

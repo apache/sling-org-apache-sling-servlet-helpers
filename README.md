@@ -41,3 +41,31 @@ Here's an example using this `InternalRequest` helper - see the test code for mo
       .checkResponseContentType("application/pdf")
       .getResponse()
       .getOutputStream()
+
+### Troubleshooting internal requests
+
+To help map log messages to internal requests, as several of those might be used to handle a single
+HTTP request, the `InternalRequest` class sets a log4j Mapped Diagnostic Context (MDC) value with
+the `sling.InternalRequest`key.
+
+The value of that key provides the essential attributes of the current request, so that using a log
+formatting pattern that displays it, like:
+
+    %-5level [%-50logger{50}] %message ## %mdc{sling.InternalRequest} %n
+
+Causes the internal request information to be logged, like in this example (lines folded
+for readability):
+
+    DEBUG [o.a.s.s.internalrequests.SlingInternalRequest     ]
+       Executing request using the SlingRequestProcessor
+       ## GET P=/content/tags/monitor+array S=null EXT=json RT=samples/tag(null)
+    WARN  [org.apache.sling.engine.impl.request.RequestData  ]
+      SlingRequestProgressTracker not found in request attributes
+      ## GET P=/content/tags/monitor+array S=null EXT=json RT=samples/tag(null)
+    DEBUG [o.a.s.s.resolver.internal.SlingServletResolver    ]
+      Using cached servlet /apps/samples/tag/json.gql
+      ## GET P=/content/tags/monitor+array S=null EXT=json RT=samples/tag(null)
+
+In these log messages, `GET P=/content/tags/monitor+array S=null EXT=json RT=null/null` points
+to the current internal request, showing its method, path, selectors, extension, resource type and
+resource supertype.

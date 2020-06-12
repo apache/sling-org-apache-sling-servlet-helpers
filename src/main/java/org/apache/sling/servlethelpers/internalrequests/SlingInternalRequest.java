@@ -41,6 +41,7 @@ class SlingInternalRequest extends InternalRequest {
     @Override
     protected void delegateExecute(SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
     throws ServletException, IOException {
+        log.debug("Executing request using the SlingRequestProcessor");
         processor.processRequest(request, response, resourceResolver);
     }
 }

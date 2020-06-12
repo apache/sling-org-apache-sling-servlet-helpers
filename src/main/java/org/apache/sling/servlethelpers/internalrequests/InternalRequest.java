@@ -38,6 +38,9 @@ import org.apache.sling.servlethelpers.MockRequestPathInfo;
 import org.apache.sling.servlethelpers.MockSlingHttpServletRequest;
 import org.apache.sling.servlethelpers.MockSlingHttpServletResponse;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 /** Fluent helper for Sling internal requests. 
  * 
@@ -67,13 +70,39 @@ public abstract class InternalRequest {
     private MockSlingHttpServletRequest request;
     private MockSlingHttpServletResponse response;
 
+    protected final Logger log = LoggerFactory.getLogger(getClass());
+
     public static final String DEFAULT_METHOD = "GET";
+
+    /** An slf4j MDC value is set at this key with request information.
+     *  That's useful for debugging when using multiple internal requests
+     *  in the context of a single HTTP request
+     */
+    public static final String MDC_KEY = "sling." + InternalRequest.class.getSimpleName();
 
     /** Clients use the static builder methods to create instances of this class */
     protected InternalRequest(ResourceResolver resourceResolver, String path) {
         this.resourceResolver = resourceResolver;
         this.path = path;
         this.requestMethod = DEFAULT_METHOD;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s", getClass().getSimpleName(), getRequestInfo());
+    }
+
+    /** Return essential request info, used to set the logging MDC  */
+    protected String getRequestInfo() {
+        return String.format(
+            "%s P=%s S=%s EXT=%s RT=%s(%s)",
+            requestMethod,
+            path,
+            selectorString,
+            extension,
+            resourceType,
+            resourceSuperType
+        );
     }
 
     /** Start preparing an internal request that uses the "SlingRequest"Processor mode.
@@ -214,6 +243,8 @@ public abstract class InternalRequest {
         request.setParameterMap(parameters);
 
         response = new MockSlingHttpServletResponse();
+
+        MDC.put(MDC_KEY, getRequestInfo());
         try {
             delegateExecute(request, response, resourceResolver);
         } catch(ServletException sx) {
