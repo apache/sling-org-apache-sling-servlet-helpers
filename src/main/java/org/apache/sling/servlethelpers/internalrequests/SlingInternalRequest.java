@@ -24,24 +24,65 @@ import javax.servlet.ServletException;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.engine.SlingRequestProcessor;
+import org.jetbrains.annotations.NotNull;
 
-/** Common interface between the various types of 
- *  internal requests
+/** Internal request that uses a SlingRequestProcessor.
+ *  This executes the complete Sling request processing
+ *  pipeline. That's the same processing than Sling uses
+ *  for HTTP requests, but it's not as efficient as the
+ *  {@link ServletInternalRequest} which resolves and
+ *  calls a Servlet or Script directly.
  */
-class SlingInternalRequest extends InternalRequest {
-    protected final SlingRequestProcessor processor;
+public class SlingInternalRequest extends InternalRequest {
+    private final SlingRequestProcessor processor;
+    private String resourceType;
+    private String resourceSuperType;
 
-    SlingInternalRequest(ResourceResolver resolver, SlingRequestProcessor p, String path) {
-        super(resolver, path);
-        processor = p;
+    public SlingInternalRequest(@NotNull ResourceResolver resourceResolver, @NotNull SlingRequestProcessor p, @NotNull String path) {
+        super(resourceResolver, path);
+        this.processor = p;
+    }
+
+    /** Return essential request info, used to set the logging MDC  */
+    public String toString() {
+        return String.format(
+            "%s: %s P=%s S=%s EXT=%s RT=%s(%s)",
+            getClass().getSimpleName(),
+            requestMethod,
+            path,
+            selectorString,
+            extension,
+            resourceType,
+            resourceSuperType
+        );
+    }
+
+    /** Sets the sling:resourceSuperType of the fake Resource used to resolve
+     *  the Script or Servlet to use for the internal request */
+    public SlingInternalRequest withResourceSuperType(String resourceSuperType) {
+        this.resourceSuperType = resourceSuperType;
+        return this;
+    }
+
+    /** Sets the sling:resourceType of the fake Resource used to resolve
+     *  the Script or Servlet to use for the internal request */
+    public SlingInternalRequest withResourceType(String resourceType) {
+        this.resourceType = resourceType;
+        return this;
     }
 
     @Override
     protected void delegateExecute(SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
     throws ServletException, IOException {
-        log.debug("Executing request using the SlingRequestProcessor");
+        log.debug("Executing request using a SlingRequestProcessor");
         processor.processRequest(request, response, resourceResolver);
+    }
+
+    @Override
+    protected Resource getExecutionResource() {
+        return new ServletResolutionResource(resourceResolver, path, resourceType, resourceSuperType);
     }
 }

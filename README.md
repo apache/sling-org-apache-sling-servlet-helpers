@@ -17,7 +17,7 @@ that technique to retrieve GraphQL schemas using the powerful Sling request proc
 
 ## InternalRequest helpers
 
-The `InternalRequest` class uses either a `SlingRequestProcessor` to execute internal requests using
+The internal request helpers use either a `SlingRequestProcessor` to execute internal requests using
 the full Sling request processing pipeline, or a `ServletResolver` to resolve and call a Servlet or Script
 directly. 
 
@@ -28,10 +28,9 @@ In both cases, the standard Sling Servlet/Script resolution mechanism is used, w
 scripts that are resolved based on the current resource type, for non-HTTP operations. Inventing HTTP method
 names for this is fine and allows for reusing this powerful resolution mechanism in other contexts.
 
-Here's an example using this `InternalRequest` helper - see the test code for more.
+Here's an example using the `SlingInternalRequest` helper - see the test code for more.
 
-    OutputStream os = InternalRequest
-      .servletRequest(resourceResolver, servletResolver, "/some/path")
+    OutputStream os = new SlingInternalRequest(resourceResolver, slingRequestProcessor, path)
       .withResourceType("website/article/news")
       .withResourceSuperType("website/article")
       .withSelectors("print", "a4")

@@ -31,13 +31,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.api.servlets.ServletResolver;
-import org.apache.sling.engine.SlingRequestProcessor;
 import org.apache.sling.servlethelpers.MockRequestPathInfo;
 import org.apache.sling.servlethelpers.MockSlingHttpServletRequest;
 import org.apache.sling.servlethelpers.MockSlingHttpServletResponse;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -56,17 +54,15 @@ import org.slf4j.MDC;
  *  like content aggregation, generating query schemas dynamically, etc.
  */
 public abstract class InternalRequest {
+    protected final ResourceResolver resourceResolver;
     protected final String path;
-    private String selectorString;
-    private String extension;
-    private String requestMethod;
-    private String resourceType;
-    private String resourceSuperType;
-    private String contentType;
+    protected String selectorString;
+    protected String extension;
+    protected String requestMethod = DEFAULT_METHOD;
+    protected String contentType;
     private Reader bodyReader;
     private boolean explicitStatusCheck;
     private Map<String, Object> parameters = new HashMap<>();
-    private final ResourceResolver resourceResolver;
     private MockSlingHttpServletRequest request;
     private MockSlingHttpServletResponse response;
 
@@ -80,58 +76,9 @@ public abstract class InternalRequest {
      */
     public static final String MDC_KEY = "sling." + InternalRequest.class.getSimpleName();
 
-    /** Clients use the static builder methods to create instances of this class */
     protected InternalRequest(ResourceResolver resourceResolver, String path) {
         this.resourceResolver = resourceResolver;
         this.path = path;
-        this.requestMethod = DEFAULT_METHOD;
-    }
-
-    @Override
-    public String toString() {
-        return String.format("%s %s", getClass().getSimpleName(), getRequestInfo());
-    }
-
-    /** Return essential request info, used to set the logging MDC  */
-    protected String getRequestInfo() {
-        return String.format(
-            "%s P=%s S=%s EXT=%s RT=%s(%s)",
-            requestMethod,
-            path,
-            selectorString,
-            extension,
-            resourceType,
-            resourceSuperType
-        );
-    }
-
-    /** Start preparing an internal request that uses the "SlingRequest"Processor mode.
-     * 
-     * @param resourceResolver Used for access control
-     * @param processor The SlingRequestProcessor to use for processing
-     * @param path The path of the request
-     * @return a fluent InternalRequest 
-     */
-    @NotNull
-    public static InternalRequest slingRequest(
-        @NotNull ResourceResolver resourceResolver, 
-        @NotNull SlingRequestProcessor processor,
-        @NotNull String path) {
-        return new SlingInternalRequest(resourceResolver, processor, path);
-    }
-
-    /** Start preparing an internal request that calls the resolved Servlet
-     *  directly. This bypasses the Servlet Filters used by the default
-     *  Sling request processing pipeline, which are often not needed
-     *  for internal requests.
-     * 
-     * @param resourceResolver Used for access control
-     * @param servletResolver Resolves the Servlet or Script used to process the internal request
-     * @param path The path of the request
-     * @return a fluent InternalRequest 
-     */
-    public static InternalRequest servletRequest(ResourceResolver resourceResolver, ServletResolver servletResolver, String path) {
-        return new ServletInternalRequest(resourceResolver, servletResolver, path);
     }
 
     /** Set the HTTP request method to use - defaults to GET */
@@ -149,20 +96,6 @@ public abstract class InternalRequest {
     /** Use the supplied Reader as the request's body content */
     public InternalRequest withBody(Reader bodyContent) {
         bodyReader = bodyContent;
-        return this;
-    }
-
-    /** Sets the sling:resourceSuperType of the fake Resource used to resolve
-     *  the Script or Servlet to use for the internal request */
-    public InternalRequest withResourceSuperType(String resourceSuperType) {
-        this.resourceSuperType = resourceSuperType;
-        return this;
-    }
-
-    /** Sets the sling:resourceType of the fake Resource used to resolve
-     *  the Script or Servlet to use for the internal request */
-    public InternalRequest withResourceType(String resourceType) {
-        this.resourceType = resourceType;
         return this;
     }
 
@@ -218,6 +151,7 @@ public abstract class InternalRequest {
         if(request != null) {
             throw new IOException("Request was already executed");
         }
+        final Resource resource = getExecutionResource();
         request = new MockSlingHttpServletRequest(resourceResolver) {
             @Override
             protected MockRequestPathInfo newMockRequestPathInfo() {
@@ -239,12 +173,12 @@ public abstract class InternalRequest {
         };
         request.setMethod(requestMethod);
         request.setContentType(contentType);
-        request.setResource(new MockResource(resourceResolver, path, resourceType, resourceSuperType));
+        request.setResource(resource);
         request.setParameterMap(parameters);
 
         response = new MockSlingHttpServletResponse();
 
-        MDC.put(MDC_KEY, getRequestInfo());
+        MDC.put(MDC_KEY, toString());
         try {
             delegateExecute(request, response, resourceResolver);
         } catch(ServletException sx) {
@@ -253,6 +187,10 @@ public abstract class InternalRequest {
         return this;
     }
 
+    /** Return the Resource to use to execute the request */
+    protected abstract Resource getExecutionResource();
+
+    /** Execute the supplied Request */
     protected abstract void delegateExecute(SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
     throws ServletException, IOException;
 

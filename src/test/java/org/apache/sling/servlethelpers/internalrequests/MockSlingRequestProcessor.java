@@ -34,7 +34,7 @@ class MockSlingRequestProcessor implements SlingRequestProcessor {
     public void processRequest(HttpServletRequest httpRequest, HttpServletResponse response, ResourceResolver resourceResolver)
         throws ServletException, IOException {
             final SlingHttpServletRequest request = (SlingHttpServletRequest)httpRequest;
-            if(request.getResource() != null && "NOSERVLET".equals(request.getResource().getResourceType())) {
+            if(request.getResource() != null && "/NOSERVLET".equals(request.getResource().getPath())) {
                 response.sendError(404);
             } else {
                 new RequestInfoServlet((SlingHttpServletRequest)request).service(request, response);

@@ -24,23 +24,25 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceResolver;
 
-/** Minimal Resource implementation for our internal requests */
-class MockResource implements Resource {
+/** Minimal Resource implementation for our internal requests, meant
+ *  to be used only to resolve scripts and servlets.
+ */
+class ServletResolutionResource implements Resource {
 
     private final String path;
     private final String resourceType;
     private final String resourceSuperType;
     private final ResourceResolver resourceResolver;
 
-    static class NotNeededException extends UnsupportedOperationException {
+    static class NotImplementedException extends UnsupportedOperationException {
         private static final long serialVersionUID = 1L;
 
-        NotNeededException() {
-            super("Not implemented - this method should not be needed?");
+        NotImplementedException() {
+            super("Not implemented - this Resource is only meant to resolve Servlets and Scripts");
         }
     }
 
-    MockResource(ResourceResolver resourceResolver, String path, String resourceType, String resourceSuperType) {
+    ServletResolutionResource(ResourceResolver resourceResolver, String path, String resourceType, String resourceSuperType) {
         this.path = path;
         this.resourceType = resourceType;
         this.resourceSuperType = resourceSuperType;
@@ -49,7 +51,7 @@ class MockResource implements Resource {
 
     @Override
     public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
-        throw new NotNeededException();
+        throw new NotImplementedException();
     }
 
     @Override
@@ -59,27 +61,27 @@ class MockResource implements Resource {
 
     @Override
     public String getName() {
-        throw new NotNeededException();
+        throw new NotImplementedException();
     }
 
     @Override
     public Resource getParent() {
-        throw new NotNeededException();
+        throw new NotImplementedException();
     }
 
     @Override
     public Iterator<Resource> listChildren() {
-        throw new NotNeededException();
+        throw new NotImplementedException();
     }
 
     @Override
     public Iterable<Resource> getChildren() {
-        throw new NotNeededException();
+        throw new NotImplementedException();
     }
 
     @Override
     public Resource getChild(String relPath) {
-        throw new NotNeededException();
+        throw new NotImplementedException();
     }
 
     @Override
@@ -94,12 +96,12 @@ class MockResource implements Resource {
 
     @Override
     public boolean isResourceType(String resourceType) {
-        throw new NotNeededException();
+        throw new NotImplementedException();
     }
 
     @Override
     public ResourceMetadata getResourceMetadata() {
-        throw new NotNeededException();
+        throw new NotImplementedException();
     }
 
     @Override

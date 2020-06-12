@@ -59,10 +59,10 @@ class RequestInfoServlet extends SlingAllMethodsServlet {
 
     @Override
     public void service(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException,ServletException {
-        if(request.getMethod().equals("EXCEPTION")) {
+        if(request.getResource().getPath().equals("/EXCEPTION")) {
             throw new IOException("Failing as designed");
         }
-        if(request.getMethod().equals("SERVLET-EXCEPTION")) {
+        if(request.getResource().getPath().equals("/SERVLET-EXCEPTION")) {
             throw new ServletException("Failing as designed");
         }
         if(request.getMethod().equals("STATUS")) {

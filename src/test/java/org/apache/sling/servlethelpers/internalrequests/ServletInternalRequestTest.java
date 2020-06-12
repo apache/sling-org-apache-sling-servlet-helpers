@@ -37,8 +37,16 @@ import org.mockito.Mockito;
 public class ServletInternalRequestTest {
     protected ResourceResolver resourceResolver;
 
-    protected InternalRequest request(String path) {
-        return InternalRequest.servletRequest(resourceResolver, new MockServletResolver(), path);
+    protected final InternalRequest request(String path) {
+        return request(path, null, null);
+    }
+
+
+    protected InternalRequest request(String path, String resourceType, String resourceSuperType) {
+        return new ServletInternalRequest(
+            new MockServletResolver(), 
+            new ServletResolutionResource(resourceResolver, path, resourceType, resourceSuperType)
+        );
     }
 
     @Before
@@ -60,9 +68,7 @@ public class ServletInternalRequestTest {
         params.put("A", "alpha");
         params.put("B", "bravo");
 
-        final String content = request("/451")
-            .withResourceType("quincy")
-            .withResourceSuperType("jones")
+        final String content = request("/451", "quincy", "jones")
             .withSelectors("leo", "nardo")
             .withExtension("davinci")
             .withParameter("K", "willBeOverwritten")
@@ -129,12 +135,12 @@ public class ServletInternalRequestTest {
 
     @Test(expected = IOException.class)
     public void servletIOException() throws IOException {
-        request("/never").withRequestMethod("EXCEPTION").execute();
+        request("/EXCEPTION").execute();
     }
 
     @Test(expected = IOException.class)
     public void servletServletException() throws IOException {
-        request("/never").withRequestMethod("SERVLET-EXCEPTION").execute();
+        request("/SERVLET-EXCEPTION").execute();
     }
 
     @Test
@@ -226,12 +232,12 @@ public class ServletInternalRequestTest {
 
     @Test
     public void noServletReturns404() throws IOException {
-        request("/noservlet").withResourceType("NOSERVLET").execute().checkStatus(HttpServletResponse.SC_NOT_FOUND);
+        request("/NOSERVLET").execute().checkStatus(HttpServletResponse.SC_NOT_FOUND);
     }
 
     @Test
     public void checkStatusCodeReturn() throws IOException {
-        InternalRequest call = request("/noservlet").withResourceType("NOSERVLET").execute().checkStatus(HttpServletResponse.SC_NOT_FOUND);
+        InternalRequest call = request("/NOSERVLET").execute().checkStatus(HttpServletResponse.SC_NOT_FOUND);
         assertEquals("Unexpected Status Code", HttpServletResponse.SC_NOT_FOUND, call.getStatus());
     }
 

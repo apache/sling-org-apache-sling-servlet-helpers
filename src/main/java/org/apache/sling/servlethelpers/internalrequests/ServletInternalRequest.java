@@ -26,15 +26,45 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.ServletResolver;
+import org.jetbrains.annotations.NotNull;
 
-class ServletInternalRequest extends InternalRequest {
+/** Internal request that calls the resolved Servlet directly.
+ *  This bypasses the Servlet Filters used by the default
+ *  Sling request processing pipeline, which are often not
+ *  needed for internal requests. That's more efficient than
+ *  the {@link SlingInternalRequest} but less faithful to the
+ *  way Sling processes HTTP requests.
+ */
+public class ServletInternalRequest extends InternalRequest {
     protected final ServletResolver servletResolver;
+    private final Resource resource;
 
-    ServletInternalRequest(ResourceResolver resourceResolver, ServletResolver servletResolver, String path) {
-        super(resourceResolver, path);
+    public ServletInternalRequest(@NotNull ServletResolver servletResolver, @NotNull Resource resource) {
+        super(resource.getResourceResolver(), resource.getPath());
+        this.resource = resource;
         this.servletResolver = servletResolver;
+    }
+
+    /** Return essential request info, used to set the logging MDC  */
+    public String toString() {
+        return String.format(
+            "%s: %s P=%s S=%s EXT=%s RT=%s(%s)",
+            getClass().getSimpleName(),
+            requestMethod,
+            resource.getPath(),
+            selectorString,
+            extension,
+            resource.getResourceType(),
+            resource.getResourceSuperType()
+        );
+    }
+
+    @Override
+    protected Resource getExecutionResource() {
+        return resource;
     }
 
     @Override
