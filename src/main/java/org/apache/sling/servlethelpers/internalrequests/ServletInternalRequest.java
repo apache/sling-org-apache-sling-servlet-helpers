@@ -31,17 +31,24 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.ServletResolver;
 import org.jetbrains.annotations.NotNull;
 
-/** Internal request that calls the resolved Servlet directly.
+/** Internal request that a Servlet or Script directly,
+ *  after resolving it using a ServletResolver.
+ * 
  *  This bypasses the Servlet Filters used by the default
  *  Sling request processing pipeline, which are often not
- *  needed for internal requests. That's more efficient than
- *  the {@link SlingInternalRequest} but less faithful to the
- *  way Sling processes HTTP requests.
+ *  needed for internal requests. 
+ * 
+ *  That's more efficient than the {@link SlingInternalRequest}
+ *  variant, but less faithful to the way Sling processes HTTP
+ *  requests.
  */
 public class ServletInternalRequest extends InternalRequest {
     protected final ServletResolver servletResolver;
     private final Resource resource;
 
+    /** Setup an internal request to the supplied Resource, using
+     *  the supplied servlet/script resolver.
+     */
     public ServletInternalRequest(@NotNull ServletResolver servletResolver, @NotNull Resource resource) {
         super(resource.getResourceResolver(), resource.getPath());
         this.resource = resource;

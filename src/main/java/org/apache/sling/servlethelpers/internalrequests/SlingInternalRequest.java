@@ -31,16 +31,24 @@ import org.jetbrains.annotations.NotNull;
 
 /** Internal request that uses a SlingRequestProcessor.
  *  This executes the complete Sling request processing
- *  pipeline. That's the same processing than Sling uses
+ *  pipeline.
+ * 
+ *  That's the same processing than Sling uses
  *  for HTTP requests, but it's not as efficient as the
  *  {@link ServletInternalRequest} which resolves and
  *  calls a Servlet or Script directly.
+ * 
+ *  This variant of internal requests is useful when no
+ *  Resource is available, as it builds its own Resource
+ *  based on the supplied parameters to drive the 
+ *  Servlet/Script resolution mechanism.
  */
 public class SlingInternalRequest extends InternalRequest {
     private final SlingRequestProcessor processor;
     private String resourceType;
     private String resourceSuperType;
 
+    /** Setup an internal request that uses a SlingRequestProcessor */
     public SlingInternalRequest(@NotNull ResourceResolver resourceResolver, @NotNull SlingRequestProcessor p, @NotNull String path) {
         super(resourceResolver, path);
         this.processor = p;
@@ -61,14 +69,14 @@ public class SlingInternalRequest extends InternalRequest {
     }
 
     /** Sets the sling:resourceSuperType of the fake Resource used to resolve
-     *  the Script or Servlet to use for the internal request */
+     *  the Script or Servlet used for the internal request */
     public SlingInternalRequest withResourceSuperType(String resourceSuperType) {
         this.resourceSuperType = resourceSuperType;
         return this;
     }
 
     /** Sets the sling:resourceType of the fake Resource used to resolve
-     *  the Script or Servlet to use for the internal request */
+     *  the Script or Servlet used for the internal request */
     public SlingInternalRequest withResourceType(String resourceType) {
         this.resourceType = resourceType;
         return this;

@@ -42,16 +42,11 @@ import org.slf4j.MDC;
 
 /** Fluent helper for Sling internal requests. 
  * 
- *  Two modes are supported: "full Sling request processing chain" which
- *  uses a SlingRequestProcessor, and a "direct request to the resolved 
- *  Servlet or Script" mode which is faster but less faithful to the way
- *  Sling processes HTTP requests.
- * 
- *  Both modes use the standard Sling request attributes (resource type
- *  and supertype, HTTP method, selectors, extension) to resolve the
- *  Servlet or Script to use. This allows that powerful resolution mechanism
- *  to be used to other purposes than processing incoming HTTP requests,
- *  like content aggregation, generating query schemas dynamically, etc.
+ *  The {@link ServletInternalRequest} and {@link SlingInternalRequest}
+ *  subclasses provide two modes for executing the
+ *  internal requests, one that's very similar to the way Sling
+ *  executes an HTTP request and another one that's faster by
+ *  calling Servlets or Scripts directly.
  */
 public abstract class InternalRequest {
     protected final ResourceResolver resourceResolver;
@@ -71,11 +66,12 @@ public abstract class InternalRequest {
     public static final String DEFAULT_METHOD = "GET";
 
     /** An slf4j MDC value is set at this key with request information.
-     *  That's useful for debugging when using multiple internal requests
-     *  in the context of a single HTTP request
+     *  That's useful for troubleshooting when using multiple internal
+     *  requests in the context of a single HTTP request.
      */
     public static final String MDC_KEY = "sling." + InternalRequest.class.getSimpleName();
 
+    /** Clients use subclasses of this one  */
     protected InternalRequest(ResourceResolver resourceResolver, String path) {
         this.resourceResolver = resourceResolver;
         this.path = path;
@@ -87,7 +83,7 @@ public abstract class InternalRequest {
         return this;
     }
 
-    /** Set the HTTP request method to use - defaults to GET */
+    /** Set the HTTP request's Content-Type */
     public InternalRequest withContentType(String contentType) {
         this.contentType = contentType;
         return this;
@@ -139,13 +135,10 @@ public abstract class InternalRequest {
     }
 
     /** Execute the internal request. Can be called right after
-     *  creating it, if not options need to be set.
+     *  creating it, if no options need to be set.
      * 
      *  @throws IOException if the request was already executed,
-     *      if an error occurs during execution or if the
-     *      response status doesn't match the provided value
-     * 
-     *  @param expectedResponseStatus a negative value means "do not check the status"
+     *      or if an error occurs during execution.
      */
     public final InternalRequest execute() throws IOException {
         if(request != null) {
@@ -187,7 +180,7 @@ public abstract class InternalRequest {
         return this;
     }
 
-    /** Return the Resource to use to execute the request */
+    /** Provide the Resource to use to execute the request */
     protected abstract Resource getExecutionResource();
 
     /** Execute the supplied Request */
@@ -200,9 +193,15 @@ public abstract class InternalRequest {
         }
     }
 
-    /** After executing the request, checks that the request status is one of the supplied values.
-     *  If this not called before methods that access the response, a check for a 200 OK status
-     *  is done automatically, to make sure client's don't forget to check it.
+    /** After executing the request, checks that the request status is one
+     *  of the supplied values.
+     * 
+     *  If this is not called before methods that access the response, a check
+     *  for a 200 OK status is done automatically unless this was called
+     *  with no arguments before.
+     * 
+     *  This makes sure a status check is done or explicitly disabled.
+     * 
      *  @param acceptableValues providing no values means "don't care"
      *  @throws IOException if status doesn't match any of these values
      */
@@ -257,7 +256,11 @@ public abstract class InternalRequest {
     }
 
     /** Return the response object. The execute method must be called before this one.
-     *  @throws IOException if the request hasn't been executed yet
+     *  A check for "200 OK" status is done automatically unless {@link #checkStatus} has
+     *  been called before.
+     * 
+     *  @throws IOException if the request hasn't been executed yet or if the status
+     *      check fails.
      */
     public SlingHttpServletResponse getResponse() throws IOException {
         assertRequestExecuted();
@@ -266,7 +269,12 @@ public abstract class InternalRequest {
     }
 
     /** Return the response as a String. The execute method must be called before this one.
-     *  @throws IOException if the request hasn't been executed yet
+     * 
+     *  A check for "200 OK" status is done automatically unless {@link #checkStatus} has
+     *  been called before.
+     * 
+     *  @throws IOException if the request hasn't been executed yet or if the status
+     *      check fails.
      */
     public String getResponseAsString() throws IOException {
         assertRequestExecuted();
