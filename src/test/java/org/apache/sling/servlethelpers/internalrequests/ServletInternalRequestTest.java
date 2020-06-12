@@ -192,13 +192,22 @@ public class ServletInternalRequestTest {
     @Test
     public void ignoreNon200Status() throws IOException {
         final InternalRequest r = request("/ignore").withRequestMethod("STATUS").execute().checkStatus();
+
         assertEquals(451, r.getStatus());
+
+        // This doesn't fail as we have called checkStatus() with no
+        // arguments, meaning "I don't care"
+        r.getResponseAsString();
     }
 
     @Test
     public void ignoreNon200StatusWithNull() throws IOException {
         final InternalRequest r = request("/ignoreAgain").withRequestMethod("STATUS").execute().checkStatus(null);
         assertEquals(451, r.getStatus());
+
+        // This doesn't fail as we have called checkStatus() with
+        // null, also meaning "I don't care"
+        r.getResponseAsString();
     }
 
     @Test
