@@ -36,6 +36,7 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.servlethelpers.MockRequestPathInfo;
 import org.apache.sling.servlethelpers.MockSlingHttpServletRequest;
 import org.apache.sling.servlethelpers.MockSlingHttpServletResponse;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -72,9 +73,21 @@ public abstract class InternalRequest {
     public static final String MDC_KEY = "sling." + InternalRequest.class.getSimpleName();
 
     /** Clients use subclasses of this one  */
-    protected InternalRequest(ResourceResolver resourceResolver, String path) {
+    protected InternalRequest(@NotNull ResourceResolver resourceResolver, @NotNull String path) {
+        checkNotNull(ResourceResolver.class, resourceResolver);
+        checkNotNull("path", path);
         this.resourceResolver = resourceResolver;
         this.path = path;
+    }
+
+    protected void checkNotNull(String info, Object candidate) {
+        if(candidate == null) {
+            throw new IllegalArgumentException(info + " is null");
+        }
+    }
+
+    protected void checkNotNull(Class<?> clazz, Object candidate) {
+        checkNotNull(clazz.getSimpleName(), candidate);
     }
 
     /** Set the HTTP request method to use - defaults to GET */

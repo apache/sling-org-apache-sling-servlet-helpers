@@ -18,6 +18,8 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
+import static org.mockito.ArgumentMatchers.nullable;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
@@ -52,20 +54,22 @@ class RequestInfoServlet extends SlingAllMethodsServlet {
             sb.append(" RT_").append(resolutionRequest.getResource().getResourceType());
             sb.append(" RST_").append(resolutionRequest.getResource().getResourceSuperType());
         }
-        sb.append(" RRA_").append(resolutionRequest.getResource().getResourceResolver().getAttribute("testAttribute"));
+        if(resolutionRequest.getResource().getResourceResolver() != null) {
+            sb.append(" RRA_").append(resolutionRequest.getResource().getResourceResolver().getAttribute("testAttribute"));
+        }
 
         resolutionInfo = sb.toString();
     }
 
     @Override
     public void service(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException,ServletException {
-        if(request.getResource().getPath().equals("/EXCEPTION")) {
+        if("/EXCEPTION".equals(request.getResource().getPath())) {
             throw new IOException("Failing as designed");
         }
-        if(request.getResource().getPath().equals("/SERVLET-EXCEPTION")) {
+        if("/SERVLET-EXCEPTION".equals(request.getResource().getPath())) {
             throw new ServletException("Failing as designed");
         }
-        if(request.getMethod().equals("STATUS")) {
+        if("STATUS".equals(request.getMethod())) {
             response.setContentType("farenheit");
             response.sendError(451);
             return;

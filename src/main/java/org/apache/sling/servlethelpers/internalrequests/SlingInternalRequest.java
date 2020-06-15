@@ -51,6 +51,7 @@ public class SlingInternalRequest extends InternalRequest {
     /** Setup an internal request that uses a SlingRequestProcessor */
     public SlingInternalRequest(@NotNull ResourceResolver resourceResolver, @NotNull SlingRequestProcessor p, @NotNull String path) {
         super(resourceResolver, path);
+        checkNotNull(SlingRequestProcessor.class, p);
         this.processor = p;
     }
 

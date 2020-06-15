@@ -51,6 +51,8 @@ public class ServletInternalRequest extends InternalRequest {
      */
     public ServletInternalRequest(@NotNull ServletResolver servletResolver, @NotNull Resource resource) {
         super(resource.getResourceResolver(), resource.getPath());
+        checkNotNull(ServletResolver.class, servletResolver);
+        checkNotNull(Resource.class, resource);
         this.resource = resource;
         this.servletResolver = servletResolver;
     }
