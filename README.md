@@ -7,64 +7,6 @@
 This module is part of the [Apache Sling](https://sling.apache.org) project.
 
 It provides helper mock implementations of the `SlingHttpServletRequest`, `SlingHttpServletRepsonse` and related classes, along
-with helpers for internal Sling requests described below.
+with `SlingInternalRequest` and `ServletInternalRequest` helpers for internal requests.
 
-These helpers can be used for **testing**, like the [Sling Mocks](https://sling.apache.org/documentation/development/sling-mock.html) do.
-
-They are also useful for **executing internal requests**, like in the
-[GraphQL Core](https://github.com/apache/sling-org-apache-sling-graphql-core/) module which uses
-that technique to retrieve GraphQL schemas using the powerful Sling request processing mechanisms.
-
-## InternalRequest helpers
-
-The internal request helpers use either a `SlingRequestProcessor` to execute internal requests using
-the full Sling request processing pipeline, or a `ServletResolver` to resolve and call a Servlet or Script
-directly. 
-
-The direct mode is more efficient but less faithful to the way HTTP requests are processed, as it bypasses
-all Servlet Filters, in particular.
-
-In both cases, the standard Sling Servlet/Script resolution mechanism is used, which can be useful to execute
-scripts that are resolved based on the current resource type, for non-HTTP operations. Inventing HTTP method
-names for this is fine and allows for reusing this powerful resolution mechanism in other contexts.
-
-Here's an example using the `SlingInternalRequest` helper - see the test code for more.
-
-    OutputStream os = new SlingInternalRequest(resourceResolver, slingRequestProcessor, path)
-      .withResourceType("website/article/news")
-      .withResourceSuperType("website/article")
-      .withSelectors("print", "a4")
-      .withExtension("pdf")
-      .execute()
-      .checkStatus(200)
-      .checkResponseContentType("application/pdf")
-      .getResponse()
-      .getOutputStream()
-
-### Troubleshooting internal requests
-
-To help map log messages to internal requests, as several of those might be used to handle a single
-HTTP request, the `InternalRequest` class sets a log4j _Mapped Diagnostic Context_ (MDC) value with
-the `sling.InternalRequest`key.
-
-The value of that key provides the essential attributes of the current request, so that using a log
-formatting pattern that displays it, like:
-
-    %-5level [%-50logger{50}] %message ## %mdc{sling.InternalRequest} %n
-
-Causes the internal request information to be logged, like in this example (lines folded
-for readability):
-
-    DEBUG [o.a.s.s.internalrequests.SlingInternalRequest     ]
-       Executing request using the SlingRequestProcessor
-       ## GET P=/content/tags/monitor+array S=null EXT=json RT=samples/tag(null)
-    WARN  [org.apache.sling.engine.impl.request.RequestData  ]
-      SlingRequestProgressTracker not found in request attributes
-      ## GET P=/content/tags/monitor+array S=null EXT=json RT=samples/tag(null)
-    DEBUG [o.a.s.s.resolver.internal.SlingServletResolver    ]
-      Using cached servlet /apps/samples/tag/json.gql
-      ## GET P=/content/tags/monitor+array S=null EXT=json RT=samples/tag(null)
-
-In these log messages, `GET P=/content/tags/monitor+array S=null EXT=json RT=samples/tag(null)` points
-to the current internal request, showing its method, path, selectors, extension, resource type and
-resource supertype.
+See the [Sling website documentation](https://sling.apache.org/documentation/bundles/servlet-helpers.html) for more information.
