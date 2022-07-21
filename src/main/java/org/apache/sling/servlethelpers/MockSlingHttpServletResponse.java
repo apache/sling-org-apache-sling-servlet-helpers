@@ -39,6 +39,8 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
 
     static final String CHARSET_SEPARATOR = ";charset=";
 
+    private boolean enableCheckForClosedWriter = false;
+
     private String contentType;
     private String characterEncoding;
     private int contentLength;
@@ -50,6 +52,10 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
     private final HeaderSupport headerSupport = new HeaderSupport();
     private final ResponseBodySupport bodySupport = new ResponseBodySupport();
     private final CookieSupport cookieSupport = new CookieSupport();
+
+    public void setEnableCheckForClosedWriter(boolean enableCheckForClosedWriter) {
+        bodySupport.setEnableCheckForClosedWriter(enableCheckForClosedWriter);
+    }
 
     @Override
     public String getContentType() {
