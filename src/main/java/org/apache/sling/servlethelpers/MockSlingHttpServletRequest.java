@@ -107,6 +107,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     private Locale locale = Locale.US;
     private boolean getInputStreamCalled;
     private boolean getReaderCalled;
+    private List<Part> parts = new ArrayList<Part>();
 
     private MockRequestDispatcherFactory requestDispatcherFactory;
     private String responseContentType;
@@ -860,6 +861,25 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     public RequestProgressTracker getRequestProgressTracker() {
         return new MockRequestProgressTracker();
     }
+    
+    public void addPart(Part part) {
+    	if ( part == null )
+    		throw new IllegalArgumentException("part may not be null");
+    	this.parts.add(part);
+    }
+    
+    @Override
+    public Collection<Part> getParts() {
+        return parts;
+    }
+
+    @Override
+    public Part getPart(String name) {
+        return parts.stream()
+			.filter( p -> p.getName().equals(name))
+			.findFirst()
+			.orElse(null);
+    }
 
     // --- unsupported operations ---
 
@@ -945,16 +965,6 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     @Override
     public void logout() throws ServletException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Collection<Part> getParts() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Part getPart(String name) {
         throw new UnsupportedOperationException();
     }
 
