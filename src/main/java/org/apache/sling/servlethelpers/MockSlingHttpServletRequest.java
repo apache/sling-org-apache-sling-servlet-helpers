@@ -107,7 +107,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     private Locale locale = Locale.US;
     private boolean getInputStreamCalled;
     private boolean getReaderCalled;
-    private List<Part> parts = new ArrayList<Part>();
+    private List<Part> parts = new ArrayList<>();
 
     private MockRequestDispatcherFactory requestDispatcherFactory;
     private String responseContentType;
