@@ -18,6 +18,8 @@
  */
 package org.apache.sling.servlethelpers;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -220,7 +222,7 @@ public class MockSlingHttpServletRequestTest {
         assertEquals("äöüß€!:!", request.getParameter("param2"));
         assertArrayEquals(new String[] { "a", "b" }, request.getParameterValues("param3"));
 
-        Map<String, Object> paramMap = new LinkedHashMap<String, Object>();
+        Map<String, Object> paramMap = new LinkedHashMap<>();
         paramMap.put("p1", "a");
         paramMap.put("p2", new String[] { "b", "c" });
         paramMap.put("p3", null);
@@ -540,4 +542,31 @@ public class MockSlingHttpServletRequestTest {
         assertNotEquals(result1,  result2);
     }
 
+    @Test
+    public void testNoParts() {
+        assertThat(request.getParts()).as("request parts").isEmpty();
+        assertThat(request.getPart("some-part")).as("missing part").isNull();
+    }
+
+    @Test
+    public void testExistingParts() {
+        ByteArrayPart part = ByteArrayPart.builder()
+                .withName("log.txt")
+                .withContent("hello, world".getBytes(UTF_8))
+                .build();
+
+        request.addPart(part);
+
+        assertThat(request.getParts()).as("request parts")
+            .hasSize(1)
+            .extracting( p -> p.getName())
+            .containsExactly("log.txt");
+
+        assertThat(request.getPart("log.txt")).as("part looked up by name").isNotNull();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testInvalidPart() {
+        request.addPart(null);
+    }
 }
