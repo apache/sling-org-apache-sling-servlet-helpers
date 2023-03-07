@@ -18,8 +18,6 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
-import static org.mockito.ArgumentMatchers.nullable;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
