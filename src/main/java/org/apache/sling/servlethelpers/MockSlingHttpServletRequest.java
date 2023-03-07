@@ -82,7 +82,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     private final ResourceResolver resourceResolver;
     private final RequestPathInfo requestPathInfo;
-    private Map<String, Object> attributeMap = new HashMap<String, Object>();
+    private Map<String, Object> attributeMap = new HashMap<>();
     private Map<String, MockRequestParameter[]> parameterMap = new LinkedHashMap<>();
     private HttpSession session;
     private Resource resource;
@@ -319,7 +319,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     }
 
     private void parseQueryString(Map<String, MockRequestParameter[]> map, String query) throws UnsupportedEncodingException {
-        Map<String, List<String>> queryPairs = new LinkedHashMap<String, List<String>>();
+        Map<String, List<String>> queryPairs = new LinkedHashMap<>();
         String[] pairs = query.split("&");
         for (String pair : pairs) {
             int idx = pair.indexOf('=');
@@ -527,7 +527,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     // part of Sling API 2.7
     public List<RequestParameter> getRequestParameterList() {
-        List<RequestParameter> params = new ArrayList<RequestParameter>();
+        List<RequestParameter> params = new ArrayList<>();
         for (RequestParameter[] requestParameters : getRequestParameterMap().values()) {
             params.addAll(Arrays.asList(requestParameters));
         }
@@ -861,13 +861,13 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     public RequestProgressTracker getRequestProgressTracker() {
         return new MockRequestProgressTracker();
     }
-    
+
     public void addPart(Part part) {
-    	if ( part == null )
-    		throw new IllegalArgumentException("part may not be null");
-    	this.parts.add(part);
+        if ( part == null )
+            throw new IllegalArgumentException("part may not be null");
+        this.parts.add(part);
     }
-    
+
     @Override
     public Collection<Part> getParts() {
         return parts;
@@ -876,9 +876,9 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     @Override
     public Part getPart(String name) {
         return parts.stream()
-			.filter( p -> p.getName().equals(name))
-			.findFirst()
-			.orElse(null);
+            .filter( p -> p.getName().equals(name))
+            .findFirst()
+            .orElse(null);
     }
 
     // --- unsupported operations ---

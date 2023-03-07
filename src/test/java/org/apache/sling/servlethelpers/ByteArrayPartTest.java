@@ -27,39 +27,39 @@ import org.junit.Test;
 
 public class ByteArrayPartTest {
 
-	private static final String TEST_CONTENT = "test input";
-	private static final String PART_NAME = "test_part_name";
+    private static final String TEST_CONTENT = "test input";
+    private static final String PART_NAME = "test_part_name";
 
-	@Test
-	public void buildPart() throws IOException {
-		ByteArrayPart part = ByteArrayPart.builder()
-			.withName(PART_NAME)
-			.withContent(TEST_CONTENT.getBytes(UTF_8))
-			.build();
-		
-		assertThat(part).as("part").isNotNull();
-		assertThat(part.getName()).as("part name").isEqualTo(PART_NAME);
-		assertThat(part.getInputStream()).as("part contents").hasContent(TEST_CONTENT);
-	}
+    @Test
+    public void buildPart() throws IOException {
+        ByteArrayPart part = ByteArrayPart.builder()
+            .withName(PART_NAME)
+            .withContent(TEST_CONTENT.getBytes(UTF_8))
+            .build();
 
-	@Test(expected = IllegalArgumentException.class)
-	public void emptyBuilderFails() {
-		ByteArrayPart.builder().build();
-	}
+        assertThat(part).as("part").isNotNull();
+        assertThat(part.getName()).as("part name").isEqualTo(PART_NAME);
+        assertThat(part.getInputStream()).as("part contents").hasContent(TEST_CONTENT);
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void missingNameFails() {
-		ByteArrayPart.builder().withContent(TEST_CONTENT.getBytes(UTF_8)).build();
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void emptyBuilderFails() {
+        ByteArrayPart.builder().build();
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void emptyNameFails() {
-		ByteArrayPart.builder().withName("").withContent(TEST_CONTENT.getBytes(UTF_8)).build();
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void missingNameFails() {
+        ByteArrayPart.builder().withContent(TEST_CONTENT.getBytes(UTF_8)).build();
+    }
 
-	@Test(expected = IllegalArgumentException.class)
-	public void missingContentFails() {
-		ByteArrayPart.builder().withName("test").build();
-	}
+    @Test(expected = IllegalArgumentException.class)
+    public void emptyNameFails() {
+        ByteArrayPart.builder().withName("").withContent(TEST_CONTENT.getBytes(UTF_8)).build();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void missingContentFails() {
+        ByteArrayPart.builder().withName("test").build();
+    }
 
 }

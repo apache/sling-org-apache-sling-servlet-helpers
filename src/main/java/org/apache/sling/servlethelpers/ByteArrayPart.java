@@ -30,99 +30,99 @@ import javax.servlet.http.Part;
  *
  */
 public class ByteArrayPart implements Part {
-	
-	/**
-	 * Returns a <tt>Builder</tt> instance used to create a <tt>ByteArrayPart</tt> 
-	 * 
-	 * @return a new builder instance
-	 */
-	public static Builder builder() {
-		return new Builder();
-	}
-	
-	private final byte[] content;
-	private final String name;
-	
-	private ByteArrayPart(byte[] content, String name) {
-		if ( content == null )
-			throw new IllegalArgumentException("content may not be null");
-		
-		if ( name == null || name.isEmpty() )
-			throw new IllegalArgumentException("name may not be null or empty");
-		
-		this.content = content;
-		this.name = name;
-	}
 
-	@Override
-	public InputStream getInputStream() throws IOException {
-		return new ByteArrayInputStream(content);
-	}
+    /**
+     * Returns a <tt>Builder</tt> instance used to create a <tt>ByteArrayPart</tt> 
+     * 
+     * @return a new builder instance
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
 
-	@Override
-	public String getContentType() {
-		return null;
-	}
+    private final byte[] content;
+    private final String name;
 
-	@Override
-	public String getName() {
-		return name;
-	}
+    private ByteArrayPart(byte[] content, String name) {
+        if ( content == null )
+            throw new IllegalArgumentException("content may not be null");
 
-	@Override
-	public String getSubmittedFileName() {
-		return getName();
-	}
+        if ( name == null || name.isEmpty() )
+            throw new IllegalArgumentException("name may not be null or empty");
 
-	@Override
-	public long getSize() {
-		return content.length;
-	}
+        this.content = content;
+        this.name = name;
+    }
 
-	@Override
-	public void write(String fileName) throws IOException {
-		throw new UnsupportedOperationException();
+    @Override
+    public InputStream getInputStream() throws IOException {
+        return new ByteArrayInputStream(content);
+    }
 
-	}
+    @Override
+    public String getContentType() {
+        return null;
+    }
 
-	@Override
-	public void delete() throws IOException {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public String getName() {
+        return name;
+    }
 
-	@Override
-	public String getHeader(String name) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public String getSubmittedFileName() {
+        return getName();
+    }
 
-	@Override
-	public Collection<String> getHeaders(String name) {
-		throw new UnsupportedOperationException();
-	}
+    @Override
+    public long getSize() {
+        return content.length;
+    }
 
-	@Override
-	public Collection<String> getHeaderNames() {
-		throw new UnsupportedOperationException();
-	}
-	
-	public static class Builder {
+    @Override
+    public void write(String fileName) throws IOException {
+        throw new UnsupportedOperationException();
 
-		private byte[] content;
-		private String name;
-		
-		public Builder withContent(byte[] content) {
-			this.content = content;
-			return this;
-		}
-		
-		public Builder withName(String name) {
-			this.name = name;
-			return this;
-		}
-		
-		public ByteArrayPart build() {
-			return new ByteArrayPart(content, name);
-		}
-	}
+    }
+
+    @Override
+    public void delete() throws IOException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String getHeader(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Collection<String> getHeaders(String name) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        throw new UnsupportedOperationException();
+    }
+
+    public static class Builder {
+
+        private byte[] content;
+        private String name;
+
+        public Builder withContent(byte[] content) {
+            this.content = content;
+            return this;
+        }
+
+        public Builder withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public ByteArrayPart build() {
+            return new ByteArrayPart(content, name);
+        }
+    }
 
 }
