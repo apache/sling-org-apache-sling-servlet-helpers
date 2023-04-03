@@ -881,6 +881,25 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
             .orElse(null);
     }
 
+    @Override
+    public Principal getUserPrincipal() {
+        Principal principal = null;
+        ResourceResolver rr = getResourceResolver();
+        if (rr != null) {
+            principal = rr.adaptTo(Principal.class);
+        }
+
+        if (principal == null) {
+            //fallback to the userid
+            final String userid = getRemoteUser();
+            if (userid != null) {
+                principal = () -> userid;
+            }
+        }
+
+        return principal;
+    }
+
     // --- unsupported operations ---
 
     @Override
@@ -890,11 +909,6 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     @Override
     public String getRequestedSessionId() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Principal getUserPrincipal() {
         throw new UnsupportedOperationException();
     }
 

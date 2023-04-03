@@ -36,6 +36,7 @@ import java.io.BufferedReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.security.Principal;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -569,4 +570,15 @@ public class MockSlingHttpServletRequestTest {
     public void testInvalidPart() {
         request.addPart(null);
     }
+
+    @Test
+    public void testGetUserPrincipal() {
+        assertNull(null, request.getUserPrincipal());
+
+        request.setRemoteUser("admin");
+        Principal userPrincipal = request.getUserPrincipal();
+        assertNotNull(userPrincipal);
+        assertEquals("admin", userPrincipal.getName());
+    }
+
 }
