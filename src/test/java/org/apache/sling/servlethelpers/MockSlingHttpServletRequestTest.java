@@ -63,6 +63,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -579,6 +580,14 @@ public class MockSlingHttpServletRequestTest {
         Principal userPrincipal = request.getUserPrincipal();
         assertNotNull(userPrincipal);
         assertEquals("admin", userPrincipal.getName());
+    }
+    @Test
+    public void testGetUserPrincipalFromResourceResolver() {
+        Mockito.when(resourceResolver.adaptTo(Principal.class))
+            .thenReturn(() -> "rruser");
+        Principal userPrincipal = request.getUserPrincipal();
+        assertNotNull(userPrincipal);
+        assertEquals("rruser", userPrincipal.getName());
     }
 
 }
