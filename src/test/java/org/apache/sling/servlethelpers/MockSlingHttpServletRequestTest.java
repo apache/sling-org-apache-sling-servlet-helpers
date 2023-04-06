@@ -36,6 +36,7 @@ import java.io.BufferedReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.security.Principal;
 import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
@@ -62,6 +63,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
@@ -569,4 +571,23 @@ public class MockSlingHttpServletRequestTest {
     public void testInvalidPart() {
         request.addPart(null);
     }
+
+    @Test
+    public void testGetUserPrincipal() {
+        assertNull(null, request.getUserPrincipal());
+
+        request.setRemoteUser("admin");
+        Principal userPrincipal = request.getUserPrincipal();
+        assertNotNull(userPrincipal);
+        assertEquals("admin", userPrincipal.getName());
+    }
+    @Test
+    public void testGetUserPrincipalFromResourceResolver() {
+        Mockito.when(resourceResolver.adaptTo(Principal.class))
+            .thenReturn(() -> "rruser");
+        Principal userPrincipal = request.getUserPrincipal();
+        assertNotNull(userPrincipal);
+        assertEquals("rruser", userPrincipal.getName());
+    }
+
 }
