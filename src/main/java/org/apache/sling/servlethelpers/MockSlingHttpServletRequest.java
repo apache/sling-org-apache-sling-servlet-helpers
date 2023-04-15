@@ -884,15 +884,16 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     @Override
     public Principal getUserPrincipal() {
         Principal principal = null;
-        ResourceResolver rr = getResourceResolver();
-        if (rr != null) {
-            principal = rr.adaptTo(Principal.class);
-        }
+        // always return null for anonymous user
+        final String userid = getRemoteUser();
+        if (userid != null) {
+            ResourceResolver rr = getResourceResolver();
+            if (rr != null) {
+                principal = rr.adaptTo(Principal.class);
+            }
 
-        if (principal == null) {
-            //fallback to the userid
-            final String userid = getRemoteUser();
-            if (userid != null) {
+            if (principal == null) {
+                //fallback to the userid
                 principal = () -> userid;
             }
         }
