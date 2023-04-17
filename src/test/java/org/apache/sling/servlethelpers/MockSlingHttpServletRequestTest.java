@@ -585,6 +585,11 @@ public class MockSlingHttpServletRequestTest {
     public void testGetUserPrincipalFromResourceResolver() {
         Mockito.when(resourceResolver.adaptTo(Principal.class))
             .thenReturn(() -> "rruser");
+        // always returns null for anonymous user
+        assertNull(request.getUserPrincipal());
+
+        // make remote user not anonymous
+        request.setRemoteUser("remoteuser");
         Principal userPrincipal = request.getUserPrincipal();
         assertNotNull(userPrincipal);
         assertEquals("rruser", userPrincipal.getName());
