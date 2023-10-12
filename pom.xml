@@ -43,7 +43,7 @@
     <scm>
         <connection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-servlet-helpers.git</connection>
         <developerConnection>scm:git:https://gitbox.apache.org/repos/asf/sling-org-apache-sling-servlet-helpers.git</developerConnection>
-        <url>https://gitbox.apache.org/repos/asf?p=sling-org-apache-sling-servlet-helpers.git</url>
+        <url>https://github.com/apache/sling-org-apache-sling-servlet-helpers.git</url>
       <tag>org.apache.sling.servlet-helpers-1.4.4</tag>
     </scm>
 
