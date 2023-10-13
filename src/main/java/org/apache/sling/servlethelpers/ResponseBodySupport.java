@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.Locale;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
@@ -35,6 +36,7 @@ import org.apache.commons.lang3.StringUtils;
  */
 class ResponseBodySupport {
 
+    private boolean enableCheckForClosedWriter = false;
     private ByteArrayOutputStream outputStream;
     private ServletOutputStream servletOutputStream;
     private PrintWriter printWriter;
@@ -42,6 +44,12 @@ class ResponseBodySupport {
     public ResponseBodySupport() {
         reset();
     }
+
+    public void setEnableCheckForClosedWriter(boolean enableCheckForClosedWriter) {
+        this.enableCheckForClosedWriter = enableCheckForClosedWriter;
+        reset();
+    }
+
 
     public void reset() {
         outputStream = new ByteArrayOutputStream();
@@ -72,7 +80,8 @@ class ResponseBodySupport {
     public PrintWriter getWriter(String charset) {
         if (printWriter == null) {
             try {
-                printWriter = new PrintWriter(new OutputStreamWriter(getOutputStream(), defaultCharset(charset)));
+                PrintWriter printWriter1 = new PrintWriter(new OutputStreamWriter(getOutputStream(), defaultCharset(charset)));
+                printWriter = enableCheckForClosedWriter ? new CheckForClosedPrintWriter(printWriter1) : printWriter1;
             } catch (UnsupportedEncodingException ex) {
                 throw new RuntimeException("Unsupported encoding: " + defaultCharset(charset), ex);
             }
@@ -106,4 +115,232 @@ class ResponseBodySupport {
         return StringUtils.defaultString(charset, CharEncoding.UTF_8);
     }
 
+    private class CheckForClosedPrintWriter extends PrintWriter {
+
+        private final PrintWriter delegatee;
+
+        private boolean isClosed = false;
+
+        public CheckForClosedPrintWriter(PrintWriter delegatee) {
+            super(delegatee);
+            this.delegatee = delegatee;
+        }
+
+        private void checkClosed() {
+            if ( this.isClosed ) {
+                throw new WriterAlreadyClosedException();
+            }
+        }
+
+        @Override
+        public PrintWriter append(final char arg0) {
+            this.checkClosed();
+            return delegatee.append(arg0);
+        }
+
+        @Override
+        public PrintWriter append(final CharSequence arg0, final int arg1, final int arg2) {
+            this.checkClosed();
+            return delegatee.append(arg0, arg1, arg2);
+        }
+
+        @Override
+        public PrintWriter append(final CharSequence arg0) {
+            this.checkClosed();
+            return delegatee.append(arg0);
+        }
+
+        @Override
+        public boolean checkError() {
+            this.checkClosed();
+            return delegatee.checkError();
+        }
+
+        @Override
+        public void close() {
+            this.checkClosed();
+            this.isClosed = true;
+            delegatee.close();
+        }
+
+        @Override
+        public void flush() {
+            this.checkClosed();
+            delegatee.flush();
+        }
+
+        @Override
+        public PrintWriter format(final Locale arg0, final String arg1,
+                                  final Object... arg2) {
+            this.checkClosed();
+            return delegatee.format(arg0, arg1, arg2);
+        }
+
+        @Override
+        public PrintWriter format(final String arg0, final Object... arg1) {
+            this.checkClosed();
+            return delegatee.format(arg0, arg1);
+        }
+
+        @Override
+        public void print(final boolean arg0) {
+            this.checkClosed();
+            delegatee.print(arg0);
+        }
+
+        @Override
+        public void print(final char arg0) {
+            this.checkClosed();
+            delegatee.print(arg0);
+        }
+
+        @Override
+        public void print(final char[] arg0) {
+            this.checkClosed();
+            delegatee.print(arg0);
+        }
+
+        @Override
+        public void print(final double arg0) {
+            this.checkClosed();
+            delegatee.print(arg0);
+        }
+
+        @Override
+        public void print(final float arg0) {
+            this.checkClosed();
+            delegatee.print(arg0);
+        }
+
+        @Override
+        public void print(final int arg0) {
+            this.checkClosed();
+            delegatee.print(arg0);
+        }
+
+        @Override
+        public void print(final long arg0) {
+            this.checkClosed();
+            delegatee.print(arg0);
+        }
+
+        @Override
+        public void print(final Object arg0) {
+            this.checkClosed();
+            delegatee.print(arg0);
+        }
+
+        @Override
+        public void print(final String arg0) {
+            this.checkClosed();
+            delegatee.print(arg0);
+        }
+
+        @Override
+        public PrintWriter printf(final Locale arg0, final String arg1,
+        final Object... arg2) {
+            this.checkClosed();
+            return delegatee.printf(arg0, arg1, arg2);
+        }
+
+        @Override
+        public PrintWriter printf(final String arg0, final Object... arg1) {
+            this.checkClosed();
+            return delegatee.printf(arg0, arg1);
+        }
+
+        @Override
+        public void println() {
+            this.checkClosed();
+            delegatee.println();
+        }
+
+        @Override
+        public void println(final boolean arg0) {
+            this.checkClosed();
+            delegatee.println(arg0);
+        }
+
+        @Override
+        public void println(final char arg0) {
+            this.checkClosed();
+            delegatee.println(arg0);
+        }
+
+        @Override
+        public void println(final char[] arg0) {
+            this.checkClosed();
+            delegatee.println(arg0);
+        }
+
+        @Override
+        public void println(final double arg0) {
+            this.checkClosed();
+            delegatee.println(arg0);
+        }
+
+        @Override
+        public void println(final float arg0) {
+            this.checkClosed();
+            delegatee.println(arg0);
+        }
+
+        @Override
+        public void println(final int arg0) {
+            this.checkClosed();
+            delegatee.println(arg0);
+        }
+
+        @Override
+        public void println(final long arg0) {
+            this.checkClosed();
+            delegatee.println(arg0);
+        }
+
+        @Override
+        public void println(final Object arg0) {
+            this.checkClosed();
+            delegatee.println(arg0);
+        }
+
+        @Override
+        public void println(final String arg0) {
+            this.checkClosed();
+            delegatee.println(arg0);
+        }
+
+        @Override
+        public void write(final char[] arg0, final int arg1, final int arg2) {
+            this.checkClosed();
+            delegatee.write(arg0, arg1, arg2);
+        }
+
+        @Override
+        public void write(final char[] arg0) {
+            this.checkClosed();
+            delegatee.write(arg0);
+        }
+
+        @Override
+        public void write(final int arg0) {
+            this.checkClosed();
+            delegatee.write(arg0);
+        }
+
+        @Override
+        public void write(final String arg0, final int arg1, final int arg2) {
+            this.checkClosed();
+            delegatee.write(arg0, arg1, arg2);
+        }
+
+        @Override
+        public void write(final String arg0) {
+            this.checkClosed();
+            delegatee.write(arg0);
+        }
+
+    };
+
+    public class WriterAlreadyClosedException extends RuntimeException {
+    }
 }

@@ -25,8 +25,11 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.when;
 
+import java.io.IOException;
+import java.io.Writer;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
@@ -38,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.sling.api.adapter.AdapterManager;
 import org.apache.sling.api.adapter.SlingAdaptable;
+import org.apache.sling.servlethelpers.ResponseBodySupport.WriterAlreadyClosedException;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -238,4 +242,17 @@ public class MockSlingHttpServletResponseTest {
         assertNotEquals(result1,  result2);
     }
 
+    @Test
+    public void testCheckForClosedWriter() throws IOException {
+        response.setEnableCheckForClosedWriter(true);
+        Writer writer = response.getWriter();
+        // Close it twice and make sure the second one fails
+        writer.close();
+        try {
+            writer.close();
+            fail("Subsequent Closing of a Check-for-Closed Writer was not failing");
+        } catch(WriterAlreadyClosedException e) {
+            // Expected
+        }
+    }
 }
