@@ -26,13 +26,13 @@ import java.io.InputStream;
 import java.util.Collection;
 
 /**
- * Simple <tt>Part</tt> implementation backed by an in-memory byte array
+ * Simple Part implementation backed by an in-memory byte array
  *
  */
 public class ByteArrayPart implements Part {
 
     /**
-     * Returns a <tt>Builder</tt> instance used to create a <tt>ByteArrayPart</tt>
+     * Returns a Builder instance used to create a ByteArrayPart
      *
      * @return a new builder instance
      */
