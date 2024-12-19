@@ -18,14 +18,14 @@
  */
 package org.apache.sling.servlethelpers;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
 
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
@@ -56,10 +56,12 @@ class ResponseBodySupport {
                 public void write(int b) throws IOException {
                     outputStream.write(b);
                 }
+
                 @Override
                 public boolean isReady() {
                     return true;
                 }
+
                 @Override
                 public void setWriteListener(WriteListener writeListener) {
                     throw new UnsupportedOperationException();
@@ -101,9 +103,8 @@ class ResponseBodySupport {
             throw new RuntimeException("Unsupported encoding: " + defaultCharset(charset), ex);
         }
     }
-    
+
     private String defaultCharset(String charset) {
         return StringUtils.defaultString(charset, CharEncoding.UTF_8);
     }
-
 }

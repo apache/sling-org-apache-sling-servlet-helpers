@@ -29,7 +29,8 @@ class MockServletResolver implements ServletResolver {
 
     @Override
     public Servlet resolveServlet(SlingHttpServletRequest request) {
-        if(request.getResource() != null && "/NOSERVLET".equals(request.getResource().getPath())) {
+        if (request.getResource() != null
+                && "/NOSERVLET".equals(request.getResource().getPath())) {
             return null;
         } else {
             return new RequestInfoServlet(request);

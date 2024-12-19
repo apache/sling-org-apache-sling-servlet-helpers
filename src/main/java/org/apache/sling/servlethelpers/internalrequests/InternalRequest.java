@@ -18,6 +18,9 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletResponse;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
@@ -25,9 +28,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalInt;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -41,8 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
-/** Fluent helper for Sling internal requests. 
- * 
+/** Fluent helper for Sling internal requests.
+ *
  *  The {@link ServletInternalRequest} and {@link SlingInternalRequest}
  *  subclasses provide two modes for executing the
  *  internal requests, one that's very similar to the way Sling
@@ -81,7 +81,7 @@ public abstract class InternalRequest {
     }
 
     protected void checkNotNull(String info, Object candidate) {
-        if(candidate == null) {
+        if (candidate == null) {
             throw new IllegalArgumentException(info + " is null");
         }
     }
@@ -111,12 +111,13 @@ public abstract class InternalRequest {
     /** Sets the optional selectors of the internal request, which influence
      *  the Servlet/Script resolution.
      */
-    public InternalRequest withSelectors(String ... selectors) {
-        if(selectors == null) {
+    public InternalRequest withSelectors(String... selectors) {
+        if (selectors == null) {
             return this;
         }
         StringBuilder sb = new StringBuilder();
-        Arrays.stream(selectors).forEach(sel -> sb.append(sb.length() == 0 ? "" : ".").append(sel));
+        Arrays.stream(selectors)
+                .forEach(sel -> sb.append(sb.length() == 0 ? "" : ".").append(sel));
         selectorString = sb.toString();
         return this;
     }
@@ -131,7 +132,7 @@ public abstract class InternalRequest {
 
     /** Set a request parameter */
     public InternalRequest withParameter(String key, Object value) {
-        if(key != null && value != null) {
+        if (key != null && value != null) {
             parameters.put(key, value);
         } else {
             throw new IllegalArgumentException("Null key or value");
@@ -141,20 +142,21 @@ public abstract class InternalRequest {
 
     /** Add the supplied request parameters to the current ones */
     public InternalRequest withParameters(Map<String, Object> additionalParameters) {
-        if(additionalParameters != null) {
+        if (additionalParameters != null) {
             parameters.putAll(additionalParameters);
-        };
+        }
+        ;
         return this;
     }
 
     /** Execute the internal request. Can be called right after
      *  creating it, if no options need to be set.
-     * 
+     *
      *  @throws IOException if the request was already executed,
      *      or if an error occurs during execution.
      */
     public final InternalRequest execute() throws IOException {
-        if(request != null) {
+        if (request != null) {
             throw new IOException("Request was already executed");
         }
         final Resource resource = getExecutionResource();
@@ -170,7 +172,7 @@ public abstract class InternalRequest {
 
             @Override
             public BufferedReader getReader() {
-                if(bodyReader != null) {
+                if (bodyReader != null) {
                     return new BufferedReader(bodyReader);
                 } else {
                     return super.getReader();
@@ -187,7 +189,7 @@ public abstract class InternalRequest {
         MDC.put(MDC_KEY, toString());
         try {
             delegateExecute(request, response, resourceResolver);
-        } catch(ServletException sx) {
+        } catch (ServletException sx) {
             throw new IOException("ServletException in execute()", sx);
         }
         return this;
@@ -197,48 +199,52 @@ public abstract class InternalRequest {
     protected abstract Resource getExecutionResource();
 
     /** Execute the supplied Request */
-    protected abstract void delegateExecute(SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
-    throws ServletException, IOException;
+    protected abstract void delegateExecute(
+            SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
+            throws ServletException, IOException;
 
     protected void assertRequestExecuted() throws IOException {
-        if(request == null) {
+        if (request == null) {
             throw new IOException("Request hasn't been executed");
         }
     }
 
     /** After executing the request, checks that the request status is one
      *  of the supplied values.
-     * 
+     *
      *  If this is not called before methods that access the response, a check
      *  for a 200 OK status is done automatically unless this was called
      *  with no arguments before.
-     * 
+     *
      *  This makes sure a status check is done or explicitly disabled.
-     * 
+     *
      *  @param acceptableValues providing no values means "don't care"
      *  @throws IOException if status doesn't match any of these values
      */
-    public InternalRequest checkStatus(int ... acceptableValues) throws IOException {
+    public InternalRequest checkStatus(int... acceptableValues) throws IOException {
         assertRequestExecuted();
         explicitStatusCheck = true;
 
-        if(acceptableValues == null || acceptableValues.length == 0) {
+        if (acceptableValues == null || acceptableValues.length == 0) {
             return this;
         }
 
         final int actualStatus = getStatus();
-        final OptionalInt found = Arrays.stream(acceptableValues).filter(expected -> expected == actualStatus).findFirst();
-        if(!found.isPresent()) {
+        final OptionalInt found = Arrays.stream(acceptableValues)
+                .filter(expected -> expected == actualStatus)
+                .findFirst();
+        if (!found.isPresent()) {
             final StringBuilder sb = new StringBuilder();
-            Arrays.stream(acceptableValues).forEach(val -> sb.append(sb.length() == 0 ? "" : ",").append(val));
+            Arrays.stream(acceptableValues)
+                    .forEach(val -> sb.append(sb.length() == 0 ? "" : ",").append(val));
             throw new IOException("Unexpected response status " + actualStatus + ", expected one of '" + sb + "'");
         }
-         return this;
+        return this;
     }
 
     /** If response status hasn't been explicitly checked, ensure it's 200 */
     private void maybeCheckOkStatus() throws IOException {
-        if(!explicitStatusCheck) {
+        if (!explicitStatusCheck) {
             try {
                 checkStatus(HttpServletResponse.SC_OK);
             } finally {
@@ -249,12 +255,12 @@ public abstract class InternalRequest {
 
     /** After executing the request, checks that the response content-type
      *  is as expected.
-     * 
+     *
      *  @throws IOException if the actual content-type doesn't match the expected one
      */
     public InternalRequest checkResponseContentType(String contentType) throws IOException {
         assertRequestExecuted();
-        if(!contentType.equals(response.getContentType())) {
+        if (!contentType.equals(response.getContentType())) {
             throw new IOException("Expected content type " + contentType + " but got " + response.getContentType());
         }
         return this;
@@ -271,7 +277,7 @@ public abstract class InternalRequest {
     /** Return the response object. The execute method must be called before this one.
      *  A check for "200 OK" status is done automatically unless {@link #checkStatus} has
      *  been called before.
-     * 
+     *
      *  @throws IOException if the request hasn't been executed yet or if the status
      *      check fails.
      */
@@ -282,10 +288,10 @@ public abstract class InternalRequest {
     }
 
     /** Return the response as a String. The execute method must be called before this one.
-     * 
+     *
      *  A check for "200 OK" status is done automatically unless {@link #checkStatus} has
      *  been called before.
-     * 
+     *
      *  @throws IOException if the request hasn't been executed yet or if the status
      *      check fails.
      */

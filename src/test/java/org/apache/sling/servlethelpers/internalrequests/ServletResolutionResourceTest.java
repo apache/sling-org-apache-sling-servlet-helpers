@@ -18,13 +18,13 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
-import static org.junit.Assert.assertEquals;
-
 import java.util.UUID;
 
 import org.apache.sling.api.resource.ResourceResolver;
 import org.junit.Test;
 import org.mockito.Mockito;
+
+import static org.junit.Assert.assertEquals;
 
 public class ServletResolutionResourceTest {
     private final String id = UUID.randomUUID().toString();
@@ -32,7 +32,8 @@ public class ServletResolutionResourceTest {
     private final String resourceType = "RT_" + id;
     private final String resourceSuperType = "RST_" + id;
     private final ResourceResolver resourceResolver = Mockito.mock(ResourceResolver.class);
-    private final ServletResolutionResource r = new ServletResolutionResource(resourceResolver, path, resourceType, resourceSuperType);
+    private final ServletResolutionResource r =
+            new ServletResolutionResource(resourceResolver, path, resourceType, resourceSuperType);
 
     @Test
     public void testImplementedMethods() {
@@ -49,12 +50,12 @@ public class ServletResolutionResourceTest {
 
     @Test(expected = ServletResolutionResource.NotImplementedException.class)
     public void testGetName() {
-        r.getName();    
+        r.getName();
     }
 
     @Test(expected = ServletResolutionResource.NotImplementedException.class)
     public void testGetParent() {
-        r.getParent();    
+        r.getParent();
     }
 
     @Test(expected = ServletResolutionResource.NotImplementedException.class)
@@ -64,7 +65,7 @@ public class ServletResolutionResourceTest {
 
     @Test(expected = ServletResolutionResource.NotImplementedException.class)
     public void testGetChildren() {
-        r.getChildren();    
+        r.getChildren();
     }
 
     @Test(expected = ServletResolutionResource.NotImplementedException.class)
@@ -79,7 +80,6 @@ public class ServletResolutionResourceTest {
 
     @Test(expected = ServletResolutionResource.NotImplementedException.class)
     public void testResourceMetadata() {
-        r.getResourceMetadata();    
+        r.getResourceMetadata();
     }
-
 }

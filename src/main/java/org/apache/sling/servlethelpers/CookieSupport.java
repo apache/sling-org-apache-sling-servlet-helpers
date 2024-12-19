@@ -18,10 +18,10 @@
  */
 package org.apache.sling.servlethelpers;
 
+import javax.servlet.http.Cookie;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
-
-import javax.servlet.http.Cookie;
 
 /**
  * Manages cookies for request and response.
@@ -49,5 +49,4 @@ class CookieSupport {
     public void reset() {
         cookies.clear();
     }
-
 }

@@ -18,12 +18,12 @@
  */
 package org.apache.sling.servlethelpers;
 
+import javax.servlet.http.Part;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
-
-import javax.servlet.http.Part;
 
 /**
  * Simple <tt>Part</tt> implementation backed by an in-memory byte array
@@ -32,8 +32,8 @@ import javax.servlet.http.Part;
 public class ByteArrayPart implements Part {
 
     /**
-     * Returns a <tt>Builder</tt> instance used to create a <tt>ByteArrayPart</tt> 
-     * 
+     * Returns a <tt>Builder</tt> instance used to create a <tt>ByteArrayPart</tt>
+     *
      * @return a new builder instance
      */
     public static Builder builder() {
@@ -44,11 +44,9 @@ public class ByteArrayPart implements Part {
     private final String name;
 
     private ByteArrayPart(byte[] content, String name) {
-        if ( content == null )
-            throw new IllegalArgumentException("content may not be null");
+        if (content == null) throw new IllegalArgumentException("content may not be null");
 
-        if ( name == null || name.isEmpty() )
-            throw new IllegalArgumentException("name may not be null or empty");
+        if (name == null || name.isEmpty()) throw new IllegalArgumentException("name may not be null or empty");
 
         this.content = content;
         this.name = name;
@@ -82,7 +80,6 @@ public class ByteArrayPart implements Part {
     @Override
     public void write(String fileName) throws IOException {
         throw new UnsupportedOperationException();
-
     }
 
     @Override
@@ -124,5 +121,4 @@ public class ByteArrayPart implements Part {
             return new ByteArrayPart(content, name);
         }
     }
-
 }

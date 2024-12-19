@@ -63,7 +63,6 @@ class HeaderSupport {
         public String getValue() {
             return this.value;
         }
-
     }
 
     public void addHeader(String name, String value) {
@@ -161,10 +160,8 @@ class HeaderSupport {
     private static synchronized Calendar parseDate(String dateString) {
         try {
             return GregorianCalendar.from(ZonedDateTime.parse(dateString, RFC_1123_DATE_TIME));
-        }
-        catch (DateTimeParseException ex) {
+        } catch (DateTimeParseException ex) {
             throw new IllegalArgumentException("Invalid date value: " + dateString, ex);
         }
     }
-
 }

@@ -18,12 +18,12 @@
  */
 package org.apache.sling.servlethelpers;
 
-import static org.junit.Assert.assertEquals;
-
 import javax.servlet.ServletContext;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class MockServletContextTest {
 
@@ -38,5 +38,4 @@ public class MockServletContextTest {
     public void testGetMimeType() {
         assertEquals("application/octet-stream", this.servletContext.getMimeType("any"));
     }
-
 }

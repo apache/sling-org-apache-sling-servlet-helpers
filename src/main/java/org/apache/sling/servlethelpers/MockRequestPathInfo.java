@@ -34,11 +34,11 @@ public class MockRequestPathInfo implements RequestPathInfo {
     private String resourcePath;
     private String selectorString;
     private String suffix;
-    
+
     private final ResourceResolver resourceResolver;
-    
+
     /**
-     * @deprecated Use @link {@link #MockRequestPathInfo(ResourceResolver)} instead. 
+     * @deprecated Use @link {@link #MockRequestPathInfo(ResourceResolver)} instead.
      */
     @Deprecated
     public MockRequestPathInfo() {
@@ -104,5 +104,4 @@ public class MockRequestPathInfo implements RequestPathInfo {
         }
         return this.resourceResolver.getResource(suffix);
     }
-
 }

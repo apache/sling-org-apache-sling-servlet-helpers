@@ -18,9 +18,9 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
-import java.io.IOException;
-
 import javax.servlet.ServletException;
+
+import java.io.IOException;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -32,15 +32,15 @@ import org.jetbrains.annotations.NotNull;
 /** Internal request that uses a SlingRequestProcessor.
  *  This executes the complete Sling request processing
  *  pipeline.
- * 
+ *
  *  That's the same processing than Sling uses
  *  for HTTP requests, but it's not as efficient as the
  *  {@link ServletInternalRequest} which resolves and
  *  calls a Servlet or Script directly.
- * 
+ *
  *  This variant of internal requests is useful when no
  *  Resource is available, as it builds its own Resource
- *  based on the supplied parameters to drive the 
+ *  based on the supplied parameters to drive the
  *  Servlet/Script resolution mechanism.
  */
 public class SlingInternalRequest extends InternalRequest {
@@ -49,7 +49,8 @@ public class SlingInternalRequest extends InternalRequest {
     private String resourceSuperType;
 
     /** Setup an internal request that uses a SlingRequestProcessor */
-    public SlingInternalRequest(@NotNull ResourceResolver resourceResolver, @NotNull SlingRequestProcessor p, @NotNull String path) {
+    public SlingInternalRequest(
+            @NotNull ResourceResolver resourceResolver, @NotNull SlingRequestProcessor p, @NotNull String path) {
         super(resourceResolver, path);
         checkNotNull(SlingRequestProcessor.class, p);
         this.processor = p;
@@ -58,15 +59,14 @@ public class SlingInternalRequest extends InternalRequest {
     /** Return essential request info, used to set the logging MDC  */
     public String toString() {
         return String.format(
-            "%s: %s P=%s S=%s EXT=%s RT=%s(%s)",
-            getClass().getSimpleName(),
-            requestMethod,
-            path,
-            selectorString,
-            extension,
-            resourceType,
-            resourceSuperType
-        );
+                "%s: %s P=%s S=%s EXT=%s RT=%s(%s)",
+                getClass().getSimpleName(),
+                requestMethod,
+                path,
+                selectorString,
+                extension,
+                resourceType,
+                resourceSuperType);
     }
 
     /** Sets the sling:resourceSuperType of the fake Resource used to resolve
@@ -84,8 +84,9 @@ public class SlingInternalRequest extends InternalRequest {
     }
 
     @Override
-    protected void delegateExecute(SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
-    throws ServletException, IOException {
+    protected void delegateExecute(
+            SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
+            throws ServletException, IOException {
         log.debug("Executing request using a SlingRequestProcessor");
         processor.processRequest(request, response, resourceResolver);
     }

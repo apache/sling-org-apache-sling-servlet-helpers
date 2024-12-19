@@ -18,11 +18,11 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
-import java.io.IOException;
-
 import javax.servlet.Servlet;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -33,11 +33,11 @@ import org.jetbrains.annotations.NotNull;
 
 /** Internal request that a Servlet or Script directly,
  *  after resolving it using a ServletResolver.
- * 
+ *
  *  This bypasses the Servlet Filters used by the default
  *  Sling request processing pipeline, which are often not
- *  needed for internal requests. 
- * 
+ *  needed for internal requests.
+ *
  *  That's more efficient than the {@link SlingInternalRequest}
  *  variant, but less faithful to the way Sling processes HTTP
  *  requests.
@@ -60,15 +60,14 @@ public class ServletInternalRequest extends InternalRequest {
     /** Return essential request info, used to set the logging MDC  */
     public String toString() {
         return String.format(
-            "%s: %s P=%s S=%s EXT=%s RT=%s(%s)",
-            getClass().getSimpleName(),
-            requestMethod,
-            resource.getPath(),
-            selectorString,
-            extension,
-            resource.getResourceType(),
-            resource.getResourceSuperType()
-        );
+                "%s: %s P=%s S=%s EXT=%s RT=%s(%s)",
+                getClass().getSimpleName(),
+                requestMethod,
+                resource.getPath(),
+                selectorString,
+                extension,
+                resource.getResourceType(),
+                resource.getResourceSuperType());
     }
 
     @Override
@@ -77,12 +76,15 @@ public class ServletInternalRequest extends InternalRequest {
     }
 
     @Override
-    protected void delegateExecute(SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
-    throws ServletException, IOException {
+    protected void delegateExecute(
+            SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
+            throws ServletException, IOException {
         final Servlet s = servletResolver.resolveServlet(request);
         log.debug("ServletResolver provides servlet '{}'", s);
-        if(s == null) {
-            response.sendError(HttpServletResponse.SC_NOT_FOUND, "Servlet not found by " + getClass().getName());
+        if (s == null) {
+            response.sendError(
+                    HttpServletResponse.SC_NOT_FOUND,
+                    "Servlet not found by " + getClass().getName());
         } else {
             s.service(request, response);
         }
