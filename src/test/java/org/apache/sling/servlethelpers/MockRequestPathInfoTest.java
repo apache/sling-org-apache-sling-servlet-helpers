@@ -18,13 +18,6 @@
  */
 package org.apache.sling.servlethelpers;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.junit.Before;
@@ -33,11 +26,18 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class MockRequestPathInfoTest {
 
     private MockRequestPathInfo requestPathInfo;
-    
+
     @Mock
     private ResourceResolver resourceResolver;
 
@@ -67,7 +67,7 @@ public class MockRequestPathInfoTest {
         this.requestPathInfo.setSelectorString("aa.bb");
         assertEquals("aa.bb", this.requestPathInfo.getSelectorString());
         assertEquals(2, this.requestPathInfo.getSelectors().length);
-        assertArrayEquals(new String[] { "aa", "bb" }, this.requestPathInfo.getSelectors());
+        assertArrayEquals(new String[] {"aa", "bb"}, this.requestPathInfo.getSelectors());
     }
 
     @Test
@@ -80,12 +80,11 @@ public class MockRequestPathInfoTest {
     @Test
     public void testGetSuffixResource() {
         assertNull(this.requestPathInfo.getSuffixResource());
-        
+
         this.requestPathInfo.setSuffix("/suffix");
         Resource resource = mock(Resource.class);
         when(resourceResolver.getResource("/suffix")).thenReturn(resource);
-        
+
         assertSame(resource, this.requestPathInfo.getSuffixResource());
     }
-
 }

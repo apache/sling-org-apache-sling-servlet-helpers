@@ -18,19 +18,9 @@
  */
 package org.apache.sling.servlethelpers;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpSession;
 
 import java.io.BufferedReader;
 import java.io.UnsupportedEncodingException;
@@ -44,10 +34,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.UUID;
-
-import javax.servlet.RequestDispatcher;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.CharEncoding;
@@ -68,13 +54,29 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 @RunWith(MockitoJUnitRunner.class)
 public class MockSlingHttpServletRequestTest {
 
     @Mock
     private ResourceResolver resourceResolver;
+
     @Mock
     private Resource resource;
+
     @Mock
     private AdapterManager adapterManager;
 
@@ -153,20 +155,28 @@ public class MockSlingHttpServletRequestTest {
         requestPathInfo.setResourcePath("/content/resource");
         requestPathInfo.setExtension("html");
 
-        assertEquals("http://localhost/content/resource.html", request.getRequestURL().toString());
+        assertEquals(
+                "http://localhost/content/resource.html",
+                request.getRequestURL().toString());
 
         request.setServerPort(8080);
 
-        assertEquals("http://localhost:8080/content/resource.html", request.getRequestURL().toString());
+        assertEquals(
+                "http://localhost:8080/content/resource.html",
+                request.getRequestURL().toString());
 
         request.setScheme("https");
         request.setServerPort(443);
 
-        assertEquals("https://localhost/content/resource.html", request.getRequestURL().toString());
+        assertEquals(
+                "https://localhost/content/resource.html",
+                request.getRequestURL().toString());
 
         request.setServerPort(8443);
 
-        assertEquals("https://localhost:8443/content/resource.html", request.getRequestURL().toString());
+        assertEquals(
+                "https://localhost:8443/content/resource.html",
+                request.getRequestURL().toString());
     }
 
     @Test
@@ -214,21 +224,21 @@ public class MockSlingHttpServletRequestTest {
         assertEquals(0, request.getParameterMap().size());
         assertFalse(request.getParameterNames().hasMoreElements());
 
-        request.setQueryString("param1=123&param2=" + URLEncoder.encode("äöüß€!:!", CharEncoding.UTF_8)
-                + "&param3=a&param3=b");
+        request.setQueryString(
+                "param1=123&param2=" + URLEncoder.encode("äöüß€!:!", CharEncoding.UTF_8) + "&param3=a&param3=b");
 
         assertNotNull(request.getQueryString());
         assertEquals(3, request.getParameterMap().size());
         assertTrue(request.getParameterNames().hasMoreElements());
         assertEquals("123", request.getParameter("param1"));
         assertEquals("äöüß€!:!", request.getParameter("param2"));
-        assertArrayEquals(new String[] { "a", "b" }, request.getParameterValues("param3"));
+        assertArrayEquals(new String[] {"a", "b"}, request.getParameterValues("param3"));
 
         Map<String, Object> paramMap = new LinkedHashMap<>();
         paramMap.put("p1", "a");
-        paramMap.put("p2", new String[] { "b", "c" });
+        paramMap.put("p2", new String[] {"b", "c"});
         paramMap.put("p3", null);
-        paramMap.put("p4", new String[] { null });
+        paramMap.put("p4", new String[] {null});
         paramMap.put("p5", 22);
         request.setParameterMap(paramMap);
 
@@ -314,7 +324,7 @@ public class MockSlingHttpServletRequestTest {
         assertEquals("value1", cookies[0].getValue());
         assertEquals("value2", cookies[1].getValue());
     }
-    
+
     @Test
     public void testDefaultResourceBundle() {
         ResourceBundle bundle = request.getResourceBundle(Locale.US);
@@ -324,61 +334,60 @@ public class MockSlingHttpServletRequestTest {
 
     @Test
     public void testRequestParameter() throws Exception {
-        request.setQueryString("param1=123&param2=" + URLEncoder.encode("äöüß€!:!", CharEncoding.UTF_8)
-                + "&param3=a&param3=b");
+        request.setQueryString(
+                "param1=123&param2=" + URLEncoder.encode("äöüß€!:!", CharEncoding.UTF_8) + "&param3=a&param3=b");
 
         assertEquals(3, request.getRequestParameterMap().size());
         assertEquals(4, request.getRequestParameterList().size());
         assertEquals("123", request.getRequestParameter("param1").getString());
         assertEquals("äöüß€!:!", request.getRequestParameter("param2").getString());
-        assertEquals("a",request.getRequestParameters("param3")[0].getString());
-        assertEquals("b",request.getRequestParameters("param3")[1].getString());
+        assertEquals("a", request.getRequestParameters("param3")[0].getString());
+        assertEquals("b", request.getRequestParameters("param3")[1].getString());
 
         assertNull(request.getRequestParameter("unknown"));
         assertNull(request.getRequestParameters("unknown"));
 
-        assertEquals("param1", ((MockRequestParameter)request.getRequestParameter("param1")).getName());
+        assertEquals("param1", ((MockRequestParameter) request.getRequestParameter("param1")).getName());
     }
 
     @Test
     public void testFormRequestParameters() throws Exception {
-    	request.addRequestParameter("param1", "value1");
-    	request.addRequestParameter("param2", "value2".getBytes("UTF-8"), "application/xml");
-    	request.addRequestParameter("param3", "value3".getBytes("UTF-8"), "application/json", "param3.json");
-    	request.addRequestParameter("param4", "value4a".getBytes("UTF-8"), "application/xml");
-    	request.addRequestParameter("param4", "value4b".getBytes("UTF-8"), "application/json");
-    	
-    	RequestParameter param1 = request.getRequestParameter("param1");
-    	assertEquals("value1", param1.getString());
-    	assertArrayEquals("value1".getBytes(), param1.get());
-    	assertEquals("text/plain", param1.getContentType());
-    	assertArrayEquals("value1".getBytes(), param1.get());
-    	
-    	RequestParameter param2 = request.getRequestParameter("param2");
-    	assertEquals("value2", param2.getString());
-    	assertEquals("application/xml", param2.getContentType());
-    	assertArrayEquals("value2".getBytes(), param2.get());
-    	
-    	RequestParameter param3 = request.getRequestParameter("param3");
-    	assertEquals("value3", param3.getString());
-    	assertEquals("application/json", param3.getContentType());
-    	assertArrayEquals("value3".getBytes(), param3.get());
-    	assertEquals("param3.json", param3.getFileName());
-    	
-    	RequestParameter param4 = request.getRequestParameter("param4");
-    	assertEquals("value4a", param4.getString());
-    	assertEquals("application/xml", param4.getContentType());
-    	assertArrayEquals("value4a".getBytes(), param4.get());
+        request.addRequestParameter("param1", "value1");
+        request.addRequestParameter("param2", "value2".getBytes("UTF-8"), "application/xml");
+        request.addRequestParameter("param3", "value3".getBytes("UTF-8"), "application/json", "param3.json");
+        request.addRequestParameter("param4", "value4a".getBytes("UTF-8"), "application/xml");
+        request.addRequestParameter("param4", "value4b".getBytes("UTF-8"), "application/json");
 
-    	RequestParameter[] param4array = request.getRequestParameters("param4");
-    	assertEquals(2, param4array.length);
-    	assertEquals("value4a", param4array[0].getString());
-    	assertEquals("value4b", param4array[1].getString());
-    	assertEquals("application/xml", param4array[0].getContentType());
-    	assertEquals("application/json", param4array[1].getContentType());
-    	assertArrayEquals("value4a".getBytes(), param4array[0].get());
-    	assertArrayEquals("value4b".getBytes(), param4array[1].get());
-    	
+        RequestParameter param1 = request.getRequestParameter("param1");
+        assertEquals("value1", param1.getString());
+        assertArrayEquals("value1".getBytes(), param1.get());
+        assertEquals("text/plain", param1.getContentType());
+        assertArrayEquals("value1".getBytes(), param1.get());
+
+        RequestParameter param2 = request.getRequestParameter("param2");
+        assertEquals("value2", param2.getString());
+        assertEquals("application/xml", param2.getContentType());
+        assertArrayEquals("value2".getBytes(), param2.get());
+
+        RequestParameter param3 = request.getRequestParameter("param3");
+        assertEquals("value3", param3.getString());
+        assertEquals("application/json", param3.getContentType());
+        assertArrayEquals("value3".getBytes(), param3.get());
+        assertEquals("param3.json", param3.getFileName());
+
+        RequestParameter param4 = request.getRequestParameter("param4");
+        assertEquals("value4a", param4.getString());
+        assertEquals("application/xml", param4.getContentType());
+        assertArrayEquals("value4a".getBytes(), param4.get());
+
+        RequestParameter[] param4array = request.getRequestParameters("param4");
+        assertEquals(2, param4array.length);
+        assertEquals("value4a", param4array[0].getString());
+        assertEquals("value4b", param4array[1].getString());
+        assertEquals("application/xml", param4array[0].getContentType());
+        assertEquals("application/json", param4array[1].getContentType());
+        assertArrayEquals("value4a".getBytes(), param4array[0].get());
+        assertArrayEquals("value4b".getBytes(), param4array[1].get());
     }
 
     @Test
@@ -389,11 +398,11 @@ public class MockSlingHttpServletRequestTest {
         request.setContentType("image/gif");
         assertEquals("image/gif", request.getContentType());
         assertNull(request.getCharacterEncoding());
-        
+
         request.setContentType("text/plain;charset=UTF-8");
         assertEquals("text/plain;charset=UTF-8", request.getContentType());
         assertEquals(CharEncoding.UTF_8, request.getCharacterEncoding());
-        
+
         request.setCharacterEncoding(CharEncoding.ISO_8859_1);
         assertEquals("text/plain;charset=ISO-8859-1", request.getContentType());
         assertEquals(CharEncoding.ISO_8859_1, request.getCharacterEncoding());
@@ -404,8 +413,8 @@ public class MockSlingHttpServletRequestTest {
         assertEquals(0, request.getContentLength());
         assertNotNull(request.getInputStream());
         assertArrayEquals(new byte[0], IOUtils.toByteArray(request.getInputStream()));
-        
-        byte[] data = new byte[] { 0x01,0x02,0x03 };
+
+        byte[] data = new byte[] {0x01, 0x02, 0x03};
         request.setContent(data);
 
         assertEquals(data.length, request.getContentLength());
@@ -446,31 +455,32 @@ public class MockSlingHttpServletRequestTest {
         assertTrue(thrown);
     }
 
-
     @Test
     public void testGetRequestDispatcher() {
         MockRequestDispatcherFactory requestDispatcherFactory = mock(MockRequestDispatcherFactory.class);
         RequestDispatcher requestDispatcher = mock(RequestDispatcher.class);
-        when(requestDispatcherFactory.getRequestDispatcher(any(Resource.class), any())).thenReturn(requestDispatcher);
-        when(requestDispatcherFactory.getRequestDispatcher(any(String.class), any())).thenReturn(requestDispatcher);
-        
+        when(requestDispatcherFactory.getRequestDispatcher(any(Resource.class), any()))
+                .thenReturn(requestDispatcher);
+        when(requestDispatcherFactory.getRequestDispatcher(any(String.class), any()))
+                .thenReturn(requestDispatcher);
+
         request.setRequestDispatcherFactory(requestDispatcherFactory);
-        
+
         assertSame(requestDispatcher, request.getRequestDispatcher("/path"));
         assertSame(requestDispatcher, request.getRequestDispatcher("/path", new RequestDispatcherOptions()));
         assertSame(requestDispatcher, request.getRequestDispatcher(resource));
         assertSame(requestDispatcher, request.getRequestDispatcher(resource, new RequestDispatcherOptions()));
     }
-    
+
     @Test(expected = IllegalStateException.class)
     public void testGetRequestDispatcherWithoutFactory() {
         request.getRequestDispatcher("/path");
     }
-    
+
     @Test
     public void testGetRemoteUser() {
         assertNull(null, request.getRemoteUser());
-        
+
         request.setRemoteUser("admin");
         assertEquals("admin", request.getRemoteUser());
     }
@@ -478,7 +488,7 @@ public class MockSlingHttpServletRequestTest {
     @Test
     public void testGetRemoteAddr() throws Exception {
         assertNull(null, request.getRemoteAddr());
-        
+
         request.setRemoteAddr("1.2.3.4");
         assertEquals("1.2.3.4", request.getRemoteAddr());
     }
@@ -486,7 +496,7 @@ public class MockSlingHttpServletRequestTest {
     @Test
     public void testGetRemoteHost() throws Exception {
         assertNull(null, request.getRemoteHost());
-        
+
         request.setRemoteHost("host1");
         assertEquals("host1", request.getRemoteHost());
     }
@@ -494,7 +504,7 @@ public class MockSlingHttpServletRequestTest {
     @Test
     public void testGetRemotePort() throws Exception {
         assertEquals(0, request.getRemotePort());
-        
+
         request.setRemotePort(1234);
         assertEquals(1234, request.getRemotePort());
     }
@@ -502,7 +512,8 @@ public class MockSlingHttpServletRequestTest {
     @Test
     public void testServletPathWithPathInfo() throws Exception {
         request.setServletPath("/my/path");
-        request.setPathInfo("/myinfo");;
+        request.setPathInfo("/myinfo");
+        ;
 
         assertEquals("/my/path", request.getServletPath());
         assertEquals("/myinfo", request.getPathInfo());
@@ -519,11 +530,11 @@ public class MockSlingHttpServletRequestTest {
     @Test
     public void testGetSuffixResource() {
         assertNull(request.getRequestPathInfo().getSuffixResource());
-        
-        ((MockRequestPathInfo)request.getRequestPathInfo()).setSuffix("/suffix");
+
+        ((MockRequestPathInfo) request.getRequestPathInfo()).setSuffix("/suffix");
         Resource resource = mock(Resource.class);
         when(resourceResolver.getResource("/suffix")).thenReturn(resource);
-        
+
         assertSame(resource, request.getRequestPathInfo().getSuffixResource());
     }
 
@@ -541,7 +552,7 @@ public class MockSlingHttpServletRequestTest {
         assertNotNull(result1);
 
         String result2 = request.adaptTo(String.class);
-        assertNotEquals(result1,  result2);
+        assertNotEquals(result1, result2);
     }
 
     @Test
@@ -559,10 +570,11 @@ public class MockSlingHttpServletRequestTest {
 
         request.addPart(part);
 
-        assertThat(request.getParts()).as("request parts")
-            .hasSize(1)
-            .extracting( p -> p.getName())
-            .containsExactly("log.txt");
+        assertThat(request.getParts())
+                .as("request parts")
+                .hasSize(1)
+                .extracting(p -> p.getName())
+                .containsExactly("log.txt");
 
         assertThat(request.getPart("log.txt")).as("part looked up by name").isNotNull();
     }
@@ -581,10 +593,10 @@ public class MockSlingHttpServletRequestTest {
         assertNotNull(userPrincipal);
         assertEquals("admin", userPrincipal.getName());
     }
+
     @Test
     public void testGetUserPrincipalFromResourceResolver() {
-        Mockito.when(resourceResolver.adaptTo(Principal.class))
-            .thenReturn(() -> "rruser");
+        Mockito.when(resourceResolver.adaptTo(Principal.class)).thenReturn(() -> "rruser");
         // always returns null for anonymous user
         assertNull(request.getUserPrincipal());
 
@@ -594,5 +606,4 @@ public class MockSlingHttpServletRequestTest {
         assertNotNull(userPrincipal);
         assertEquals("rruser", userPrincipal.getName());
     }
-
 }

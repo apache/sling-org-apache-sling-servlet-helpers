@@ -18,17 +18,16 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /** Run the same tests as the ServletInternalRequestTest but in "sling" mode */
 public class SlingInternalRequestTest extends ServletInternalRequestTest {
     protected InternalRequest request(String path, String resourceType, String resourceSuperType) {
         return new SlingInternalRequest(resourceResolver, new MockSlingRequestProcessor(), path)
-            .withResourceType(resourceType)
-            .withResourceSuperType(resourceSuperType)
-        ;
+                .withResourceType(resourceType)
+                .withResourceSuperType(resourceSuperType);
     }
 
     @Test
@@ -38,6 +37,8 @@ public class SlingInternalRequestTest extends ServletInternalRequestTest {
 
     @Test
     public void verifyClassUnderTestWithParams() {
-        assertEquals(SlingInternalRequest.class, request("unused", "with", "resourceType").getClass());
+        assertEquals(
+                SlingInternalRequest.class,
+                request("unused", "with", "resourceType").getClass());
     }
 }

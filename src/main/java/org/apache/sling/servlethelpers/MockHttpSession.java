@@ -18,13 +18,13 @@
  */
 package org.apache.sling.servlethelpers;
 
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpSession;
+
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
-import javax.servlet.ServletContext;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.osgi.annotation.versioning.ConsumerType;
@@ -42,7 +42,7 @@ public class MockHttpSession implements HttpSession {
     private boolean invalidated = false;
     private boolean isNew = true;
     private int maxActiveInterval = 1800;
-    
+
     public MockHttpSession() {
         this.servletContext = newMockServletContext();
     }
@@ -55,7 +55,7 @@ public class MockHttpSession implements HttpSession {
     public ServletContext getServletContext() {
         return this.servletContext;
     }
-    
+
     @Override
     public Object getAttribute(final String name) {
         checkInvalidatedState();
@@ -88,7 +88,9 @@ public class MockHttpSession implements HttpSession {
     @Override
     public String[] getValueNames() {
         checkInvalidatedState();
-        return this.attributeMap.keySet().toArray(new String[this.attributeMap.keySet().size()]);
+        return this.attributeMap
+                .keySet()
+                .toArray(new String[this.attributeMap.keySet().size()]);
     }
 
     @Override
@@ -120,13 +122,13 @@ public class MockHttpSession implements HttpSession {
         checkInvalidatedState();
         this.invalidated = true;
     }
-    
+
     private void checkInvalidatedState() {
         if (invalidated) {
             throw new IllegalStateException("Session is already invalidated.");
         }
     }
-    
+
     public boolean isInvalidated() {
         return invalidated;
     }
@@ -136,7 +138,7 @@ public class MockHttpSession implements HttpSession {
         checkInvalidatedState();
         return isNew;
     }
-    
+
     public void setNew(boolean isNew) {
         this.isNew = isNew;
     }
@@ -163,5 +165,4 @@ public class MockHttpSession implements HttpSession {
     public javax.servlet.http.HttpSessionContext getSessionContext() {
         throw new UnsupportedOperationException();
     }
-
 }

@@ -18,11 +18,11 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
-import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.IOException;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.resource.ResourceResolver;
@@ -31,13 +31,15 @@ import org.apache.sling.engine.SlingRequestProcessor;
 class MockSlingRequestProcessor implements SlingRequestProcessor {
 
     @Override
-    public void processRequest(HttpServletRequest httpRequest, HttpServletResponse response, ResourceResolver resourceResolver)
-        throws ServletException, IOException {
-            final SlingHttpServletRequest request = (SlingHttpServletRequest)httpRequest;
-            if(request.getResource() != null && "/NOSERVLET".equals(request.getResource().getPath())) {
-                response.sendError(404);
-            } else {
-                new RequestInfoServlet((SlingHttpServletRequest)request).service(request, response);
-            }
+    public void processRequest(
+            HttpServletRequest httpRequest, HttpServletResponse response, ResourceResolver resourceResolver)
+            throws ServletException, IOException {
+        final SlingHttpServletRequest request = (SlingHttpServletRequest) httpRequest;
+        if (request.getResource() != null
+                && "/NOSERVLET".equals(request.getResource().getPath())) {
+            response.sendError(404);
+        } else {
+            new RequestInfoServlet((SlingHttpServletRequest) request).service(request, response);
+        }
     }
 }

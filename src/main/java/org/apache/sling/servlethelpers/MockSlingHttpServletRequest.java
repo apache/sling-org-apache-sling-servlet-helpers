@@ -18,7 +18,20 @@
  */
 package org.apache.sling.servlethelpers;
 
-import static org.apache.sling.servlethelpers.MockSlingHttpServletResponse.CHARSET_SEPARATOR;
+import javax.servlet.AsyncContext;
+import javax.servlet.DispatcherType;
+import javax.servlet.ReadListener;
+import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUpgradeHandler;
+import javax.servlet.http.Part;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -44,21 +57,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.ResourceBundle;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.ReadListener;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUpgradeHandler;
-import javax.servlet.http.Part;
-
 import org.apache.commons.collections4.IteratorUtils;
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.commons.lang3.StringUtils;
@@ -73,6 +71,8 @@ import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.HttpConstants;
 import org.osgi.annotation.versioning.ConsumerType;
+
+import static org.apache.sling.servlethelpers.MockSlingHttpServletResponse.CHARSET_SEPARATOR;
 
 /**
  * Mock {@link SlingHttpServletRequest} implementation.
@@ -259,7 +259,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         }
     }
 
-    private static String formatQueryString(Map<String, MockRequestParameter[]> map) throws UnsupportedEncodingException {
+    private static String formatQueryString(Map<String, MockRequestParameter[]> map)
+            throws UnsupportedEncodingException {
         StringBuilder querystring = new StringBuilder();
         for (Map.Entry<String, MockRequestParameter[]> entry : map.entrySet()) {
             if (entry.getValue() != null) {
@@ -269,7 +270,9 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         return querystring.length() > 0 ? querystring.toString() : null;
     }
 
-    private static void formatQueryStringParameter(StringBuilder querystring, Map.Entry<String, MockRequestParameter[]> entry) throws UnsupportedEncodingException {
+    private static void formatQueryStringParameter(
+            StringBuilder querystring, Map.Entry<String, MockRequestParameter[]> entry)
+            throws UnsupportedEncodingException {
         for (MockRequestParameter value : entry.getValue()) {
             if (querystring.length() != 0) {
                 querystring.append('&');
@@ -318,7 +321,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         }
     }
 
-    private void parseQueryString(Map<String, MockRequestParameter[]> map, String query) throws UnsupportedEncodingException {
+    private void parseQueryString(Map<String, MockRequestParameter[]> map, String query)
+            throws UnsupportedEncodingException {
         Map<String, List<String>> queryPairs = new LinkedHashMap<>();
         String[] pairs = query.split("&");
         for (String pair : pairs) {
@@ -327,7 +331,9 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
             if (!queryPairs.containsKey(key)) {
                 queryPairs.put(key, new ArrayList<String>());
             }
-            String value = idx > 0 && pair.length() > idx + 1 ? URLDecoder.decode(pair.substring(idx + 1), CharEncoding.UTF_8) : null;
+            String value = idx > 0 && pair.length() > idx + 1
+                    ? URLDecoder.decode(pair.substring(idx + 1), CharEncoding.UTF_8)
+                    : null;
             queryPairs.get(key).add(value);
         }
         map.clear();
@@ -415,7 +421,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Add header, keep existing ones with same name.
-     * 
+     *
      * @param name  Header name
      * @param value Header value
      */
@@ -425,7 +431,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Add header, keep existing ones with same name.
-     * 
+     *
      * @param name  Header name
      * @param value Header value
      */
@@ -435,7 +441,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Add header, keep existing ones with same name.
-     * 
+     *
      * @param name Header name
      * @param date Header value
      */
@@ -445,7 +451,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Set header, overwrite existing ones with same name.
-     * 
+     *
      * @param name  Header name
      * @param value Header value
      */
@@ -455,7 +461,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Set header, overwrite existing ones with same name.
-     * 
+     *
      * @param name  Header name
      * @param value Header value
      */
@@ -465,7 +471,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Set header, overwrite existing ones with same name.
-     * 
+     *
      * @param name Header name
      * @param date Header value
      */
@@ -485,7 +491,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Set cookie
-     * 
+     *
      * @param cookie Cookie
      */
     public void addCookie(Cookie cookie) {
@@ -537,7 +543,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     /**
      * Add a request parameter that consists of a simple name/value pair. This
      * emulates a simple form field.
-     * 
+     *
      * @param name  field name
      * @param value field value
      */
@@ -548,7 +554,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     /**
      * Add a request parameter that emulates a file upload field.
-     * 
+     *
      * @param name        field name
      * @param content     file content
      * @param contentType mime type of content in the field
@@ -561,7 +567,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     /**
      * Add a request parameter that emulates a file upload field with a filename
      * associated with it.
-     * 
+     *
      * @param name        field name
      * @param content     file content
      * @param contentType mime type of content in the field
@@ -578,7 +584,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
             list.add(mockRequestParameter);
             this.parameterMap.put(name, list.toArray(new MockRequestParameter[0]));
         } else {
-            this.parameterMap.put(name, new MockRequestParameter[] { mockRequestParameter });
+            this.parameterMap.put(name, new MockRequestParameter[] {mockRequestParameter});
         }
     }
 
@@ -597,7 +603,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         if (this.contentType == null) {
             return null;
         } else {
-            return this.contentType + (StringUtils.isNotBlank(characterEncoding) ? CHARSET_SEPARATOR + characterEncoding : "");
+            return this.contentType
+                    + (StringUtils.isNotBlank(characterEncoding) ? CHARSET_SEPARATOR + characterEncoding : "");
         }
     }
 
@@ -616,7 +623,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         }
         getInputStreamCalled = true;
         return new ServletInputStream() {
-            private final InputStream is = content == null ? new ByteArrayInputStream(new byte[0]) : new ByteArrayInputStream(content);
+            private final InputStream is =
+                    content == null ? new ByteArrayInputStream(new byte[0]) : new ByteArrayInputStream(content);
 
             @Override
             public int read() throws IOException {
@@ -655,7 +663,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     @Override
     public RequestDispatcher getRequestDispatcher(String path) {
         if (requestDispatcherFactory == null) {
-            throw new IllegalStateException("Please provdide a MockRequestDispatcherFactory (setRequestDispatcherFactory).");
+            throw new IllegalStateException(
+                    "Please provdide a MockRequestDispatcherFactory (setRequestDispatcherFactory).");
         }
         return requestDispatcherFactory.getRequestDispatcher(path, null);
     }
@@ -663,7 +672,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     @Override
     public RequestDispatcher getRequestDispatcher(String path, RequestDispatcherOptions options) {
         if (requestDispatcherFactory == null) {
-            throw new IllegalStateException("Please provdide a MockRequestDispatcherFactory (setRequestDispatcherFactory).");
+            throw new IllegalStateException(
+                    "Please provdide a MockRequestDispatcherFactory (setRequestDispatcherFactory).");
         }
         return requestDispatcherFactory.getRequestDispatcher(path, options);
     }
@@ -671,7 +681,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     @Override
     public RequestDispatcher getRequestDispatcher(Resource resource) {
         if (requestDispatcherFactory == null) {
-            throw new IllegalStateException("Please provdide a MockRequestDispatcherFactory (setRequestDispatcherFactory).");
+            throw new IllegalStateException(
+                    "Please provdide a MockRequestDispatcherFactory (setRequestDispatcherFactory).");
         }
         return requestDispatcherFactory.getRequestDispatcher(resource, null);
     }
@@ -679,7 +690,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     @Override
     public RequestDispatcher getRequestDispatcher(Resource resource, RequestDispatcherOptions options) {
         if (requestDispatcherFactory == null) {
-            throw new IllegalStateException("Please provdide a MockRequestDispatcherFactory (setRequestDispatcherFactory).");
+            throw new IllegalStateException(
+                    "Please provdide a MockRequestDispatcherFactory (setRequestDispatcherFactory).");
         }
         return requestDispatcherFactory.getRequestDispatcher(resource, options);
     }
@@ -796,7 +808,8 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
         requestUrl.append(this.getScheme());
         requestUrl.append("://");
         requestUrl.append(getServerName());
-        if ((StringUtils.equals(this.getScheme(), "http") && this.getServerPort() != 80) || (StringUtils.equals(this.getScheme(), "https") && this.getServerPort() != 443)) {
+        if ((StringUtils.equals(this.getScheme(), "http") && this.getServerPort() != 80)
+                || (StringUtils.equals(this.getScheme(), "https") && this.getServerPort() != 443)) {
             requestUrl.append(':');
             requestUrl.append(getServerPort());
         }
@@ -854,7 +867,6 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
             }
             return new BufferedReader(new StringReader(content));
         }
-
     }
 
     @Override
@@ -863,8 +875,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     }
 
     public void addPart(Part part) {
-        if ( part == null )
-            throw new IllegalArgumentException("part may not be null");
+        if (part == null) throw new IllegalArgumentException("part may not be null");
         this.parts.add(part);
     }
 
@@ -875,10 +886,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
 
     @Override
     public Part getPart(String name) {
-        return parts.stream()
-            .filter( p -> p.getName().equals(name))
-            .findFirst()
-            .orElse(null);
+        return parts.stream().filter(p -> p.getName().equals(name)).findFirst().orElse(null);
     }
 
     @Override
@@ -893,7 +901,7 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
             }
 
             if (principal == null) {
-                //fallback to the userid
+                // fallback to the userid
                 principal = () -> userid;
             }
         }
@@ -1032,5 +1040,4 @@ public class MockSlingHttpServletRequest extends SlingAdaptable implements Sling
     public long getContentLengthLong() {
         throw new UnsupportedOperationException();
     }
-
 }

@@ -41,11 +41,9 @@ final class AdaptableUtil {
         try {
             Field adapterManagerStaticField = SlingAdaptable.class.getDeclaredField("ADAPTER_MANAGER");
             adapterManagerStaticField.setAccessible(true);
-            return (AdapterManager)adapterManagerStaticField.get(null);
-        }
-        catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex) {
+            return (AdapterManager) adapterManagerStaticField.get(null);
+        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex) {
             throw new RuntimeException("Unable to get AdapterManager instance from SlingAdaptable via reflection.", ex);
         }
     }
-
 }

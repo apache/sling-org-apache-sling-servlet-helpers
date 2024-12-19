@@ -46,5 +46,4 @@ public interface MockRequestDispatcherFactory {
      * @return Request dispatcher
      */
     RequestDispatcher getRequestDispatcher(Resource resource, RequestDispatcherOptions options);
-
 }

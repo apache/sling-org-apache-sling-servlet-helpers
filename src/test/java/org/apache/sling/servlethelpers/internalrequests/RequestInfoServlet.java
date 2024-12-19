@@ -18,13 +18,13 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
+import javax.servlet.ServletException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import javax.servlet.ServletException;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.sling.api.SlingHttpServletRequest;
@@ -34,7 +34,7 @@ import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 
 class RequestInfoServlet extends SlingAllMethodsServlet {
     private static final long serialVersionUID = 1L;
-    private final static String PREFIX = "TEST_";
+    private static final String PREFIX = "TEST_";
     private final String resolutionInfo;
 
     RequestInfoServlet(SlingHttpServletRequest resolutionRequest) {
@@ -48,42 +48,46 @@ class RequestInfoServlet extends SlingAllMethodsServlet {
         sb.append(" RPI_EXT_").append(rpi.getExtension());
         sb.append(" RPI_SEL_").append(rpi.getSelectorString());
         sb.append(" RPI_P_").append(rpi.getResourcePath());
-        if(resolutionRequest.getResource() != null) {
+        if (resolutionRequest.getResource() != null) {
             sb.append(" RT_").append(resolutionRequest.getResource().getResourceType());
             sb.append(" RST_").append(resolutionRequest.getResource().getResourceSuperType());
         }
-        if(resolutionRequest.getResource().getResourceResolver() != null) {
-            sb.append(" RRA_").append(resolutionRequest.getResource().getResourceResolver().getAttribute("testAttribute"));
+        if (resolutionRequest.getResource().getResourceResolver() != null) {
+            sb.append(" RRA_")
+                    .append(resolutionRequest
+                            .getResource()
+                            .getResourceResolver()
+                            .getAttribute("testAttribute"));
         }
 
         resolutionInfo = sb.toString();
     }
 
     @Override
-    public void service(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException,ServletException {
-        if("/EXCEPTION".equals(request.getResource().getPath())) {
+    public void service(SlingHttpServletRequest request, SlingHttpServletResponse response)
+            throws IOException, ServletException {
+        if ("/EXCEPTION".equals(request.getResource().getPath())) {
             throw new IOException("Failing as designed");
         }
-        if("/SERVLET-EXCEPTION".equals(request.getResource().getPath())) {
+        if ("/SERVLET-EXCEPTION".equals(request.getResource().getPath())) {
             throw new ServletException("Failing as designed");
         }
-        if("STATUS".equals(request.getMethod())) {
+        if ("STATUS".equals(request.getMethod())) {
             response.setContentType("farenheit");
             response.sendError(451);
             return;
         }
 
         final SortedMap<String, String> sorted = new TreeMap<>();
-        request.getParameterMap().entrySet().stream()
-            .forEach(e -> {
-                sorted.put(e.getKey(), Arrays.asList(e.getValue()).toString());
-            });
+        request.getParameterMap().entrySet().stream().forEach(e -> {
+            sorted.put(e.getKey(), Arrays.asList(e.getValue()).toString());
+        });
 
         response.getWriter().write(resolutionInfo);
         response.getWriter().write(" CT_" + request.getContentType());
         response.getWriter().write(" P_" + sorted);
         final BufferedReader body = request.getReader();
-        if(body != null) {
+        if (body != null) {
             response.getWriter().write(" B_");
             IOUtils.copy(body, response.getWriter());
         }

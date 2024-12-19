@@ -18,12 +18,12 @@
  */
 package org.apache.sling.servlethelpers;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.assertj.core.api.Assertions.assertThat;
-
 import java.io.IOException;
 
 import org.junit.Test;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class ByteArrayPartTest {
 
@@ -33,9 +33,9 @@ public class ByteArrayPartTest {
     @Test
     public void buildPart() throws IOException {
         ByteArrayPart part = ByteArrayPart.builder()
-            .withName(PART_NAME)
-            .withContent(TEST_CONTENT.getBytes(UTF_8))
-            .build();
+                .withName(PART_NAME)
+                .withContent(TEST_CONTENT.getBytes(UTF_8))
+                .build();
 
         assertThat(part).as("part").isNotNull();
         assertThat(part.getName()).as("part name").isEqualTo(PART_NAME);
@@ -54,12 +54,14 @@ public class ByteArrayPartTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void emptyNameFails() {
-        ByteArrayPart.builder().withName("").withContent(TEST_CONTENT.getBytes(UTF_8)).build();
+        ByteArrayPart.builder()
+                .withName("")
+                .withContent(TEST_CONTENT.getBytes(UTF_8))
+                .build();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void missingContentFails() {
         ByteArrayPart.builder().withName("test").build();
     }
-
 }

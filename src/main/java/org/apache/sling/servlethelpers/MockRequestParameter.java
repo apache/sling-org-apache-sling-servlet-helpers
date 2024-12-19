@@ -46,7 +46,7 @@ class MockRequestParameter implements RequestParameter {
         this.isFormField = true;
         this.filename = null;
     }
-    
+
     public MockRequestParameter(String name, byte[] content, String contentType) {
         this.name = name;
         this.value = null;
@@ -55,7 +55,7 @@ class MockRequestParameter implements RequestParameter {
         this.isFormField = false;
         this.filename = null;
     }
-    
+
     public MockRequestParameter(String name, byte[] content, String contentType, String filename) {
         this.name = name;
         this.value = null;
@@ -64,7 +64,7 @@ class MockRequestParameter implements RequestParameter {
         this.isFormField = false;
         this.filename = filename;
     }
-    
+
     void setName(String name) {
         this.name = name;
     }
@@ -84,10 +84,10 @@ class MockRequestParameter implements RequestParameter {
     public byte[] get() {
         if (this.content == null && this.value != null) {
             try {
-            	this.content = getString().getBytes(getEncoding());
+                this.content = getString().getBytes(getEncoding());
             } catch (Exception e) {
                 // UnsupportedEncodingException, IllegalArgumentException
-            	this.content = getString().getBytes();
+                this.content = getString().getBytes();
             }
         }
         return this.content;
@@ -111,7 +111,7 @@ class MockRequestParameter implements RequestParameter {
     }
 
     public String getString() {
-        return this.value == null && this.content != null? new String(this.content) : this.value;
+        return this.value == null && this.content != null ? new String(this.content) : this.value;
     }
 
     public String getString(String encoding) throws UnsupportedEncodingException {
@@ -125,5 +125,4 @@ class MockRequestParameter implements RequestParameter {
     public String toString() {
         return this.getString();
     }
-
 }

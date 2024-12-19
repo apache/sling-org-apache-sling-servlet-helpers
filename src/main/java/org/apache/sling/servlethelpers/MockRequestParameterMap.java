@@ -30,9 +30,9 @@ import org.apache.sling.api.request.RequestParameterMap;
  * Mock implementation of {@link RequestParameterMap}.
  */
 class MockRequestParameterMap implements RequestParameterMap {
-    
-    private final Map<String,RequestParameter[]> delegate = new HashMap<String, RequestParameter[]>();
-    
+
+    private final Map<String, RequestParameter[]> delegate = new HashMap<String, RequestParameter[]>();
+
     public RequestParameter getValue(String name) {
         RequestParameter[] params = getValues(name);
         return (params != null && params.length > 0) ? params[0] : null;
@@ -97,5 +97,4 @@ class MockRequestParameterMap implements RequestParameterMap {
     public int hashCode() {
         return delegate.hashCode();
     }
-
 }

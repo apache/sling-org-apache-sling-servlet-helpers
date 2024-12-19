@@ -18,13 +18,13 @@
  */
 package org.apache.sling.servlethelpers;
 
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Locale;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
+
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -268,10 +268,10 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
     public String getStatusMessage() {
         return statusMessage;
     }
-    
+
     /**
      * @deprecated As of package version 1.6, use {@link #getStatusMessage()} instead.
-     * 
+     *
      * @return status message that was set using {@link #setStatus(int, String)} or {@link #sendError(int, String)}
      */
     @Deprecated
@@ -309,5 +309,4 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
     public void setContentLengthLong(long len) {
         throw new UnsupportedOperationException();
     }
-
 }

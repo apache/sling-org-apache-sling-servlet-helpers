@@ -42,7 +42,8 @@ class ServletResolutionResource implements Resource {
         }
     }
 
-    ServletResolutionResource(ResourceResolver resourceResolver, String path, String resourceType, String resourceSuperType) {
+    ServletResolutionResource(
+            ResourceResolver resourceResolver, String path, String resourceType, String resourceSuperType) {
         this.path = path;
         this.resourceType = resourceType;
         this.resourceSuperType = resourceSuperType;

@@ -18,22 +18,13 @@
  */
 package org.apache.sling.servlethelpers;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.when;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.UUID;
-
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.CharEncoding;
 import org.apache.sling.api.adapter.AdapterManager;
@@ -46,6 +37,15 @@ import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockSlingHttpServletResponseTest {
@@ -74,11 +74,11 @@ public class MockSlingHttpServletResponseTest {
         response.setContentType("image/gif");
         assertEquals("image/gif", response.getContentType());
         assertNull(response.getCharacterEncoding());
-        
+
         response.setContentType("text/plain;charset=UTF-8");
         assertEquals("text/plain;charset=UTF-8", response.getContentType());
         assertEquals(CharEncoding.UTF_8, response.getCharacterEncoding());
-        
+
         response.setCharacterEncoding(CharEncoding.ISO_8859_1);
         assertEquals("text/plain;charset=ISO-8859-1", response.getContentType());
         assertEquals(CharEncoding.ISO_8859_1, response.getCharacterEncoding());
@@ -143,7 +143,7 @@ public class MockSlingHttpServletResponseTest {
     public void testSendErrorWithMEssage() throws Exception {
         response.sendError(HttpServletResponse.SC_NOT_FOUND, "my error message");
         assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
-        assertEquals("my error message", response.geStatusMessage());	// This version has been depracated.
+        assertEquals("my error message", response.geStatusMessage()); // This version has been depracated.
         assertEquals("my error message", response.getStatusMessage());
     }
 
@@ -181,7 +181,7 @@ public class MockSlingHttpServletResponseTest {
 
     @Test
     public void testWriteBinaryContent() throws Exception {
-        final byte[] TEST_DATA = new byte[] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+        final byte[] TEST_DATA = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05};
         response.getOutputStream().write(TEST_DATA);
         assertArrayEquals(TEST_DATA, response.getOutput());
 
@@ -235,7 +235,6 @@ public class MockSlingHttpServletResponseTest {
         assertNotNull(result1);
 
         String result2 = response.adaptTo(String.class);
-        assertNotEquals(result1,  result2);
+        assertNotEquals(result1, result2);
     }
-
 }

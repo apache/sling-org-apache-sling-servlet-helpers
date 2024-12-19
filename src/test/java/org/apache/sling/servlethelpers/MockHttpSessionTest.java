@@ -18,13 +18,13 @@
  */
 package org.apache.sling.servlethelpers;
 
+import org.junit.Before;
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
-import org.junit.Before;
-import org.junit.Test;
 
 public class MockHttpSessionTest {
 
@@ -85,7 +85,7 @@ public class MockHttpSessionTest {
         assertTrue(httpSession.isNew());
         httpSession.setNew(false);
         assertFalse(httpSession.isNew());
-   }
+    }
 
     @Test
     public void testGetLastAccessedTime() {
@@ -98,5 +98,4 @@ public class MockHttpSessionTest {
         httpSession.setMaxInactiveInterval(123);
         assertEquals(123, httpSession.getMaxInactiveInterval());
     }
-
 }
