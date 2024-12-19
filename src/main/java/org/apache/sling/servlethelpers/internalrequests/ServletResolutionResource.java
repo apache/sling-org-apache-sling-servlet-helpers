@@ -23,6 +23,8 @@ import java.util.Iterator;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceMetadata;
 import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.resource.ValueMap;
+import org.jetbrains.annotations.NotNull;
 
 /** Minimal Resource implementation for our internal requests, meant
  *  to be used only to resolve scripts and servlets.
@@ -108,5 +110,15 @@ class ServletResolutionResource implements Resource {
     @Override
     public ResourceResolver getResourceResolver() {
         return resourceResolver;
+    }
+
+    @Override
+    public boolean hasChildren() {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public @NotNull ValueMap getValueMap() {
+        throw new NotImplementedException();
     }
 }
