@@ -16,8 +16,38 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-/**
- * Mock implementation of selected Servlet-related Sling APIs.
- */
-@org.osgi.annotation.versioning.Version("1.10")
 package org.apache.sling.servlethelpers;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import jakarta.servlet.http.Cookie;
+
+/**
+ * Manages cookies for request and response.
+ * @since 1.10.0
+ */
+class JakartaCookieSupport {
+
+    private Map<String, Cookie> cookies = new LinkedHashMap<String, Cookie>();
+
+    public void addCookie(Cookie cookie) {
+        cookies.put(cookie.getName(), cookie);
+    }
+
+    public Cookie getCookie(String name) {
+        return cookies.get(name);
+    }
+
+    public Cookie[] getCookies() {
+        if (cookies.isEmpty()) {
+            return null;
+        } else {
+            return cookies.values().toArray(new Cookie[cookies.size()]);
+        }
+    }
+
+    public void reset() {
+        cookies.clear();
+    }
+}

@@ -25,6 +25,8 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
+import org.apache.sling.api.SlingServletException;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.engine.SlingRequestProcessor;
 
@@ -40,6 +42,25 @@ class MockSlingRequestProcessor implements SlingRequestProcessor {
             response.sendError(404);
         } else {
             new RequestInfoServlet((SlingHttpServletRequest) request).service(request, response);
+        }
+    }
+
+    @Override
+    public void processRequest(
+            jakarta.servlet.http.HttpServletRequest httpRequest,
+            jakarta.servlet.http.HttpServletResponse response,
+            ResourceResolver resourceResolver)
+            throws IOException {
+        final SlingJakartaHttpServletRequest request = (SlingJakartaHttpServletRequest) httpRequest;
+        if (request.getResource() != null
+                && "/NOSERVLET".equals(request.getResource().getPath())) {
+            response.sendError(404);
+        } else {
+            try {
+                new JakartaRequestInfoServlet((SlingJakartaHttpServletRequest) request).service(request, response);
+            } catch (final jakarta.servlet.ServletException e) {
+                throw new SlingServletException(e);
+            }
         }
     }
 }

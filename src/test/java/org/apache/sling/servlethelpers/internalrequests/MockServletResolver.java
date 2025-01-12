@@ -21,9 +21,12 @@ package org.apache.sling.servlethelpers.internalrequests;
 import javax.servlet.Servlet;
 
 import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.ServletResolver;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 class MockServletResolver implements ServletResolver {
 
@@ -44,6 +47,21 @@ class MockServletResolver implements ServletResolver {
 
     @Override
     public Servlet resolveServlet(ResourceResolver resolver, String scriptName) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public jakarta.servlet.@Nullable Servlet resolve(@NotNull SlingJakartaHttpServletRequest request) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public jakarta.servlet.@Nullable Servlet resolve(@NotNull Resource resource, @NotNull String scriptName) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public jakarta.servlet.@Nullable Servlet resolve(@NotNull ResourceResolver resolver, @NotNull String scriptName) {
         throw new UnsupportedOperationException();
     }
 }
