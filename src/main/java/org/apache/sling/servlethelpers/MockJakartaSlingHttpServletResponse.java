@@ -32,7 +32,7 @@ import org.apache.sling.api.adapter.SlingAdaptable;
 import org.osgi.annotation.versioning.ConsumerType;
 
 /**
- * Mock {@link SlingHttpServletResponse} implementation.
+ * Mock {@link SlingJakartaHttpServletResponse} implementation.
  */
 @ConsumerType
 public class MockJakartaSlingHttpServletResponse extends SlingAdaptable implements SlingJakartaHttpServletResponse {
@@ -257,7 +257,7 @@ public class MockJakartaSlingHttpServletResponse extends SlingAdaptable implemen
     }
 
     /**
-     * @return status message that was set using {@link #setStatus(int, String)} or {@link #sendError(int, String)}
+     * @return status message that was set using {@link #sendError(int, String)}
      */
     public String getStatusMessage() {
         return statusMessage;

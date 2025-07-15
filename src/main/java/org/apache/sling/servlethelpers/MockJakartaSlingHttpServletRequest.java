@@ -76,7 +76,7 @@ import org.osgi.annotation.versioning.ConsumerType;
 import static org.apache.sling.servlethelpers.MockJakartaSlingHttpServletResponse.CHARSET_SEPARATOR;
 
 /**
- * Mock {@link SlingHttpServletRequest} implementation.
+ * Mock {@link SlingJakartaHttpServletRequest} implementation.
  */
 @ConsumerType
 public class MockJakartaSlingHttpServletRequest extends SlingAdaptable implements SlingJakartaHttpServletRequest {
