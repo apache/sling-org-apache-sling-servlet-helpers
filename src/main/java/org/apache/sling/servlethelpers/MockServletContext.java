@@ -41,8 +41,11 @@ import org.osgi.annotation.versioning.ConsumerType;
 
 /**
  * Mock {@link ServletContext} implementation.
+ *
+ * @deprecated Use {@link MockJakartaServletContext} instead.
  */
 @ConsumerType
+@Deprecated(since = "2.0.0")
 public class MockServletContext implements ServletContext {
 
     @Override

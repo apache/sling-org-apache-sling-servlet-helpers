@@ -25,7 +25,11 @@ import org.apache.sling.api.adapter.SlingAdaptable;
 
 final class AdaptableUtil {
 
-    public static <AdapterType> AdapterType adaptToWithoutCaching(Object adaptable, Class<AdapterType> type) {
+    private AdaptableUtil() {
+        // to hide the public ctor
+    }
+
+    public static <T> T adaptToWithoutCaching(Object adaptable, Class<T> type) {
         AdapterManager adapterManager = getAdapterManager();
         if (adapterManager == null) {
             return null;

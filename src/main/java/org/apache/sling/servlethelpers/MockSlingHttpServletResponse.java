@@ -27,14 +27,18 @@ import java.util.Collection;
 import java.util.Locale;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.adapter.SlingAdaptable;
 import org.osgi.annotation.versioning.ConsumerType;
 
 /**
  * Mock {@link SlingHttpServletResponse} implementation.
+ *
+ * @deprecated Use {@link MockJakartaSlingHttpServletResponse} instead.
  */
 @ConsumerType
+@Deprecated(since = "2.0.0")
 public class MockSlingHttpServletResponse extends SlingAdaptable implements SlingHttpServletResponse {
 
     static final String CHARSET_SEPARATOR = ";charset=";
@@ -64,7 +68,7 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
     @Override
     public void setContentType(String type) {
         this.contentType = type;
-        if (StringUtils.contains(this.contentType, CHARSET_SEPARATOR)) {
+        if (Strings.CS.contains(this.contentType, CHARSET_SEPARATOR)) {
             this.characterEncoding = StringUtils.substringAfter(this.contentType, CHARSET_SEPARATOR);
             this.contentType = StringUtils.substringBefore(this.contentType, CHARSET_SEPARATOR);
         }
@@ -274,13 +278,13 @@ public class MockSlingHttpServletResponse extends SlingAdaptable implements Slin
      *
      * @return status message that was set using {@link #setStatus(int, String)} or {@link #sendError(int, String)}
      */
-    @Deprecated
+    @Deprecated(since = "1.6")
     public String geStatusMessage() {
         return this.getStatusMessage();
     }
 
     @Override
-    public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
+    public <T> T adaptTo(Class<T> type) {
         return AdaptableUtil.adaptToWithoutCaching(this, type);
     }
 

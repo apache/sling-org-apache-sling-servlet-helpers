@@ -22,7 +22,11 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/** Run the same tests as the ServletInternalRequestTest but in "sling" mode */
+/**
+ * Run the same tests as the ServletInternalRequestTest but in "sling" mode
+ * @deprecated Use {@link JakartaSlingInternalRequestTest} instead.
+ */
+@Deprecated(since = "2.0.0")
 public class SlingInternalRequestTest extends ServletInternalRequestTest {
     protected InternalRequest request(String path, String resourceType, String resourceSuperType) {
         return new SlingInternalRequest(resourceResolver, new MockSlingRequestProcessor(), path)

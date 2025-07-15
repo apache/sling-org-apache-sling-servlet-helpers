@@ -21,12 +21,12 @@ package org.apache.sling.servlethelpers;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.UUID;
 
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.sling.api.adapter.AdapterManager;
 import org.apache.sling.api.adapter.SlingAdaptable;
 import org.junit.After;
@@ -44,9 +44,14 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
+/**
+ * @deprecated Use {@link MockJakartaSlingHttpServletResponseTest} instead.
+ */
+@Deprecated(since = "2.0.0")
 @RunWith(MockitoJUnitRunner.class)
 public class MockSlingHttpServletResponseTest {
 
@@ -77,11 +82,11 @@ public class MockSlingHttpServletResponseTest {
 
         response.setContentType("text/plain;charset=UTF-8");
         assertEquals("text/plain;charset=UTF-8", response.getContentType());
-        assertEquals(CharEncoding.UTF_8, response.getCharacterEncoding());
+        assertEquals(StandardCharsets.UTF_8.name(), response.getCharacterEncoding());
 
-        response.setCharacterEncoding(CharEncoding.ISO_8859_1);
+        response.setCharacterEncoding(StandardCharsets.ISO_8859_1.name());
         assertEquals("text/plain;charset=ISO-8859-1", response.getContentType());
-        assertEquals(CharEncoding.ISO_8859_1, response.getCharacterEncoding());
+        assertEquals(StandardCharsets.ISO_8859_1.name(), response.getCharacterEncoding());
     }
 
     @Test
@@ -169,10 +174,10 @@ public class MockSlingHttpServletResponseTest {
     @Test
     public void testWriteStringContent() throws Exception {
         final String TEST_CONTENT = "Der Jodelkaiser äöüß€ ᚠᛇᚻ";
-        response.setCharacterEncoding(CharEncoding.UTF_8);
+        response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.getWriter().write(TEST_CONTENT);
 
-        assertEquals(TEST_CONTENT, new String(response.getOutput(), CharEncoding.UTF_8));
+        assertEquals(TEST_CONTENT, new String(response.getOutput(), StandardCharsets.UTF_8));
         assertEquals(TEST_CONTENT, response.getOutputAsString());
 
         response.resetBuffer();
@@ -236,5 +241,121 @@ public class MockSlingHttpServletResponseTest {
 
         String result2 = response.adaptTo(String.class);
         assertNotEquals(result1, result2);
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#setIntHeader(java.lang.String, int)}.
+     */
+    @Test
+    public void testSetIntHeader() {
+        response.setIntHeader("header1", 1);
+        assertEquals("1", response.getHeader("header1"));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#setDateHeader(java.lang.String, long)}.
+     */
+    @Test
+    public void testSetDateHeader() {
+        long now = System.currentTimeMillis();
+        response.setDateHeader("header1", now);
+        assertNotNull(response.getHeader("header1"));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#getBufferSize()}.
+     */
+    @Test
+    public void testGetBufferSize() {
+        assertEquals(8192, response.getBufferSize());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#setBufferSize(int)}.
+     */
+    @Test
+    public void testSetBufferSize() {
+        response.setBufferSize(100);
+        assertEquals(100, response.getBufferSize());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#reset()}.
+     */
+    @Test
+    public void testReset() {
+        response.getWriter().print("Hello");
+        assertEquals("Hello", response.getOutputAsString());
+        response.setHeader("header1", "value1");
+        assertEquals("value1", response.getHeader("header1"));
+
+        response.reset();
+        assertEquals("", response.getOutputAsString());
+        assertNull(response.getHeader("header1"));
+    }
+
+    @Test
+    public void testResetWhenAlreadyCommitted() {
+        response.getWriter().print("Hello");
+        response.flushBuffer();
+        assertThrows(IllegalStateException.class, () -> response.reset());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#resetBuffer()}.
+     */
+    @Test
+    public void testResetBuffer() {
+        response.getWriter().print("Hello");
+        assertEquals("Hello", response.getOutputAsString());
+
+        response.resetBuffer();
+        assertEquals("", response.getOutputAsString());
+    }
+
+    @Test
+    public void testResetBufferWhenAlreadyCommitted() {
+        response.getWriter().print("Hello");
+        response.flushBuffer();
+        assertThrows(IllegalStateException.class, () -> response.resetBuffer());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#encodeRedirectURL(java.lang.String)}.
+     */
+    @Test
+    public void testEncodeRedirectURL() {
+        assertThrows(UnsupportedOperationException.class, () -> response.encodeRedirectURL("url"));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#encodeRedirectUrl(java.lang.String)}.
+     */
+    @Test
+    public void testEncodeRedirectUrl() {
+        assertThrows(UnsupportedOperationException.class, () -> response.encodeRedirectUrl("url"));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#encodeURL(java.lang.String)}.
+     */
+    @Test
+    public void testEncodeURL() {
+        assertThrows(UnsupportedOperationException.class, () -> response.encodeURL("url"));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#encodeUrl(java.lang.String)}.
+     */
+    @Test
+    public void testEncodeUrl() {
+        assertThrows(UnsupportedOperationException.class, () -> response.encodeUrl("url"));
+    }
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#setContentLength(long)}.
+     */
+    @Test
+    public void testSetContentLengthLong() {
+        assertThrows(UnsupportedOperationException.class, () -> response.setContentLengthLong(100L));
     }
 }

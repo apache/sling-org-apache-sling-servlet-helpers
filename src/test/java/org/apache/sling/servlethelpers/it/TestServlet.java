@@ -31,7 +31,10 @@ import org.osgi.service.component.annotations.Component;
  *  depending on the environment that they expect, request attributes etc.
  *
  *  This is a test one with zero environment requirements.
+ *
+ * @deprecated Use {@link JakartaServletInternalRequestIT} instead.
  */
+@Deprecated(since = "2.0.0")
 @Component(
         service = Servlet.class,
         property = {"sling.servlet.resourceTypes=sling/servlet/default", "sling.servlet.extensions=TestServlet"})

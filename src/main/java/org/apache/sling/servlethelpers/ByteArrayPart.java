@@ -28,7 +28,9 @@ import java.util.Collection;
 /**
  * Simple Part implementation backed by an in-memory byte array
  *
+ * @deprecated Use {@link JakartaByteArrayPart} instead.
  */
+@Deprecated(since = "2.0.0")
 public class ByteArrayPart implements Part {
 
     /**

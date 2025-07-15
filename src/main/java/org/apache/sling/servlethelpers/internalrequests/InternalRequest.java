@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.OptionalInt;
+import java.util.stream.Collectors;
 
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.SlingHttpServletResponse;
@@ -48,7 +49,10 @@ import org.slf4j.MDC;
  *  internal requests, one that's very similar to the way Sling
  *  executes an HTTP request and another one that's faster by
  *  calling Servlets or Scripts directly.
+ *
+ * @deprecated Use {@link JakartaInternalRequest} instead.
  */
+@Deprecated(since = "2.0.0")
 public abstract class InternalRequest {
     protected final ResourceResolver resourceResolver;
     protected final String path;
@@ -145,7 +149,7 @@ public abstract class InternalRequest {
         if (additionalParameters != null) {
             parameters.putAll(additionalParameters);
         }
-        ;
+
         return this;
     }
 
@@ -234,9 +238,9 @@ public abstract class InternalRequest {
                 .filter(expected -> expected == actualStatus)
                 .findFirst();
         if (!found.isPresent()) {
-            final StringBuilder sb = new StringBuilder();
-            Arrays.stream(acceptableValues)
-                    .forEach(val -> sb.append(sb.length() == 0 ? "" : ",").append(val));
+            String sb = Arrays.stream(acceptableValues)
+                    .mapToObj(String::valueOf) // Convert each int to its String representation
+                    .collect(Collectors.joining(",")); // Join the strings with a comma delimiter
             throw new IOException("Unexpected response status " + actualStatus + ", expected one of '" + sb + "'");
         }
         return this;

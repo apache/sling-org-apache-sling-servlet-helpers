@@ -27,8 +27,11 @@ import org.osgi.annotation.versioning.ConsumerType;
 /**
  * Interface to create a mock {@link RequestDispatcher} when calling the getRequestDispatcher methods
  * on {@link MockSlingHttpServletRequest} instances.
+ *
+ * @deprecated Use {@link MockJakartaRequestDispatcherFactory} instead.
  */
 @ConsumerType
+@Deprecated(since = "2.0.0")
 public interface MockRequestDispatcherFactory {
 
     /**

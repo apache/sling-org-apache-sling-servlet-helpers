@@ -41,7 +41,10 @@ import org.jetbrains.annotations.NotNull;
  *  That's more efficient than the {@link SlingInternalRequest}
  *  variant, but less faithful to the way Sling processes HTTP
  *  requests.
+ *
+ * @deprecated Use {@link JakartaServletInternalRequest} instead.
  */
+@Deprecated(since = "2.0.0")
 public class ServletInternalRequest extends InternalRequest {
     protected final ServletResolver servletResolver;
     private final Resource resource;

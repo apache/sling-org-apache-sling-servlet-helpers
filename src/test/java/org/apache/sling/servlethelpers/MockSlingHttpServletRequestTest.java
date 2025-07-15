@@ -18,16 +18,26 @@
  */
 package org.apache.sling.servlethelpers;
 
+import javax.servlet.ReadListener;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletException;
+import javax.servlet.ServletInputStream;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpUpgradeHandler;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.Principal;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.LinkedHashMap;
 import java.util.Locale;
@@ -36,7 +46,6 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.CharEncoding;
 import org.apache.sling.api.adapter.AdapterManager;
 import org.apache.sling.api.adapter.SlingAdaptable;
 import org.apache.sling.api.request.RequestDispatcherOptions;
@@ -63,11 +72,16 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+/**
+ * @deprecated Use {@link MockJakartaSlingHttpServletRequestTest} instead.
+ */
+@Deprecated(since = "2.0.0")
 @RunWith(MockitoJUnitRunner.class)
 public class MockSlingHttpServletRequestTest {
 
@@ -225,7 +239,7 @@ public class MockSlingHttpServletRequestTest {
         assertFalse(request.getParameterNames().hasMoreElements());
 
         request.setQueryString(
-                "param1=123&param2=" + URLEncoder.encode("äöüß€!:!", CharEncoding.UTF_8) + "&param3=a&param3=b");
+                "param1=123&param2=" + URLEncoder.encode("äöüß€!:!", StandardCharsets.UTF_8) + "&param3=a&param3=b");
 
         assertNotNull(request.getQueryString());
         assertEquals(3, request.getParameterMap().size());
@@ -335,7 +349,7 @@ public class MockSlingHttpServletRequestTest {
     @Test
     public void testRequestParameter() throws Exception {
         request.setQueryString(
-                "param1=123&param2=" + URLEncoder.encode("äöüß€!:!", CharEncoding.UTF_8) + "&param3=a&param3=b");
+                "param1=123&param2=" + URLEncoder.encode("äöüß€!:!", StandardCharsets.UTF_8) + "&param3=a&param3=b");
 
         assertEquals(3, request.getRequestParameterMap().size());
         assertEquals(4, request.getRequestParameterList().size());
@@ -401,11 +415,11 @@ public class MockSlingHttpServletRequestTest {
 
         request.setContentType("text/plain;charset=UTF-8");
         assertEquals("text/plain;charset=UTF-8", request.getContentType());
-        assertEquals(CharEncoding.UTF_8, request.getCharacterEncoding());
+        assertEquals(StandardCharsets.UTF_8.name(), request.getCharacterEncoding());
 
-        request.setCharacterEncoding(CharEncoding.ISO_8859_1);
+        request.setCharacterEncoding(StandardCharsets.ISO_8859_1.name());
         assertEquals("text/plain;charset=ISO-8859-1", request.getContentType());
-        assertEquals(CharEncoding.ISO_8859_1, request.getCharacterEncoding());
+        assertEquals(StandardCharsets.ISO_8859_1.name(), request.getCharacterEncoding());
     }
 
     @Test
@@ -453,6 +467,25 @@ public class MockSlingHttpServletRequestTest {
             thrown = true;
         }
         assertTrue(thrown);
+    }
+
+    @Test
+    public void testGetInputStreamIsReady() {
+        ServletInputStream inputStream = request.getInputStream();
+        assertTrue(inputStream.isReady());
+    }
+
+    @Test
+    public void testGetInputStreamIsFinished() {
+        ServletInputStream inputStream = request.getInputStream();
+        assertThrows(UnsupportedOperationException.class, () -> inputStream.isFinished());
+    }
+
+    @Test
+    public void testGetInputStreamSetReadListener() {
+        ServletInputStream inputStream = request.getInputStream();
+        ReadListener mockReadListener = Mockito.mock(ReadListener.class);
+        assertThrows(UnsupportedOperationException.class, () -> inputStream.setReadListener(mockReadListener));
     }
 
     @Test
@@ -595,6 +628,17 @@ public class MockSlingHttpServletRequestTest {
     }
 
     @Test
+    public void testGetUserPrincipalWithNullResourceResolver() {
+        request = new MockSlingHttpServletRequest(null);
+        assertNull(null, request.getUserPrincipal());
+
+        request.setRemoteUser("admin");
+        Principal userPrincipal = request.getUserPrincipal();
+        assertNotNull(userPrincipal);
+        assertEquals("admin", userPrincipal.getName());
+    }
+
+    @Test
     public void testGetUserPrincipalFromResourceResolver() {
         Mockito.when(resourceResolver.adaptTo(Principal.class)).thenReturn(() -> "rruser");
         // always returns null for anonymous user
@@ -605,5 +649,447 @@ public class MockSlingHttpServletRequestTest {
         Principal userPrincipal = request.getUserPrincipal();
         assertNotNull(userPrincipal);
         assertEquals("rruser", userPrincipal.getName());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getPathTranslated()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetPathTranslated() {
+        request.getPathTranslated();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getRequestedSessionId()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetRequestedSessionId() {
+        request.getRequestedSessionId();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#isRequestedSessionIdFromCookie()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testIsRequestedSessionIdFromCookie() {
+        request.isRequestedSessionIdFromCookie();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#isRequestedSessionIdFromURL()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testIsRequestedSessionIdFromURL() {
+        request.isRequestedSessionIdFromURL();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#isRequestedSessionIdFromUrl()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testIsRequestedSessionIdFromUrl() {
+        request.isRequestedSessionIdFromUrl();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#isRequestedSessionIdValid()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testIsRequestedSessionIdValid() {
+        request.isRequestedSessionIdValid();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#isUserInRole(java.lang.String)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testIsUserInRole() {
+        request.isUserInRole("role1");
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getLocalAddr()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetLocalAddr() {
+        request.getLocalAddr();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getLocalName()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetLocalName() {
+        request.getLocalName();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getLocalPort()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetLocalPort() {
+        request.getLocalPort();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getProtocol()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetProtocol() {
+        request.getProtocol();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getRealPath()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetRealPath() {
+        request.getRealPath("/path1");
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#authenticate(jakarta.servlet.http.HttpServletResponse)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testAuthenticate() {
+        request.authenticate(Mockito.mock(HttpServletResponse.class));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#login(java.lang.String, java.lang.String)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testLogin() {
+        request.login("user1", "pwd1");
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#logout()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testLogout() throws ServletException {
+        request.logout();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getServletContext()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetServletContext() {
+        request.getServletContext();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#startAsync()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testStartAsync() {
+        request.startAsync();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#startAsync(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testStartAsyncServletRequestServletResponse() {
+        request.startAsync(Mockito.mock(ServletRequest.class), Mockito.mock(ServletResponse.class));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#isAsyncStarted()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testIsAsyncStarted() {
+        request.isAsyncStarted();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#isAsyncSupported()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testIsAsyncSupported() {
+        request.isAsyncSupported();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getAsyncContext()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetAsyncContext() {
+        request.getAsyncContext();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getDispatcherType()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetDispatcherType() {
+        request.getDispatcherType();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#changeSessionId()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testChangeSessionId() {
+        request.changeSessionId();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#upgrade(java.lang.Class)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testUpgrade() throws IOException, ServletException {
+        request.upgrade(HttpUpgradeHandler.class);
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getContentLengthLong()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetContentLengthLong() {
+        request.getContentLengthLong();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getAuthType()}.
+     */
+    @Test
+    public void testGetAuthType() {
+        assertNull(request.getAuthType());
+        request.setAuthType("FORMS1");
+        assertEquals("FORMS1", request.getAuthType());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#setAuthType(java.lang.String)}.
+     */
+    @Test
+    public void testSetAuthType() {
+        request.setAuthType("FORMS2");
+        assertEquals("FORMS2", request.getAuthType());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#setIntHeader(java.lang.String, int)}.
+     */
+    @Test
+    public void testSetIntHeader() {
+        request.setIntHeader("header1", 1);
+        assertEquals(1, request.getIntHeader("header1"));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#setDateHeader(java.lang.String, long)}.
+     */
+    @Test
+    public void testSetDateHeader() {
+        long now = System.currentTimeMillis();
+        request.setDateHeader("header1", now);
+        assertEquals(new Date(now).toString(), new Date(request.getDateHeader("header1")).toString());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getResponseContentType()}.
+     */
+    @Test
+    public void testGetResponseContentType() {
+        request.setResponseContentType("text/html");
+        assertEquals("text/html", request.getResponseContentType());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#setResponseContentType(java.lang.String)}.
+     */
+    @Test
+    public void testSetResponseContentType() {
+        request.setResponseContentType("text/html");
+        assertEquals("text/html", request.getResponseContentType());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getResponseContentTypes()}.
+     */
+    @Test
+    public void testGetResponseContentTypes() {
+        request.setResponseContentType("text/html");
+        Enumeration<String> responseContentTypes = request.getResponseContentTypes();
+        assertTrue(responseContentTypes.hasMoreElements());
+        assertEquals("text/html", responseContentTypes.nextElement());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getSession(boolean)}.
+     */
+    @Test
+    public void testGetSessionBoolean() {
+        assertNull(request.getSession(false));
+        HttpSession session = request.getSession(true);
+        assertNotNull(session);
+        HttpSession session2 = request.getSession(true);
+        assertSame(session2, session);
+        HttpSession session3 = request.getSession(false);
+        assertSame(session3, session);
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getParameter(java.lang.String)}.
+     */
+    @Test
+    public void testGetParameter() {
+        assertNull(request.getParameter("param1"));
+        request.setParameterMap(Map.of("param1", new String[0]));
+        assertNull(request.getParameter("param1"));
+        request.setParameterMap(Map.of("param1", new String[] {"value1", "value2"}));
+        assertEquals("value1", request.getParameter("param1"));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getParameterValues(java.lang.String)}.
+     */
+    @Test
+    public void testGetParameterValues() {
+        assertNull(request.getParameterValues("param1"));
+        request.setParameterMap(Map.of("param1", new String[0]));
+        assertArrayEquals(new String[0], request.getParameterValues("param1"));
+        request.setParameterMap(Map.of("param1", new String[] {"value1", "value2"}));
+        assertArrayEquals(new String[] {"value1", "value2"}, request.getParameterValues("param1"));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getRequestDispatcher(java.lang.String)}.
+     */
+    @Test
+    public void testGetRequestDispatcherString() {
+        String path = "/path1";
+        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(path));
+        MockRequestDispatcherFactory mockFactory = Mockito.mock(MockRequestDispatcherFactory.class);
+        RequestDispatcher mockDispatcher = Mockito.mock(RequestDispatcher.class);
+        Mockito.when(mockFactory.getRequestDispatcher(path, null)).thenReturn(mockDispatcher);
+        request.setRequestDispatcherFactory(mockFactory);
+        assertSame(mockDispatcher, request.getRequestDispatcher(path));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getRequestDispatcher(java.lang.String, org.apache.sling.api.request.RequestDispatcherOptions)}.
+     */
+    @Test
+    public void testGetRequestDispatcherStringRequestDispatcherOptions() {
+        String path = "/path1";
+        RequestDispatcherOptions options = new RequestDispatcherOptions();
+        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(path, options));
+        MockRequestDispatcherFactory mockFactory = Mockito.mock(MockRequestDispatcherFactory.class);
+        RequestDispatcher mockDispatcher = Mockito.mock(RequestDispatcher.class);
+        Mockito.when(mockFactory.getRequestDispatcher(path, options)).thenReturn(mockDispatcher);
+        request.setRequestDispatcherFactory(mockFactory);
+        assertSame(mockDispatcher, request.getRequestDispatcher(path, options));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getRequestDispatcher(org.apache.sling.api.resource.Resource)}.
+     */
+    @Test
+    public void testGetRequestDispatcherResource() {
+        Resource resource = Mockito.mock(Resource.class);
+        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(resource));
+        MockRequestDispatcherFactory mockFactory = Mockito.mock(MockRequestDispatcherFactory.class);
+        RequestDispatcher mockDispatcher = Mockito.mock(RequestDispatcher.class);
+        Mockito.when(mockFactory.getRequestDispatcher(resource, null)).thenReturn(mockDispatcher);
+        request.setRequestDispatcherFactory(mockFactory);
+        assertSame(mockDispatcher, request.getRequestDispatcher(resource));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getRequestDispatcher(org.apache.sling.api.resource.Resource, org.apache.sling.api.request.RequestDispatcherOptions)}.
+     */
+    @Test
+    public void testGetRequestDispatcherResourceRequestDispatcherOptions() {
+        Resource resource = Mockito.mock(Resource.class);
+        RequestDispatcherOptions options = new RequestDispatcherOptions();
+        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(resource, options));
+        MockRequestDispatcherFactory mockFactory = Mockito.mock(MockRequestDispatcherFactory.class);
+        RequestDispatcher mockDispatcher = Mockito.mock(RequestDispatcher.class);
+        Mockito.when(mockFactory.getRequestDispatcher(resource, options)).thenReturn(mockDispatcher);
+        request.setRequestDispatcherFactory(mockFactory);
+        assertSame(mockDispatcher, request.getRequestDispatcher(resource, options));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getReader()}.
+     */
+    @Test
+    public void testGetReader() {
+        // null content
+        BufferedReader reader = request.getReader();
+        assertNotNull(reader);
+
+        // non-null content + null characterEncoding
+        request.setContent("hello".getBytes());
+        BufferedReader reader2 = request.getReader();
+        assertNotNull(reader2);
+
+        // non-null content + non-null characterEncoding
+        request.setContent("hello".getBytes());
+        request.setCharacterEncoding(StandardCharsets.UTF_8.name());
+        BufferedReader reader3 = request.getReader();
+        assertNotNull(reader3);
+
+        // non-null content + invalid characterEncoding
+        request.setContent("hello".getBytes());
+        request.setCharacterEncoding("invalid");
+        BufferedReader reader4 = request.getReader();
+        assertNotNull(reader4);
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#setParameterMap(java.util.Map)}.
+     */
+    @Test
+    public void testSetParameterMap() {
+        request.setParameterMap(Map.of(
+                "key1", new String[] {"value1", "value2"},
+                "key2",
+                        new MockRequestParameter[] {
+                            new MockRequestParameter("key2", "value3"), new MockRequestParameter("key2", "value4")
+                        },
+                "key3", "value5"));
+        assertEquals("value1", request.getParameter("key1"));
+        assertEquals("value3", request.getParameter("key2"));
+        assertEquals("value5", request.getParameter("key3"));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getRequestParameter(java.lang.String)}.
+     */
+    @Test
+    public void testGetRequestParameter() {
+        assertNull(request.getRequestParameter("key1"));
+        request.setParameterMap(Map.of("key1", new String[0]));
+        assertNull(request.getRequestParameter("key1"));
+        request.setParameterMap(Map.of("key1", new String[] {"value1"}));
+        assertEquals("value1", request.getRequestParameter("key1").getString());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#setQueryString(java.lang.String)}.
+     */
+    @Test
+    public void testSetQueryString() {
+        request.setQueryString("key1=value1&key1=value2&key2=value3&&key3&key4=");
+        assertArrayEquals(new String[] {"value1", "value2"}, request.getParameterValues("key1"));
+        assertEquals("value3", request.getParameter("key2"));
+        assertNull(request.getParameter("key3"));
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getRequestURI()}.
+     */
+    @Test
+    public void testGetRequestURI() {
+        assertEquals("/", request.getRequestURI());
+        request.setPathInfo("/pathinfo");
+        assertEquals("/pathinfo", request.getRequestURI());
+        request.setServletPath("/servletpath");
+        assertEquals("/servletpath/pathinfo", request.getRequestURI());
     }
 }

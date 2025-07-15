@@ -40,7 +40,7 @@ public class MockRequestPathInfo implements RequestPathInfo {
     /**
      * @deprecated Use @link {@link #MockRequestPathInfo(ResourceResolver)} instead.
      */
-    @Deprecated
+    @Deprecated(since = "1.1.0")
     public MockRequestPathInfo() {
         this(null);
     }

@@ -24,7 +24,13 @@ import org.junit.Test;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
+/**
+ * @deprecated Use {@link JakartaByteArrayPartTest} instead.
+ */
+@Deprecated(since = "2.0.0")
 public class ByteArrayPartTest {
 
     private static final String TEST_CONTENT = "test input";
@@ -63,5 +69,119 @@ public class ByteArrayPartTest {
     @Test(expected = IllegalArgumentException.class)
     public void missingContentFails() {
         ByteArrayPart.builder().withName("test").build();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getName()}.
+     */
+    @Test
+    public void testGetName() {
+        assertEquals(
+                "part",
+                ByteArrayPart.builder()
+                        .withName("part")
+                        .withContent(TEST_CONTENT.getBytes(UTF_8))
+                        .build()
+                        .getName());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getContentType()}.
+     */
+    @Test
+    public void testGetContentType() {
+        assertNull(ByteArrayPart.builder()
+                .withName("part")
+                .withContent(TEST_CONTENT.getBytes(UTF_8))
+                .build()
+                .getContentType());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getSubmittedFileName()}.
+     */
+    @Test
+    public void testGetSubmittedFileName() {
+        assertEquals(
+                "part",
+                ByteArrayPart.builder()
+                        .withName("part")
+                        .withContent(TEST_CONTENT.getBytes(UTF_8))
+                        .build()
+                        .getSubmittedFileName());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getSize()}.
+     */
+    @Test
+    public void testGetSize() {
+        assertEquals(
+                10,
+                ByteArrayPart.builder()
+                        .withName("part")
+                        .withContent(TEST_CONTENT.getBytes(UTF_8))
+                        .build()
+                        .getSize());
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#write(java.lang.String)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testWrite() throws IOException {
+        ByteArrayPart.builder()
+                .withName("part")
+                .withContent(TEST_CONTENT.getBytes(UTF_8))
+                .build()
+                .write("filename");
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#delete()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testDelete() throws IOException {
+        ByteArrayPart.builder()
+                .withName("part")
+                .withContent(TEST_CONTENT.getBytes(UTF_8))
+                .build()
+                .delete();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getHeader(java.lang.String)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetHeader() {
+        ByteArrayPart.builder()
+                .withName("part")
+                .withContent(TEST_CONTENT.getBytes(UTF_8))
+                .build()
+                .getHeader("name1");
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getHeaders(java.lang.String)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetHeaders() {
+        ByteArrayPart.builder()
+                .withName("part")
+                .withContent(TEST_CONTENT.getBytes(UTF_8))
+                .build()
+                .getHeaders("name");
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getHeaderNames()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetHeaderNames() {
+        ByteArrayPart.builder()
+                .withName("part")
+                .withContent(TEST_CONTENT.getBytes(UTF_8))
+                .build()
+                .getHeaderNames();
     }
 }

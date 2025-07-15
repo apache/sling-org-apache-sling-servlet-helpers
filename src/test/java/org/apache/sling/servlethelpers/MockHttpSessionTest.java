@@ -20,12 +20,17 @@ package org.apache.sling.servlethelpers;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Test.None;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+/**
+ * @deprecated Use {@link MockJakartaHttpSessionTest} instead.
+ */
+@Deprecated(since = "2.0.0")
 public class MockHttpSessionTest {
 
     private MockHttpSession httpSession;
@@ -45,9 +50,10 @@ public class MockHttpSessionTest {
         assertNotNull(httpSession.getId());
     }
 
-    @Test
+    @Test(expected = None.class)
     public void testCreationTime() {
-        assertNotNull(httpSession.getCreationTime());
+        // just make sure we get any value without an exception
+        httpSession.getCreationTime();
     }
 
     @Test
@@ -87,9 +93,10 @@ public class MockHttpSessionTest {
         assertFalse(httpSession.isNew());
     }
 
-    @Test
+    @Test(expected = None.class)
     public void testGetLastAccessedTime() {
-        assertNotNull(httpSession.getLastAccessedTime());
+        // just make sure we get any value without an exception
+        httpSession.getLastAccessedTime();
     }
 
     @Test
@@ -97,5 +104,10 @@ public class MockHttpSessionTest {
         assertTrue(httpSession.getMaxInactiveInterval() > 0);
         httpSession.setMaxInactiveInterval(123);
         assertEquals(123, httpSession.getMaxInactiveInterval());
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetSessionContext() {
+        httpSession.getSessionContext();
     }
 }

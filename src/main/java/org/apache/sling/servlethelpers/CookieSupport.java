@@ -25,10 +25,13 @@ import java.util.Map;
 
 /**
  * Manages cookies for request and response.
+ *
+ * @deprecated Use {@link JakartaCookieSupport} instead.
  */
+@Deprecated(since = "2.0.0")
 class CookieSupport {
 
-    private Map<String, Cookie> cookies = new LinkedHashMap<String, Cookie>();
+    private Map<String, Cookie> cookies = new LinkedHashMap<>();
 
     public void addCookie(Cookie cookie) {
         cookies.put(cookie.getName(), cookie);
@@ -40,7 +43,7 @@ class CookieSupport {
 
     public Cookie[] getCookies() {
         if (cookies.isEmpty()) {
-            return null;
+            return null; // NOSONAR
         } else {
             return cookies.values().toArray(new Cookie[cookies.size()]);
         }

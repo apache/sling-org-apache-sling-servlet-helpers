@@ -26,13 +26,15 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
-
-import org.apache.commons.lang3.CharEncoding;
-import org.apache.commons.lang3.StringUtils;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 /**
  * Manage response body content.
+ *
+ * @deprecated Use {@link JakartaResponseBodySupport} instead.
  */
+@Deprecated(since = "2.0.0")
 class ResponseBodySupport {
 
     private ByteArrayOutputStream outputStream;
@@ -105,6 +107,6 @@ class ResponseBodySupport {
     }
 
     private String defaultCharset(String charset) {
-        return StringUtils.defaultString(charset, CharEncoding.UTF_8);
+        return Objects.toString(charset, StandardCharsets.UTF_8.name());
     }
 }

@@ -31,12 +31,15 @@ import org.osgi.annotation.versioning.ConsumerType;
 
 /**
  * Mock {@link HttpSession} implementation.
+ *
+ * @deprecated Use {@link MockJakartaHttpSession} instead.
  */
 @ConsumerType
+@Deprecated(since = "2.0.0")
 public class MockHttpSession implements HttpSession {
 
     private final ServletContext servletContext;
-    private final Map<String, Object> attributeMap = new HashMap<String, Object>();
+    private final Map<String, Object> attributeMap = new HashMap<>();
     private final String sessionID = UUID.randomUUID().toString();
     private final long creationTime = System.currentTimeMillis();
     private boolean invalidated = false;
@@ -107,8 +110,7 @@ public class MockHttpSession implements HttpSession {
 
     @Override
     public void removeValue(final String name) {
-        checkInvalidatedState();
-        this.attributeMap.remove(name);
+        removeAttribute(name);
     }
 
     @Override

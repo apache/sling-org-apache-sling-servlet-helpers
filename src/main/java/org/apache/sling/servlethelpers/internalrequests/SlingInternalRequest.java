@@ -42,7 +42,10 @@ import org.jetbrains.annotations.NotNull;
  *  Resource is available, as it builds its own Resource
  *  based on the supplied parameters to drive the
  *  Servlet/Script resolution mechanism.
+ *
+ * @deprecated Use {@link JakartaInternalRequest} instead.
  */
+@Deprecated(since = "2.0.0")
 public class SlingInternalRequest extends InternalRequest {
     private final SlingRequestProcessor processor;
     private String resourceType;

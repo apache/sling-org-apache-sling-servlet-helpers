@@ -32,6 +32,10 @@ import org.apache.sling.api.SlingHttpServletResponse;
 import org.apache.sling.api.request.RequestPathInfo;
 import org.apache.sling.api.servlets.SlingAllMethodsServlet;
 
+/**
+ * @deprecated Use {@link JakartaRequestInfoServlet} instead.
+ */
+@Deprecated(since = "2.0.0")
 class RequestInfoServlet extends SlingAllMethodsServlet {
     private static final long serialVersionUID = 1L;
     private static final String PREFIX = "TEST_";

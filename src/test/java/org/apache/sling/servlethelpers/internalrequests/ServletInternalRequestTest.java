@@ -34,6 +34,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+/**
+ * @deprecated Use {@link JakartaServletInternalRequestTest} instead.
+ */
+@Deprecated(since = "2.0.0")
 public class ServletInternalRequestTest {
     protected ResourceResolver resourceResolver;
 
@@ -249,5 +253,10 @@ public class ServletInternalRequestTest {
         InternalRequest call =
                 request("/response").execute().checkStatus(HttpServletResponse.SC_OK, HttpServletResponse.SC_NOT_FOUND);
         assertEquals("Unexpected Status Code", HttpServletResponse.SC_OK, call.getStatus());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testCheckNull() {
+        request(null);
     }
 }

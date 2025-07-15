@@ -87,4 +87,11 @@ public class MockRequestPathInfoTest {
 
         assertSame(resource, this.requestPathInfo.getSuffixResource());
     }
+
+    @SuppressWarnings("deprecation")
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetSuffixResourceWithNullResolver() {
+        this.requestPathInfo = new MockRequestPathInfo();
+        this.requestPathInfo.getSuffixResource();
+    }
 }
