@@ -19,5 +19,5 @@
 /**
  * Mock implementation of selected Servlet-related Sling APIs.
  */
-@org.osgi.annotation.versioning.Version("1.10")
+@org.osgi.annotation.versioning.Version("2.0")
 package org.apache.sling.servlethelpers;

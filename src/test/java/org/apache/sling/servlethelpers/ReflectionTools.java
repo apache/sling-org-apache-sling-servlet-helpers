@@ -19,6 +19,7 @@
 package org.apache.sling.servlethelpers;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import static org.junit.Assert.fail;
 
@@ -34,12 +35,30 @@ public class ReflectionTools {
     public static void setFieldWithReflection(Object obj, String fieldName, Object value) {
         try {
             Class<?> clazz = obj.getClass();
-            Field field = clazz.getDeclaredField(fieldName);
-            if (!field.canAccess(obj)) {
-                field.setAccessible(true);
+            Field field = null;
+            do {
+                try { // NOSONAR
+                    field = clazz.getDeclaredField(fieldName);
+                } catch (NoSuchFieldException nsfe) {
+                    clazz = clazz.getSuperclass();
+                }
+            } while (field == null && clazz != null);
+            if (field != null) {
+                if (Modifier.isStatic(field.getModifiers())) {
+                    if (!field.canAccess(null)) {
+                        field.setAccessible(true);
+                    }
+                    field.set(null, value);
+                } else {
+                    if (!field.canAccess(obj)) {
+                        field.setAccessible(true);
+                    }
+                    field.set(obj, value);
+                }
+            } else {
+                fail("Failed to find field via reflection: " + fieldName);
             }
-            field.set(obj, value);
-        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException | SecurityException e) {
+        } catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
             fail("Failed to set field via reflection: " + e.getMessage());
         }
     }

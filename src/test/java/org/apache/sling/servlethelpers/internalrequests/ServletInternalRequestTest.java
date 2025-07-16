@@ -28,6 +28,7 @@ import java.util.Map;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Test.None;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
@@ -100,7 +101,7 @@ public class ServletInternalRequestTest {
                         .getResponseAsString());
     }
 
-    @Test
+    @Test(expected = None.class)
     public void nullBody() throws IOException {
         request("/nullbody").withRequestMethod("post").withBody(null).execute();
     }

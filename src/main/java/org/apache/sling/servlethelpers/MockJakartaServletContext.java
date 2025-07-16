@@ -18,9 +18,6 @@
  */
 package org.apache.sling.servlethelpers;
 
-import java.io.InputStream;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.EventListener;
 import java.util.Map;
 import java.util.Set;
@@ -42,52 +39,10 @@ import org.osgi.annotation.versioning.ConsumerType;
  * Mock {@link ServletContext} implementation.
  */
 @ConsumerType
-public class MockJakartaServletContext implements ServletContext {
-
-    @Override
-    public String getMimeType(final String file) {
-        return "application/octet-stream";
-    }
-
-    // --- unsupported operations ---
-
-    @Override
-    public Object getAttribute(final String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Enumeration<String> getAttributeNames() {
-        throw new UnsupportedOperationException();
-    }
+public class MockJakartaServletContext extends BaseMockServletContext implements ServletContext {
 
     @Override
     public ServletContext getContext(final String uriPath) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getContextPath() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getInitParameter(final String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Enumeration<String> getInitParameterNames() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int getMajorVersion() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int getMinorVersion() {
         throw new UnsupportedOperationException();
     }
 
@@ -97,72 +52,7 @@ public class MockJakartaServletContext implements ServletContext {
     }
 
     @Override
-    public String getRealPath(final String pPath) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public RequestDispatcher getRequestDispatcher(final String path) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public URL getResource(final String pPath) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InputStream getResourceAsStream(final String path) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Set<String> getResourcePaths(final String path) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getServerInfo() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getServletContextName() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void log(final String msg) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void log(final String msg, final Throwable throwable) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void removeAttribute(final String name) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setAttribute(final String name, final Object object) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int getEffectiveMajorVersion() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int getEffectiveMinorVersion() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean setInitParameter(final String name, final String value) {
         throw new UnsupportedOperationException();
     }
 
@@ -247,11 +137,6 @@ public class MockJakartaServletContext implements ServletContext {
     }
 
     @Override
-    public void addListener(final String pClassName) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public <T extends EventListener> void addListener(final T listener) {
         throw new UnsupportedOperationException();
     }
@@ -272,52 +157,7 @@ public class MockJakartaServletContext implements ServletContext {
     }
 
     @Override
-    public ClassLoader getClassLoader() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void declareRoles(final String... roleNames) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getVirtualServerName() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public Dynamic addJspFile(String servletName, String jspFile) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int getSessionTimeout() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setSessionTimeout(int sessionTimeout) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getRequestCharacterEncoding() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setRequestCharacterEncoding(String encoding) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String getResponseCharacterEncoding() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setResponseCharacterEncoding(String encoding) {
         throw new UnsupportedOperationException();
     }
 }
