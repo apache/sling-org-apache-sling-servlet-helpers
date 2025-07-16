@@ -41,23 +41,11 @@ public class ByteArrayPart extends BaseByteArrayPart implements Part {
         super(content, name);
     }
 
-    public static class Builder {
-
-        private byte[] content;
-        private String name;
-
-        public Builder withContent(byte[] content) {
-            this.content = content;
-            return this;
-        }
-
-        public Builder withName(String name) {
-            this.name = name;
-            return this;
-        }
+    public static class Builder extends BaseBuilder<ByteArrayPart> {
 
         public ByteArrayPart build() {
             return new ByteArrayPart(content, name);
         }
+
     }
 }

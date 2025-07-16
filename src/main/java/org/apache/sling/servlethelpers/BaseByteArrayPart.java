@@ -79,4 +79,22 @@ public abstract class BaseByteArrayPart {
     public Collection<String> getHeaderNames() {
         throw new UnsupportedOperationException();
     }
+
+    public abstract static class BaseBuilder<T> {
+
+        protected byte[] content;
+        protected String name;
+
+        public BaseBuilder<T> withContent(byte[] content) {
+            this.content = content;
+            return this;
+        }
+
+        public BaseBuilder<T> withName(String name) {
+            this.name = name;
+            return this;
+        }
+
+        public abstract T build();
+    }
 }
