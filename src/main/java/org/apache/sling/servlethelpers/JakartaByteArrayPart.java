@@ -44,6 +44,5 @@ public class JakartaByteArrayPart extends BaseByteArrayPart implements Part {
         public JakartaByteArrayPart build() {
             return new JakartaByteArrayPart(content, name);
         }
-
     }
 }

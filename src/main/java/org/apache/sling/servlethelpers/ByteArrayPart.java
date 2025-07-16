@@ -46,6 +46,5 @@ public class ByteArrayPart extends BaseByteArrayPart implements Part {
         public ByteArrayPart build() {
             return new ByteArrayPart(content, name);
         }
-
     }
 }
