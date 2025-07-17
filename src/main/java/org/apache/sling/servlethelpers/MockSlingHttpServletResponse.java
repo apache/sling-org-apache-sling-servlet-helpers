@@ -30,7 +30,7 @@ import org.osgi.annotation.versioning.ConsumerType;
 /**
  * Mock {@link SlingHttpServletResponse} implementation.
  *
- * @deprecated Use {@link MockJakartaSlingHttpServletResponse} instead.
+ * @deprecated Use {@link MockSlingJakartaHttpServletResponse} instead.
  */
 @ConsumerType
 @Deprecated(since = "2.0.0")

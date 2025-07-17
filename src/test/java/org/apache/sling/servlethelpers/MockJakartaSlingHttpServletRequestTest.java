@@ -90,11 +90,11 @@ public class MockJakartaSlingHttpServletRequestTest {
     @Mock
     private AdapterManager adapterManager;
 
-    private MockJakartaSlingHttpServletRequest request;
+    private MockSlingJakartaHttpServletRequest request;
 
     @Before
     public void setUp() throws Exception {
-        request = new MockJakartaSlingHttpServletRequest(resourceResolver);
+        request = new MockSlingJakartaHttpServletRequest(resourceResolver);
         SlingAdaptable.setAdapterManager(adapterManager);
     }
 
@@ -625,7 +625,7 @@ public class MockJakartaSlingHttpServletRequestTest {
 
     @Test
     public void testGetUserPrincipalWithNullResourceResolver() {
-        request = new MockJakartaSlingHttpServletRequest(null);
+        request = new MockSlingJakartaHttpServletRequest(null);
         assertNull(null, request.getUserPrincipal());
 
         request.setRemoteUser("admin");
@@ -648,7 +648,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getPathTranslated()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getPathTranslated()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetPathTranslated() {
@@ -656,7 +656,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getRequestedSessionId()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getRequestedSessionId()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetRequestedSessionId() {
@@ -664,7 +664,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#isRequestedSessionIdFromCookie()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#isRequestedSessionIdFromCookie()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testIsRequestedSessionIdFromCookie() {
@@ -672,7 +672,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#isRequestedSessionIdFromURL()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#isRequestedSessionIdFromURL()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testIsRequestedSessionIdFromURL() {
@@ -680,7 +680,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#isRequestedSessionIdValid()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#isRequestedSessionIdValid()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testIsRequestedSessionIdValid() {
@@ -688,7 +688,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#isUserInRole(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#isUserInRole(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testIsUserInRole() {
@@ -696,7 +696,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getLocalAddr()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getLocalAddr()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetLocalAddr() {
@@ -704,7 +704,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getLocalName()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getLocalName()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetLocalName() {
@@ -712,7 +712,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getLocalPort()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getLocalPort()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetLocalPort() {
@@ -720,7 +720,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getProtocol()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getProtocol()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetProtocol() {
@@ -728,7 +728,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#authenticate(jakarta.servlet.http.HttpServletResponse)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#authenticate(jakarta.servlet.http.HttpServletResponse)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAuthenticate() {
@@ -736,7 +736,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#login(java.lang.String, java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#login(java.lang.String, java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testLogin() {
@@ -744,7 +744,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#logout()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#logout()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testLogout() throws ServletException {
@@ -752,7 +752,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getServletContext()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getServletContext()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetServletContext() {
@@ -760,7 +760,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#startAsync()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#startAsync()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testStartAsync() {
@@ -768,7 +768,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#startAsync(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#startAsync(jakarta.servlet.ServletRequest, jakarta.servlet.ServletResponse)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testStartAsyncServletRequestServletResponse() {
@@ -776,7 +776,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#isAsyncStarted()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#isAsyncStarted()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testIsAsyncStarted() {
@@ -784,7 +784,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#isAsyncSupported()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#isAsyncSupported()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testIsAsyncSupported() {
@@ -792,7 +792,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getAsyncContext()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getAsyncContext()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetAsyncContext() {
@@ -800,7 +800,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getDispatcherType()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getDispatcherType()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetDispatcherType() {
@@ -808,7 +808,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#changeSessionId()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#changeSessionId()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testChangeSessionId() {
@@ -816,7 +816,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#upgrade(java.lang.Class)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#upgrade(java.lang.Class)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testUpgrade() throws IOException, ServletException {
@@ -824,7 +824,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getContentLengthLong()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getContentLengthLong()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetContentLengthLong() {
@@ -832,7 +832,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getRequestId()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getRequestId()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetRequestId() {
@@ -840,7 +840,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getProtocolRequestId()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getProtocolRequestId()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetProtocolRequestId() {
@@ -848,7 +848,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getServletConnection()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getServletConnection()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetServletConnection() {
@@ -856,7 +856,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getRequestProgressTracker()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getRequestProgressTracker()}.
      */
     @Test
     public void testGetRequestProgressTracker() {
@@ -866,7 +866,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getAuthType()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getAuthType()}.
      */
     @Test
     public void testGetAuthType() {
@@ -876,7 +876,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#setAuthType(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#setAuthType(java.lang.String)}.
      */
     @Test
     public void testSetAuthType() {
@@ -885,7 +885,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#setIntHeader(java.lang.String, int)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#setIntHeader(java.lang.String, int)}.
      */
     @Test
     public void testSetIntHeader() {
@@ -894,7 +894,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#setDateHeader(java.lang.String, long)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#setDateHeader(java.lang.String, long)}.
      */
     @Test
     public void testSetDateHeader() {
@@ -904,7 +904,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getResponseContentType()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getResponseContentType()}.
      */
     @Test
     public void testGetResponseContentType() {
@@ -913,7 +913,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#setResponseContentType(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#setResponseContentType(java.lang.String)}.
      */
     @Test
     public void testSetResponseContentType() {
@@ -922,7 +922,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getResponseContentTypes()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getResponseContentTypes()}.
      */
     @Test
     public void testGetResponseContentTypes() {
@@ -933,7 +933,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getSession(boolean)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getSession(boolean)}.
      */
     @Test
     public void testGetSessionBoolean() {
@@ -947,7 +947,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getParameter(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getParameter(java.lang.String)}.
      */
     @Test
     public void testGetParameter() {
@@ -959,7 +959,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getParameterValues(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getParameterValues(java.lang.String)}.
      */
     @Test
     public void testGetParameterValues() {
@@ -971,7 +971,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getRequestDispatcher(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getRequestDispatcher(java.lang.String)}.
      */
     @Test
     public void testGetRequestDispatcherString() {
@@ -985,7 +985,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getRequestDispatcher(java.lang.String, org.apache.sling.api.request.RequestDispatcherOptions)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getRequestDispatcher(java.lang.String, org.apache.sling.api.request.RequestDispatcherOptions)}.
      */
     @Test
     public void testGetRequestDispatcherStringRequestDispatcherOptions() {
@@ -1000,7 +1000,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getRequestDispatcher(org.apache.sling.api.resource.Resource)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getRequestDispatcher(org.apache.sling.api.resource.Resource)}.
      */
     @Test
     public void testGetRequestDispatcherResource() {
@@ -1014,7 +1014,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getRequestDispatcher(org.apache.sling.api.resource.Resource, org.apache.sling.api.request.RequestDispatcherOptions)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getRequestDispatcher(org.apache.sling.api.resource.Resource, org.apache.sling.api.request.RequestDispatcherOptions)}.
      */
     @Test
     public void testGetRequestDispatcherResourceRequestDispatcherOptions() {
@@ -1029,7 +1029,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getReader()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getReader()}.
      */
     @Test
     public void testGetReader() {
@@ -1056,7 +1056,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#setParameterMap(java.util.Map)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#setParameterMap(java.util.Map)}.
      */
     @Test
     public void testSetParameterMap() {
@@ -1073,7 +1073,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getRequestParameter(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getRequestParameter(java.lang.String)}.
      */
     @Test
     public void testGetRequestParameter() {
@@ -1085,7 +1085,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#setQueryString(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#setQueryString(java.lang.String)}.
      */
     @Test
     public void testSetQueryString() {
@@ -1097,7 +1097,7 @@ public class MockJakartaSlingHttpServletRequestTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest#getRequestURI()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest#getRequestURI()}.
      */
     @Test
     public void testGetRequestURI() {

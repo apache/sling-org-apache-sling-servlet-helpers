@@ -49,7 +49,7 @@ import org.osgi.annotation.versioning.ConsumerType;
 /**
  * Mock {@link SlingHttpServletRequest} implementation.
  *
- * @deprecated Use {@link MockJakartaSlingHttpServletRequest} instead.
+ * @deprecated Use {@link MockSlingJakartaHttpServletRequest} instead.
  */
 @ConsumerType
 @Deprecated(since = "2.0.0")

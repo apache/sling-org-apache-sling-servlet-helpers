@@ -29,9 +29,9 @@ import org.apache.sling.api.SlingJakartaHttpServletRequest;
 import org.apache.sling.api.SlingJakartaHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
-import org.apache.sling.servlethelpers.MockJakartaSlingHttpServletRequest;
-import org.apache.sling.servlethelpers.MockJakartaSlingHttpServletResponse;
 import org.apache.sling.servlethelpers.MockRequestPathInfo;
+import org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest;
+import org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.MDC;
 
@@ -44,8 +44,8 @@ import org.slf4j.MDC;
  *  calling Servlets or Scripts directly.
  */
 public abstract class JakartaInternalRequest extends BaseInternalRequest {
-    private MockJakartaSlingHttpServletRequest request;
-    private MockJakartaSlingHttpServletResponse response;
+    private MockSlingJakartaHttpServletRequest request;
+    private MockSlingJakartaHttpServletResponse response;
 
     /** Clients use subclasses of this one  */
     protected JakartaInternalRequest(@NotNull ResourceResolver resourceResolver, @NotNull String path) {
@@ -98,7 +98,7 @@ public abstract class JakartaInternalRequest extends BaseInternalRequest {
             throw new IOException("Request was already executed");
         }
         final Resource resource = getExecutionResource();
-        request = new MockJakartaSlingHttpServletRequest(resourceResolver) {
+        request = new MockSlingJakartaHttpServletRequest(resourceResolver) {
             @Override
             protected MockRequestPathInfo newMockRequestPathInfo() {
                 MockRequestPathInfo rpi = super.newMockRequestPathInfo();
@@ -122,7 +122,7 @@ public abstract class JakartaInternalRequest extends BaseInternalRequest {
         request.setResource(resource);
         request.setParameterMap(parameters);
 
-        response = new MockJakartaSlingHttpServletResponse();
+        response = new MockSlingJakartaHttpServletResponse();
 
         MDC.put(MDC_KEY, toString());
         try {

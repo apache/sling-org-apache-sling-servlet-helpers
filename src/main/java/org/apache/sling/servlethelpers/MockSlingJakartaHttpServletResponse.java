@@ -30,13 +30,13 @@ import org.osgi.annotation.versioning.ConsumerType;
  * Mock {@link SlingJakartaHttpServletResponse} implementation.
  */
 @ConsumerType
-public class MockJakartaSlingHttpServletResponse extends BaseMockSlingHttpServletResponse
+public class MockSlingJakartaHttpServletResponse extends BaseMockSlingHttpServletResponse
         implements SlingJakartaHttpServletResponse {
 
     private final JakartaResponseBodySupport bodySupport = new JakartaResponseBodySupport();
     private final JakartaCookieSupport cookieSupport = new JakartaCookieSupport();
 
-    public MockJakartaSlingHttpServletResponse() {
+    public MockSlingJakartaHttpServletResponse() {
         status = HttpServletResponse.SC_OK;
     }
 

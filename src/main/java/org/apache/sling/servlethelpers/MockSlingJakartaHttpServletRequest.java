@@ -50,7 +50,7 @@ import org.osgi.annotation.versioning.ConsumerType;
  * Mock {@link SlingJakartaHttpServletRequest} implementation.
  */
 @ConsumerType
-public class MockJakartaSlingHttpServletRequest extends BaseMockSlingHttpServletRequest
+public class MockSlingJakartaHttpServletRequest extends BaseMockSlingHttpServletRequest
         implements SlingJakartaHttpServletRequest {
 
     private HttpSession session;
@@ -62,7 +62,7 @@ public class MockJakartaSlingHttpServletRequest extends BaseMockSlingHttpServlet
     /**
      * @param resourceResolver Resource resolver
      */
-    public MockJakartaSlingHttpServletRequest(ResourceResolver resourceResolver) {
+    public MockSlingJakartaHttpServletRequest(ResourceResolver resourceResolver) {
         super(resourceResolver);
     }
 

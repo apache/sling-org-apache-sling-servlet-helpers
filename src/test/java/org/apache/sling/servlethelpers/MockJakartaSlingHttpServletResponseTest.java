@@ -50,14 +50,14 @@ import static org.mockito.Mockito.when;
 @RunWith(MockitoJUnitRunner.class)
 public class MockJakartaSlingHttpServletResponseTest {
 
-    private MockJakartaSlingHttpServletResponse response;
+    private MockSlingJakartaHttpServletResponse response;
 
     @Mock
     private AdapterManager adapterManager;
 
     @Before
     public void setUp() throws Exception {
-        this.response = new MockJakartaSlingHttpServletResponse();
+        this.response = new MockSlingJakartaHttpServletResponse();
         SlingAdaptable.setAdapterManager(adapterManager);
     }
 
@@ -229,7 +229,7 @@ public class MockJakartaSlingHttpServletResponseTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletResponse#setIntHeader(java.lang.String, int)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse#setIntHeader(java.lang.String, int)}.
      */
     @Test
     public void testSetIntHeader() {
@@ -238,7 +238,7 @@ public class MockJakartaSlingHttpServletResponseTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletResponse#setDateHeader(java.lang.String, long)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse#setDateHeader(java.lang.String, long)}.
      */
     @Test
     public void testSetDateHeader() {
@@ -248,7 +248,7 @@ public class MockJakartaSlingHttpServletResponseTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletResponse#getBufferSize()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse#getBufferSize()}.
      */
     @Test
     public void testGetBufferSize() {
@@ -256,7 +256,7 @@ public class MockJakartaSlingHttpServletResponseTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletResponse#setBufferSize(int)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse#setBufferSize(int)}.
      */
     @Test
     public void testSetBufferSize() {
@@ -265,7 +265,7 @@ public class MockJakartaSlingHttpServletResponseTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletResponse#reset()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse#reset()}.
      */
     @Test
     public void testReset() {
@@ -287,7 +287,7 @@ public class MockJakartaSlingHttpServletResponseTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletResponse#resetBuffer()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse#resetBuffer()}.
      */
     @Test
     public void testResetBuffer() {
@@ -306,7 +306,7 @@ public class MockJakartaSlingHttpServletResponseTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletResponse#encodeRedirectURL(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse#encodeRedirectURL(java.lang.String)}.
      */
     @Test
     public void testEncodeRedirectURL() {
@@ -314,7 +314,7 @@ public class MockJakartaSlingHttpServletResponseTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletResponse#encodeURL(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse#encodeURL(java.lang.String)}.
      */
     @Test
     public void testEncodeURL() {
@@ -322,7 +322,7 @@ public class MockJakartaSlingHttpServletResponseTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaSlingHttpServletResponse#setContentLength(long)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse#setContentLength(long)}.
      */
     @Test
     public void testSetContentLengthLong() {
