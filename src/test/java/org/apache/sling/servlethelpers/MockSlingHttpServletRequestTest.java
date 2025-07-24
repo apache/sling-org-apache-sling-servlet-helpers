@@ -79,7 +79,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 /**
- * @deprecated Use {@link MockJakartaSlingHttpServletRequestTest} instead.
+ * @deprecated Use {@link MockSlingJakartaHttpServletRequestTest} instead.
  */
 @Deprecated(since = "2.0.0")
 @RunWith(MockitoJUnitRunner.class)

@@ -49,7 +49,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.when;
 
 /**
- * @deprecated Use {@link MockJakartaSlingHttpServletResponseTest} instead.
+ * @deprecated Use {@link MockSlingJakartaHttpServletResponseTest} instead.
  */
 @Deprecated(since = "2.0.0")
 @RunWith(MockitoJUnitRunner.class)
