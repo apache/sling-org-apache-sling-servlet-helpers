@@ -39,7 +39,7 @@ import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.options.ModifiableCompositeOption;
 import org.ops4j.pax.exam.options.extra.VMOption;
 
-import static org.apache.sling.testing.paxexam.SlingOptions.logback;
+import static org.apache.sling.testing.paxexam.SlingOptions.paxLoggingApi;
 import static org.apache.sling.testing.paxexam.SlingOptions.slingQuickstartOakTar;
 import static org.apache.sling.testing.paxexam.SlingOptions.versionResolver;
 import static org.junit.Assert.assertNotNull;
@@ -48,6 +48,7 @@ import static org.ops4j.pax.exam.CoreOptions.composite;
 import static org.ops4j.pax.exam.CoreOptions.junitBundles;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.options;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.ops4j.pax.exam.CoreOptions.vmOption;
 import static org.ops4j.pax.exam.cm.ConfigurationAdminOptions.newConfiguration;
 
@@ -79,18 +80,14 @@ public abstract class ServletHelpersTestSupport extends TestSupport {
         versionResolver.setVersion("org.apache.sling", "org.apache.sling.scripting.spi", "2.0.0");
         versionResolver.setVersion("org.apache.sling", "org.apache.sling.scripting.core", "3.0.0");
         versionResolver.setVersion("org.apache.sling", "org.apache.sling.servlets.resolver", "3.0.0");
-        // also need the 2.x version of slf4j and later logback
-        versionResolver.setVersion("org.slf4j", "slf4j-api", "2.0.17");
-        versionResolver.setVersion("org.slf4j", "jcl-over-slf4j", "2.0.17");
-        versionResolver.setVersion("ch.qos.logback", "logback-core", "1.5.18");
-        versionResolver.setVersion("ch.qos.logback", "logback-classic", "1.5.18");
 
         return options(composite(
                 super.baseConfiguration(),
                 vmOption(System.getProperty("pax.vm.options")),
                 optionalRemoteDebug(),
                 slingQuickstart(),
-                logback(),
+                paxLoggingApi(), // newer version to provide the 2.x version of slf4j
+                systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
                 junitBundles(),
                 // SLING-12858 - begin extra bundles for sling api 3.x
                 mavenBundle()
