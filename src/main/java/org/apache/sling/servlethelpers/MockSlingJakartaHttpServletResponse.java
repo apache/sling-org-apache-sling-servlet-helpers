@@ -19,31 +19,151 @@
 package org.apache.sling.servlethelpers;
 
 import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.Locale;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.sling.api.SlingJakartaHttpServletResponse;
+import org.apache.sling.api.adapter.SlingAdaptable;
 import org.osgi.annotation.versioning.ConsumerType;
 
 /**
  * Mock {@link SlingJakartaHttpServletResponse} implementation.
  */
 @ConsumerType
-public class MockSlingJakartaHttpServletResponse extends BaseMockSlingHttpServletResponse
-        implements SlingJakartaHttpServletResponse {
+public class MockSlingJakartaHttpServletResponse extends SlingAdaptable implements SlingJakartaHttpServletResponse {
 
+    static final String CHARSET_SEPARATOR = ";charset=";
+
+    private String contentType;
+    private String characterEncoding;
+    private int contentLength;
+    private int status = HttpServletResponse.SC_OK;
+    private String statusMessage;
+    private int bufferSize = 1024 * 8;
+    private boolean isCommitted;
+    private Locale locale = Locale.US;
+    private final HeaderSupport headerSupport = new HeaderSupport();
     private final JakartaResponseBodySupport bodySupport = new JakartaResponseBodySupport();
     private final JakartaCookieSupport cookieSupport = new JakartaCookieSupport();
 
-    public MockSlingJakartaHttpServletResponse() {
-        status = HttpServletResponse.SC_OK;
+    @Override
+    public String getContentType() {
+        if (this.contentType == null) {
+            return null;
+        } else {
+            return this.contentType
+                    + (StringUtils.isNotBlank(characterEncoding) ? CHARSET_SEPARATOR + characterEncoding : "");
+        }
+    }
+
+    @Override
+    public void setContentType(String type) {
+        this.contentType = type;
+        if (Strings.CS.contains(this.contentType, CHARSET_SEPARATOR)) {
+            this.characterEncoding = StringUtils.substringAfter(this.contentType, CHARSET_SEPARATOR);
+            this.contentType = StringUtils.substringBefore(this.contentType, CHARSET_SEPARATOR);
+        }
+    }
+
+    @Override
+    public void setCharacterEncoding(String charset) {
+        this.characterEncoding = charset;
+    }
+
+    @Override
+    public String getCharacterEncoding() {
+        return this.characterEncoding;
+    }
+
+    @Override
+    public void setContentLength(int len) {
+        this.contentLength = len;
+    }
+
+    public int getContentLength() {
+        return this.contentLength;
+    }
+
+    @Override
+    public void setStatus(int sc) {
+        this.status = sc;
+    }
+
+    @Override
+    public int getStatus() {
+        return this.status;
+    }
+
+    @Override
+    public void sendError(int sc, String msg) {
+        setStatus(sc);
+        this.statusMessage = msg;
+    }
+
+    @Override
+    public void sendError(int sc) {
+        setStatus(sc);
     }
 
     @Override
     public void sendRedirect(String location) {
         setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
         setHeader("Location", location);
+    }
+
+    @Override
+    public void addHeader(String name, String value) {
+        headerSupport.addHeader(name, value);
+    }
+
+    @Override
+    public void addIntHeader(String name, int value) {
+        headerSupport.addIntHeader(name, value);
+    }
+
+    @Override
+    public void addDateHeader(String name, long date) {
+        headerSupport.addDateHeader(name, date);
+    }
+
+    @Override
+    public void setHeader(String name, String value) {
+        headerSupport.setHeader(name, value);
+    }
+
+    @Override
+    public void setIntHeader(String name, int value) {
+        headerSupport.setIntHeader(name, value);
+    }
+
+    @Override
+    public void setDateHeader(String name, long date) {
+        headerSupport.setDateHeader(name, date);
+    }
+
+    @Override
+    public boolean containsHeader(String name) {
+        return headerSupport.containsHeader(name);
+    }
+
+    @Override
+    public String getHeader(String name) {
+        return headerSupport.getHeader(name);
+    }
+
+    @Override
+    public Collection<String> getHeaders(String name) {
+        return headerSupport.getHeaders(name);
+    }
+
+    @Override
+    public Collection<String> getHeaderNames() {
+        return headerSupport.getHeaderNames();
     }
 
     @Override
@@ -76,6 +196,26 @@ public class MockSlingJakartaHttpServletResponse extends BaseMockSlingHttpServle
         bodySupport.reset();
     }
 
+    @Override
+    public int getBufferSize() {
+        return this.bufferSize;
+    }
+
+    @Override
+    public void setBufferSize(int size) {
+        this.bufferSize = size;
+    }
+
+    @Override
+    public void flushBuffer() {
+        isCommitted = true;
+    }
+
+    @Override
+    public boolean isCommitted() {
+        return isCommitted;
+    }
+
     public byte[] getOutput() {
         return bodySupport.getOutput();
     }
@@ -104,5 +244,44 @@ public class MockSlingJakartaHttpServletResponse extends BaseMockSlingHttpServle
      */
     public Cookie[] getCookies() {
         return cookieSupport.getCookies();
+    }
+
+    @Override
+    public Locale getLocale() {
+        return locale;
+    }
+
+    @Override
+    public void setLocale(Locale loc) {
+        this.locale = loc;
+    }
+
+    /**
+     * @return status message that was set using {@link #setStatus(int, String)} or {@link #sendError(int, String)}
+     */
+    public String getStatusMessage() {
+        return statusMessage;
+    }
+
+    @Override
+    public <T> T adaptTo(Class<T> type) {
+        return AdaptableUtil.adaptToWithoutCaching(this, type);
+    }
+
+    // --- unsupported operations ---
+
+    @Override
+    public String encodeRedirectURL(String url) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public String encodeURL(String url) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void setContentLengthLong(long len) {
+        throw new UnsupportedOperationException();
     }
 }

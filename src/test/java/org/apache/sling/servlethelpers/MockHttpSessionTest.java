@@ -37,7 +37,7 @@ public class MockHttpSessionTest {
 
     @Before
     public void setUp() throws Exception {
-        httpSession = new MockHttpSession();
+        httpSession = new MockHttpSession(new MockJakartaHttpSession());
     }
 
     @Test

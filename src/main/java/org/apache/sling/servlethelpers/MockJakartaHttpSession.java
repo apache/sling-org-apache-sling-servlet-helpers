@@ -18,15 +18,28 @@
  */
 package org.apache.sling.servlethelpers;
 
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.http.HttpSession;
+import org.apache.commons.collections4.IteratorUtils;
 import org.osgi.annotation.versioning.ConsumerType;
 
 /**
  * Mock {@link HttpSession} implementation.
  */
 @ConsumerType
-public class MockJakartaHttpSession extends BaseMockHttpSession implements HttpSession {
+public class MockJakartaHttpSession implements HttpSession {
+
+    private final Map<String, Object> attributeMap = new HashMap<>();
+    private final String sessionID = UUID.randomUUID().toString();
+    private final long creationTime = System.currentTimeMillis();
+    private boolean invalidated = false;
+    private boolean isNew = true;
+    private int maxActiveInterval = 1800;
 
     private final ServletContext servletContext;
 
@@ -41,5 +54,82 @@ public class MockJakartaHttpSession extends BaseMockHttpSession implements HttpS
     @Override
     public ServletContext getServletContext() {
         return this.servletContext;
+    }
+
+    @Override
+    public Object getAttribute(final String name) {
+        checkInvalidatedState();
+        return this.attributeMap.get(name);
+    }
+
+    @Override
+    public Enumeration<String> getAttributeNames() {
+        checkInvalidatedState();
+        return IteratorUtils.asEnumeration(this.attributeMap.keySet().iterator());
+    }
+
+    @Override
+    public String getId() {
+        return this.sessionID;
+    }
+
+    @Override
+    public long getCreationTime() {
+        checkInvalidatedState();
+        return this.creationTime;
+    }
+
+    @Override
+    public void removeAttribute(final String name) {
+        checkInvalidatedState();
+        this.attributeMap.remove(name);
+    }
+
+    @Override
+    public void setAttribute(final String name, final Object value) {
+        checkInvalidatedState();
+        this.attributeMap.put(name, value);
+    }
+
+    @Override
+    public void invalidate() {
+        checkInvalidatedState();
+        this.invalidated = true;
+    }
+
+    private void checkInvalidatedState() {
+        if (invalidated) {
+            throw new IllegalStateException("Session is already invalidated.");
+        }
+    }
+
+    public boolean isInvalidated() {
+        return invalidated;
+    }
+
+    @Override
+    public boolean isNew() {
+        checkInvalidatedState();
+        return isNew;
+    }
+
+    public void setNew(boolean isNew) {
+        this.isNew = isNew;
+    }
+
+    @Override
+    public long getLastAccessedTime() {
+        checkInvalidatedState();
+        return creationTime;
+    }
+
+    @Override
+    public int getMaxInactiveInterval() {
+        return maxActiveInterval;
+    }
+
+    @Override
+    public void setMaxInactiveInterval(final int interval) {
+        this.maxActiveInterval = interval;
     }
 }

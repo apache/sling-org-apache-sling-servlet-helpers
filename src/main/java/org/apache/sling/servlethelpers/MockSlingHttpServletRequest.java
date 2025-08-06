@@ -18,33 +18,30 @@
  */
 package org.apache.sling.servlethelpers;
 
-import javax.servlet.AsyncContext;
-import javax.servlet.DispatcherType;
-import javax.servlet.ReadListener;
 import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.ServletInputStream;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpUpgradeHandler;
 import javax.servlet.http.Part;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.ListResourceBundle;
+import java.util.Locale;
+import java.util.Map;
+import java.util.ResourceBundle;
 
+import org.apache.felix.http.jakartawrappers.CookieWrapper;
+import org.apache.felix.http.jakartawrappers.PartWrapper;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestDispatcherOptions;
+import org.apache.sling.api.request.RequestParameter;
+import org.apache.sling.api.request.RequestPathInfo;
 import org.apache.sling.api.resource.Resource;
-import org.apache.sling.api.resource.ResourceResolver;
+import org.apache.sling.api.wrappers.JakartaToJavaxRequestWrapper;
+import org.jetbrains.annotations.NotNull;
 import org.osgi.annotation.versioning.ConsumerType;
+
+import static org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest.PLEASE_PROVDIDE_REQUEST_DISPATCHER_FACTORY;
 
 /**
  * Mock {@link SlingHttpServletRequest} implementation.
@@ -53,87 +50,112 @@ import org.osgi.annotation.versioning.ConsumerType;
  */
 @ConsumerType
 @Deprecated(since = "2.0.0")
-public class MockSlingHttpServletRequest extends BaseMockSlingHttpServletRequest implements SlingHttpServletRequest {
-
-    private HttpSession session;
-    private final CookieSupport cookieSupport = new CookieSupport();
-    private List<Part> parts = new ArrayList<>();
-
+public class MockSlingHttpServletRequest extends JakartaToJavaxRequestWrapper {
+    private MockSlingJakartaHttpServletRequest wrappedRequest;
     private MockRequestDispatcherFactory requestDispatcherFactory;
 
-    /**
-     * @param resourceResolver Resource resolver
-     */
-    public MockSlingHttpServletRequest(ResourceResolver resourceResolver) {
-        super(resourceResolver);
-    }
-
-    protected MockHttpSession newMockHttpSession() {
-        return new MockHttpSession();
-    }
-
-    @Override
-    public HttpSession getSession() {
-        return getSession(true);
-    }
-
-    @Override
-    public HttpSession getSession(boolean create) {
-        if (this.session == null && create) {
-            this.session = newMockHttpSession();
+    protected static final ResourceBundle EMPTY_RESOURCE_BUNDLE = new ListResourceBundle() {
+        @Override
+        protected Object[][] getContents() {
+            return new Object[0][0];
         }
-        return this.session;
+    };
+
+    public MockSlingHttpServletRequest(MockSlingJakartaHttpServletRequest wrappedRequest) {
+        super(wrappedRequest);
+        this.wrappedRequest = wrappedRequest;
     }
 
-    @Override
-    public Cookie getCookie(String name) {
-        return cookieSupport.getCookie(name);
+    public void setResource(Resource resource) {
+        this.wrappedRequest.setResource(resource);
     }
 
-    @Override
-    public Cookie[] getCookies() {
-        return cookieSupport.getCookies();
+    public void setParameterMap(Map<String, Object> parameterMap) {
+        this.wrappedRequest.setParameterMap(parameterMap);
     }
 
-    /**
-     * Set cookie
-     *
-     * @param cookie Cookie
-     */
+    public void setLocale(Locale loc) {
+        this.wrappedRequest.setLocale(loc);
+    }
+
+    public void setContextPath(String contextPath) {
+        this.wrappedRequest.setContextPath(contextPath);
+    }
+
+    public void setQueryString(String queryString) {
+        this.wrappedRequest.setQueryString(queryString);
+    }
+
+    public void setScheme(String scheme) {
+        this.wrappedRequest.setScheme(scheme);
+    }
+
+    public void setServerName(String serverName) {
+        this.wrappedRequest.setServerName(serverName);
+    }
+
+    public void setServerPort(int serverPort) {
+        this.wrappedRequest.setServerPort(serverPort);
+    }
+
+    public void setMethod(String method) {
+        this.wrappedRequest.setMethod(method);
+    }
+
+    public void addHeader(String name, String value) {
+        this.wrappedRequest.addHeader(name, value);
+    }
+
+    public void addIntHeader(String name, int value) {
+        this.wrappedRequest.addIntHeader(name, value);
+    }
+
+    public void addDateHeader(String name, long date) {
+        this.wrappedRequest.addDateHeader(name, date);
+    }
+
+    public void setHeader(String name, String value) {
+        this.wrappedRequest.setHeader(name, value);
+    }
+
+    public void setIntHeader(String name, int value) {
+        this.wrappedRequest.setIntHeader(name, value);
+    }
+
+    public void setDateHeader(String name, long date) {
+        this.wrappedRequest.setDateHeader(name, date);
+    }
+
     public void addCookie(Cookie cookie) {
-        cookieSupport.addCookie(cookie);
+        this.wrappedRequest.addCookie(new CookieWrapper(cookie));
     }
 
-    @Override
-    public ServletInputStream getInputStream() {
-        if (getReaderCalled) {
-            throw new IllegalStateException();
-        }
-        getInputStreamCalled = true;
-        return new ServletInputStream() {
-            private final InputStream is =
-                    content == null ? new ByteArrayInputStream(new byte[0]) : new ByteArrayInputStream(content);
+    public List<RequestParameter> getRequestParameterList() {
+        return this.wrappedRequest.getRequestParameterList();
+    }
 
-            @Override
-            public int read() throws IOException {
-                return is.read();
-            }
+    public void addRequestParameter(String name, String value) {
+        this.wrappedRequest.addRequestParameter(name, value);
+    }
 
-            @Override
-            public boolean isReady() {
-                return true;
-            }
+    public void addRequestParameter(String name, byte[] content, String contentType) {
+        this.wrappedRequest.addRequestParameter(name, content, contentType);
+    }
 
-            @Override
-            public boolean isFinished() {
-                throw new UnsupportedOperationException();
-            }
+    public void addRequestParameter(String name, byte[] content, String contentType, String filename) {
+        this.wrappedRequest.addRequestParameter(name, content, contentType, filename);
+    }
 
-            @Override
-            public void setReadListener(ReadListener readListener) {
-                throw new UnsupportedOperationException();
-            }
-        };
+    public void setContentType(String type) {
+        this.wrappedRequest.setContentType(type);
+    }
+
+    public void setContent(byte[] content) {
+        this.wrappedRequest.setContent(content);
+    }
+
+    public void setRequestDispatcherFactory(MockRequestDispatcherFactory requestDispatcherFactory) {
+        this.requestDispatcherFactory = requestDispatcherFactory;
     }
 
     @Override
@@ -168,26 +190,46 @@ public class MockSlingHttpServletRequest extends BaseMockSlingHttpServletRequest
         return requestDispatcherFactory.getRequestDispatcher(resource, options);
     }
 
-    public void setRequestDispatcherFactory(MockRequestDispatcherFactory requestDispatcherFactory) {
-        this.requestDispatcherFactory = requestDispatcherFactory;
+    public void setRemoteUser(String remoteUser) {
+        this.wrappedRequest.setRemoteUser(remoteUser);
+    }
+
+    public void setRemoteAddr(String remoteAddr) {
+        this.wrappedRequest.setRemoteAddr(remoteAddr);
+    }
+
+    public void setRemoteHost(String remoteHost) {
+        this.wrappedRequest.setRemoteHost(remoteHost);
+    }
+
+    public void setRemotePort(int remotePort) {
+        this.wrappedRequest.setRemotePort(remotePort);
+    }
+
+    public void setServletPath(String servletPath) {
+        this.wrappedRequest.setServletPath(servletPath);
+    }
+
+    public void setPathInfo(String pathInfo) {
+        this.wrappedRequest.setPathInfo(pathInfo);
+    }
+
+    public StringBuffer getRequestURL() {
+        return this.wrappedRequest.getRequestURL();
+    }
+
+    public void setAuthType(String authType) {
+        this.wrappedRequest.setAuthType(authType);
+    }
+
+    public void setResponseContentType(String responseContentType) {
+        this.wrappedRequest.setResponseContentType(responseContentType);
     }
 
     public void addPart(Part part) {
-        if (part == null) throw new IllegalArgumentException("part may not be null");
-        this.parts.add(part);
+        PartWrapper wrappedPart = part == null ? null : new PartWrapper(part);
+        this.wrappedRequest.addPart(wrappedPart);
     }
-
-    @Override
-    public Collection<Part> getParts() {
-        return parts;
-    }
-
-    @Override
-    public Part getPart(String name) {
-        return parts.stream().filter(p -> p.getName().equals(name)).findFirst().orElse(null);
-    }
-
-    // --- unsupported operations ---
 
     @Override
     public boolean authenticate(HttpServletResponse response) {
@@ -195,43 +237,26 @@ public class MockSlingHttpServletRequest extends BaseMockSlingHttpServletRequest
     }
 
     @Override
-    public void logout() throws ServletException {
-        throw new UnsupportedOperationException();
+    public @NotNull RequestPathInfo getRequestPathInfo() {
+        return this.wrappedRequest.getRequestPathInfo();
     }
 
     @Override
-    public ServletContext getServletContext() {
-        throw new UnsupportedOperationException();
+    public <T> T adaptTo(Class<T> type) {
+        return AdaptableUtil.adaptToWithoutCaching(this, type);
     }
 
     @Override
-    public AsyncContext startAsync() {
-        throw new UnsupportedOperationException();
+    public HttpSession getSession(boolean create) {
+        final jakarta.servlet.http.HttpSession session = this.wrappedRequest.getSession(create);
+        if (session != null) {
+            return new MockHttpSession((MockJakartaHttpSession) session);
+        }
+        return null;
     }
 
     @Override
-    public AsyncContext startAsync(ServletRequest servletRequest, ServletResponse servletResponse) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public AsyncContext getAsyncContext() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public DispatcherType getDispatcherType() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public <T extends HttpUpgradeHandler> T upgrade(Class<T> handlerClass) throws IOException, ServletException {
-        throw new UnsupportedOperationException();
-    }
-
-    // --- unsupported operations ---
-
-    public boolean isRequestedSessionIdFromUrl() {
-        throw new UnsupportedOperationException();
+    public HttpSession getSession() {
+        return new MockHttpSession((MockJakartaHttpSession) this.wrappedRequest.getSession());
     }
 }

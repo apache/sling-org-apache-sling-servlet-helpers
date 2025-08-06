@@ -32,7 +32,7 @@ import org.osgi.service.component.annotations.Component;
  *
  *  This is a test one with zero environment requirements.
  *
- * @deprecated Use {@link JakartaServletInternalRequestIT} instead.
+ * @deprecated Use {@link JakartaTestServlet} instead.
  */
 @Deprecated(since = "2.0.0")
 @Component(

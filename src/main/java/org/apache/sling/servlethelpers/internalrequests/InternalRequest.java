@@ -33,6 +33,8 @@ import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.servlethelpers.MockRequestPathInfo;
 import org.apache.sling.servlethelpers.MockSlingHttpServletRequest;
 import org.apache.sling.servlethelpers.MockSlingHttpServletResponse;
+import org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest;
+import org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.MDC;
 
@@ -103,7 +105,7 @@ public abstract class InternalRequest extends BaseInternalRequest {
             throw new IOException("Request was already executed");
         }
         final Resource resource = getExecutionResource();
-        request = new MockSlingHttpServletRequest(resourceResolver) {
+        request = new MockSlingHttpServletRequest(new MockSlingJakartaHttpServletRequest(resourceResolver) {
             @Override
             protected MockRequestPathInfo newMockRequestPathInfo() {
                 MockRequestPathInfo rpi = super.newMockRequestPathInfo();
@@ -121,13 +123,13 @@ public abstract class InternalRequest extends BaseInternalRequest {
                     return super.getReader();
                 }
             }
-        };
+        });
         request.setMethod(requestMethod);
         request.setContentType(contentType);
         request.setResource(resource);
         request.setParameterMap(parameters);
 
-        response = new MockSlingHttpServletResponse();
+        response = new MockSlingHttpServletResponse(new MockSlingJakartaHttpServletResponse());
 
         MDC.put(MDC_KEY, toString());
         try {

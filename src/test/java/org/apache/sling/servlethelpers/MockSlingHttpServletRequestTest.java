@@ -46,6 +46,7 @@ import java.util.ResourceBundle;
 import java.util.UUID;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.felix.http.javaxwrappers.PartWrapper;
 import org.apache.sling.api.adapter.AdapterManager;
 import org.apache.sling.api.adapter.SlingAdaptable;
 import org.apache.sling.api.request.RequestDispatcherOptions;
@@ -98,7 +99,7 @@ public class MockSlingHttpServletRequestTest {
 
     @Before
     public void setUp() throws Exception {
-        request = new MockSlingHttpServletRequest(resourceResolver);
+        request = new MockSlingHttpServletRequest(new MockSlingJakartaHttpServletRequest(resourceResolver));
         SlingAdaptable.setAdapterManager(adapterManager);
     }
 
@@ -446,7 +447,7 @@ public class MockSlingHttpServletRequestTest {
     }
 
     @Test
-    public void testGetReaderAfterGetInputStream() {
+    public void testGetReaderAfterGetInputStream() throws IOException {
         boolean thrown = false;
         request.getInputStream();
         try {
@@ -458,7 +459,7 @@ public class MockSlingHttpServletRequestTest {
     }
 
     @Test
-    public void testGetInputStreamAfterGetReader() {
+    public void testGetInputStreamAfterGetReader() throws IOException {
         boolean thrown = false;
         request.getReader();
         try {
@@ -470,19 +471,19 @@ public class MockSlingHttpServletRequestTest {
     }
 
     @Test
-    public void testGetInputStreamIsReady() {
+    public void testGetInputStreamIsReady() throws IOException {
         ServletInputStream inputStream = request.getInputStream();
         assertTrue(inputStream.isReady());
     }
 
     @Test
-    public void testGetInputStreamIsFinished() {
+    public void testGetInputStreamIsFinished() throws IOException {
         ServletInputStream inputStream = request.getInputStream();
         assertThrows(UnsupportedOperationException.class, () -> inputStream.isFinished());
     }
 
     @Test
-    public void testGetInputStreamSetReadListener() {
+    public void testGetInputStreamSetReadListener() throws IOException {
         ServletInputStream inputStream = request.getInputStream();
         ReadListener mockReadListener = Mockito.mock(ReadListener.class);
         assertThrows(UnsupportedOperationException.class, () -> inputStream.setReadListener(mockReadListener));
@@ -589,17 +590,17 @@ public class MockSlingHttpServletRequestTest {
     }
 
     @Test
-    public void testNoParts() {
+    public void testNoParts() throws IOException, ServletException {
         assertThat(request.getParts()).as("request parts").isEmpty();
         assertThat(request.getPart("some-part")).as("missing part").isNull();
     }
 
     @Test
-    public void testExistingParts() {
-        ByteArrayPart part = ByteArrayPart.builder()
+    public void testExistingParts() throws IOException, ServletException {
+        javax.servlet.http.Part part = new PartWrapper(JakartaByteArrayPart.builder()
                 .withName("log.txt")
                 .withContent("hello, world".getBytes(UTF_8))
-                .build();
+                .build());
 
         request.addPart(part);
 
@@ -629,7 +630,7 @@ public class MockSlingHttpServletRequestTest {
 
     @Test
     public void testGetUserPrincipalWithNullResourceResolver() {
-        request = new MockSlingHttpServletRequest(null);
+        request = new MockSlingHttpServletRequest(new MockSlingJakartaHttpServletRequest(null));
         assertNull(null, request.getUserPrincipal());
 
         request.setRemoteUser("admin");
@@ -759,7 +760,7 @@ public class MockSlingHttpServletRequestTest {
      * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#login(java.lang.String, java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
-    public void testLogin() {
+    public void testLogin() throws ServletException {
         request.login("user1", "pwd1");
     }
 
@@ -927,9 +928,9 @@ public class MockSlingHttpServletRequestTest {
         HttpSession session = request.getSession(true);
         assertNotNull(session);
         HttpSession session2 = request.getSession(true);
-        assertSame(session2, session);
+        assertEquals(session2.getId(), session.getId());
         HttpSession session3 = request.getSession(false);
-        assertSame(session3, session);
+        assertEquals(session3.getId(), session.getId());
     }
 
     /**
@@ -1018,7 +1019,7 @@ public class MockSlingHttpServletRequestTest {
      * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletRequest#getReader()}.
      */
     @Test
-    public void testGetReader() {
+    public void testGetReader() throws IOException {
         // null content
         BufferedReader reader = request.getReader();
         assertNotNull(reader);

@@ -18,7 +18,13 @@
  */
 package org.apache.sling.servlethelpers;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.WriteListener;
@@ -26,13 +32,58 @@ import jakarta.servlet.WriteListener;
 /**
  * Manage response body content.
  */
-class JakartaResponseBodySupport extends BaseResponseBodySupport<ServletOutputStream> {
+class JakartaResponseBodySupport {
+    protected ByteArrayOutputStream outputStream;
+    protected ServletOutputStream servletOutputStream;
+    protected PrintWriter printWriter;
 
-    public JakartaResponseBodySupport() {
+    protected JakartaResponseBodySupport() {
         reset();
     }
 
-    @Override
+    public void reset() {
+        outputStream = new ByteArrayOutputStream();
+        servletOutputStream = null;
+        printWriter = null;
+    }
+
+    public PrintWriter getWriter(String charset) {
+        if (printWriter == null) {
+            try {
+                printWriter = new PrintWriter(new OutputStreamWriter(getOutputStream(), defaultCharset(charset)));
+            } catch (UnsupportedEncodingException ex) {
+                throw new RuntimeException("Unsupported encoding: " + defaultCharset(charset), ex);
+            }
+        }
+        return printWriter;
+    }
+
+    public byte[] getOutput() {
+        if (printWriter != null) {
+            printWriter.flush();
+        }
+        if (servletOutputStream != null) {
+            try {
+                servletOutputStream.flush();
+            } catch (IOException ex) {
+                // ignore
+            }
+        }
+        return outputStream.toByteArray();
+    }
+
+    public String getOutputAsString(String charset) {
+        try {
+            return new String(getOutput(), defaultCharset(charset));
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException("Unsupported encoding: " + defaultCharset(charset), ex);
+        }
+    }
+
+    private String defaultCharset(String charset) {
+        return Objects.toString(charset, StandardCharsets.UTF_8.name());
+    }
+
     public ServletOutputStream getOutputStream() {
         if (servletOutputStream == null) {
             servletOutputStream = new ServletOutputStream() {

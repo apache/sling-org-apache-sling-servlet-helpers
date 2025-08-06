@@ -18,115 +18,65 @@
  */
 package org.apache.sling.servlethelpers;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 
-import java.io.PrintWriter;
+import java.util.Arrays;
 
-import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.felix.http.javaxwrappers.CookieWrapper;
+import org.apache.sling.api.wrappers.JakartaToJavaxResponseWrapper;
 import org.osgi.annotation.versioning.ConsumerType;
 
 /**
- * Mock {@link SlingHttpServletResponse} implementation.
+ * Mock {@link org.apache.sling.api.SlingHttpServletResponse} implementation.
  *
  * @deprecated Use {@link MockSlingJakartaHttpServletResponse} instead.
  */
 @ConsumerType
 @Deprecated(since = "2.0.0")
-public class MockSlingHttpServletResponse extends BaseMockSlingHttpServletResponse implements SlingHttpServletResponse {
+public class MockSlingHttpServletResponse extends JakartaToJavaxResponseWrapper {
+    private MockSlingJakartaHttpServletResponse wrappedResponse;
 
-    private final ResponseBodySupport bodySupport = new ResponseBodySupport();
-    private final CookieSupport cookieSupport = new CookieSupport();
-
-    public MockSlingHttpServletResponse() {
-        status = HttpServletResponse.SC_OK;
+    public MockSlingHttpServletResponse(MockSlingJakartaHttpServletResponse wrappedResponse) {
+        super(wrappedResponse);
+        this.wrappedResponse = wrappedResponse;
     }
 
-    @Override
-    public void sendRedirect(String location) {
-        setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-        setHeader("Location", location);
-    }
-
-    @Override
-    public PrintWriter getWriter() {
-        return bodySupport.getWriter(getCharacterEncoding());
-    }
-
-    @Override
-    public ServletOutputStream getOutputStream() {
-        return bodySupport.getOutputStream();
-    }
-
-    @Override
-    public void reset() {
-        if (isCommitted()) {
-            throw new IllegalStateException("Response already committed.");
-        }
-        bodySupport.reset();
-        headerSupport.reset();
-        cookieSupport.reset();
-        status = HttpServletResponse.SC_OK;
-        contentLength = 0;
-    }
-
-    @Override
-    public void resetBuffer() {
-        if (isCommitted()) {
-            throw new IllegalStateException("Response already committed.");
-        }
-        bodySupport.reset();
+    public int getContentLength() {
+        return this.wrappedResponse.getContentLength();
     }
 
     public byte[] getOutput() {
-        return bodySupport.getOutput();
+        return this.wrappedResponse.getOutput();
     }
 
     public String getOutputAsString() {
-        return bodySupport.getOutputAsString(getCharacterEncoding());
+        return this.wrappedResponse.getOutputAsString();
     }
 
-    @Override
-    public void addCookie(Cookie cookie) {
-        cookieSupport.addCookie(cookie);
-    }
-
-    /**
-     * Get cookie
-     * @param name Cookie name
-     * @return Cookie or null
-     */
     public Cookie getCookie(String name) {
-        return cookieSupport.getCookie(name);
+        return new CookieWrapper(this.wrappedResponse.getCookie(name));
     }
 
-    /**
-     * Get cookies
-     * @return Cookies array or null if no cookie defined
-     */
     public Cookie[] getCookies() {
-        return cookieSupport.getCookies();
+        jakarta.servlet.http.Cookie[] cookies = this.wrappedResponse.getCookies();
+        if (cookies == null) {
+            return null; // NOSONAR
+        } else {
+            return Arrays.stream(cookies).map(CookieWrapper::new).toArray(Cookie[]::new);
+        }
     }
 
-    /**
-     * @deprecated As of package version 1.6, use {@link #getStatusMessage()} instead.
-     *
-     * @return status message that was set using {@link #setStatus(int, String)} or {@link #sendError(int, String)}
-     */
-    @Deprecated(since = "1.6")
-    public String geStatusMessage() {
-        return this.getStatusMessage();
-    }
-
-    // --- unsupported operations ---
-    @Override
-    public String encodeRedirectUrl(String url) {
-        throw new UnsupportedOperationException();
+    public String getStatusMessage() {
+        return this.wrappedResponse.getStatusMessage();
     }
 
     @Override
-    public String encodeUrl(String url) {
-        throw new UnsupportedOperationException();
+    public void setStatus(final int sc, final String sm) {
+        this.wrappedResponse.sendError(sc, sm);
+    }
+
+    @Override
+    public <T> T adaptTo(Class<T> type) {
+        return AdaptableUtil.adaptToWithoutCaching(this, type);
     }
 }

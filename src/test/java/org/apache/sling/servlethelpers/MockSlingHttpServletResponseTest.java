@@ -21,6 +21,7 @@ package org.apache.sling.servlethelpers;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
@@ -62,7 +63,7 @@ public class MockSlingHttpServletResponseTest {
 
     @Before
     public void setUp() throws Exception {
-        this.response = new MockSlingHttpServletResponse();
+        this.response = new MockSlingHttpServletResponse(new MockSlingJakartaHttpServletResponse());
         SlingAdaptable.setAdapterManager(adapterManager);
     }
 
@@ -148,7 +149,6 @@ public class MockSlingHttpServletResponseTest {
     public void testSendErrorWithMEssage() throws Exception {
         response.sendError(HttpServletResponse.SC_NOT_FOUND, "my error message");
         assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
-        assertEquals("my error message", response.geStatusMessage()); // This version has been depracated.
         assertEquals("my error message", response.getStatusMessage());
     }
 
@@ -168,7 +168,7 @@ public class MockSlingHttpServletResponseTest {
     public void testSetStatusWithMEssage() throws Exception {
         response.setStatus(HttpServletResponse.SC_ACCEPTED, "my status message");
         assertEquals(HttpServletResponse.SC_ACCEPTED, response.getStatus());
-        assertEquals("my status message", response.geStatusMessage());
+        assertEquals("my status message", response.getStatusMessage());
     }
 
     @Test
@@ -283,7 +283,7 @@ public class MockSlingHttpServletResponseTest {
      * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#reset()}.
      */
     @Test
-    public void testReset() {
+    public void testReset() throws IOException {
         response.getWriter().print("Hello");
         assertEquals("Hello", response.getOutputAsString());
         response.setHeader("header1", "value1");
@@ -295,7 +295,7 @@ public class MockSlingHttpServletResponseTest {
     }
 
     @Test
-    public void testResetWhenAlreadyCommitted() {
+    public void testResetWhenAlreadyCommitted() throws IOException {
         response.getWriter().print("Hello");
         response.flushBuffer();
         assertThrows(IllegalStateException.class, () -> response.reset());
@@ -305,7 +305,7 @@ public class MockSlingHttpServletResponseTest {
      * Test method for {@link org.apache.sling.servlethelpers.MockSlingHttpServletResponse#resetBuffer()}.
      */
     @Test
-    public void testResetBuffer() {
+    public void testResetBuffer() throws IOException {
         response.getWriter().print("Hello");
         assertEquals("Hello", response.getOutputAsString());
 
@@ -314,7 +314,7 @@ public class MockSlingHttpServletResponseTest {
     }
 
     @Test
-    public void testResetBufferWhenAlreadyCommitted() {
+    public void testResetBufferWhenAlreadyCommitted() throws IOException {
         response.getWriter().print("Hello");
         response.flushBuffer();
         assertThrows(IllegalStateException.class, () -> response.resetBuffer());

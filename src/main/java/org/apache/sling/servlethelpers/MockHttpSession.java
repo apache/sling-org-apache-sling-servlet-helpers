@@ -21,6 +21,7 @@ package org.apache.sling.servlethelpers;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.apache.felix.http.javaxwrappers.HttpSessionWrapper;
 import org.osgi.annotation.versioning.ConsumerType;
 
 /**
@@ -30,16 +31,18 @@ import org.osgi.annotation.versioning.ConsumerType;
  */
 @ConsumerType
 @Deprecated(since = "2.0.0")
-public class MockHttpSession extends BaseMockHttpSession implements HttpSession {
-
+public class MockHttpSession extends HttpSessionWrapper {
     private final ServletContext servletContext;
+    private final MockJakartaHttpSession wrappedSession;
 
-    public MockHttpSession() {
+    public MockHttpSession(MockJakartaHttpSession wrappedSession) {
+        super(wrappedSession);
+        this.wrappedSession = wrappedSession;
         this.servletContext = newMockServletContext();
     }
 
     protected MockServletContext newMockServletContext() {
-        return new MockServletContext();
+        return new MockServletContext(new MockJakartaServletContext());
     }
 
     @Override
@@ -47,10 +50,11 @@ public class MockHttpSession extends BaseMockHttpSession implements HttpSession 
         return this.servletContext;
     }
 
-    // --- unsupported operations ---
-    @Override
-    @SuppressWarnings("deprecation")
-    public javax.servlet.http.HttpSessionContext getSessionContext() {
-        throw new UnsupportedOperationException();
+    public boolean isInvalidated() {
+        return this.wrappedSession.isInvalidated();
+    }
+
+    public void setNew(boolean isNew) {
+        this.wrappedSession.setNew(isNew);
     }
 }
