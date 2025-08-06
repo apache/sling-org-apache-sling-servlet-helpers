@@ -82,4 +82,19 @@ public class ServletResolutionResourceTest {
     public void testResourceMetadata() {
         r.getResourceMetadata();
     }
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.internalrequests.ServletResolutionResource#hasChildren()}.
+     */
+    @Test(expected = ServletResolutionResource.NotImplementedException.class)
+    public void testHasChildren() {
+        r.hasChildren();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.internalrequests.ServletResolutionResource#getValueMap()}.
+     */
+    @Test(expected = ServletResolutionResource.NotImplementedException.class)
+    public void testGetValueMap() {
+        r.getValueMap();
+    }
 }

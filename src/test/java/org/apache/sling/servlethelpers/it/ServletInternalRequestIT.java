@@ -32,6 +32,10 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @deprecated Use {@link JakartaServletInternalRequestIT} instead.
+ */
+@Deprecated(since = "2.0.0")
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
 public class ServletInternalRequestIT extends ServletHelpersTestSupport {

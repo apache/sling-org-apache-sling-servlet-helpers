@@ -18,29 +18,23 @@
  */
 package org.apache.sling.servlethelpers;
 
-import javax.servlet.Filter;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-import javax.servlet.SessionTrackingMode;
-
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.util.EventListener;
 import java.util.Set;
 
+import jakarta.servlet.Filter;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.SessionTrackingMode;
 import org.apache.sling.servlethelpers.it.JakartaTestServlet;
-import org.apache.sling.servlethelpers.it.TestServlet;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @deprecated Use {@link MockJakartaServletContextTest} instead.
- */
-@Deprecated(since = "2.0.0")
-public class MockServletContextTest {
+public class MockJakartaServletContextTest {
 
     private static final class TestEventListener implements EventListener {}
 
@@ -48,7 +42,7 @@ public class MockServletContextTest {
 
     @Before
     public void setUp() {
-        this.servletContext = new MockServletContext(new MockJakartaServletContext());
+        this.servletContext = new MockJakartaServletContext();
     }
 
     @Test
@@ -57,7 +51,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getAttribute(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getAttribute(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetAttribute() {
@@ -65,7 +59,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getAttributeNames()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getAttributeNames()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetAttributeNames() {
@@ -73,7 +67,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getContext(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getContext(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetContext() {
@@ -81,7 +75,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getContextPath()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getContextPath()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetContextPath() {
@@ -89,7 +83,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getInitParameter(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getInitParameter(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetInitParameter() {
@@ -97,7 +91,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getInitParameterNames()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getInitParameterNames()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetInitParameterNames() {
@@ -105,7 +99,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getMajorVersion()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getMajorVersion()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetMajorVersion() {
@@ -113,7 +107,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getMinorVersion()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getMinorVersion()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetMinorVersion() {
@@ -121,7 +115,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getNamedDispatcher(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getNamedDispatcher(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetNamedDispatcher() {
@@ -129,7 +123,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getRealPath(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getRealPath(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetRealPath() {
@@ -137,7 +131,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getRequestDispatcher(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getRequestDispatcher(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetRequestDispatcher() {
@@ -145,7 +139,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getResource(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getResource(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetResource() throws MalformedURLException {
@@ -153,7 +147,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getResourceAsStream(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getResourceAsStream(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetResourceAsStream() {
@@ -161,7 +155,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getResourcePaths(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getResourcePaths(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetResourcePaths() {
@@ -169,7 +163,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getServerInfo()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getServerInfo()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetServerInfo() {
@@ -177,15 +171,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getServlet()}.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetServlet() throws ServletException {
-        this.servletContext.getServlet("nope");
-    }
-
-    /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getServletContextName()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getServletContextName()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetServletContextName() {
@@ -193,23 +179,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getServletNames()}.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetServletNames() {
-        this.servletContext.getServletNames();
-    }
-
-    /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getServlets()}.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetServlets() {
-        this.servletContext.getServlets();
-    }
-
-    /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#log(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#log(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testLogString() {
@@ -217,15 +187,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#log(java.lang.String, java.lang.Throwable)}.
-     */
-    @Test(expected = UnsupportedOperationException.class)
-    public void testLogExceptionString() {
-        this.servletContext.log(new Exception("test"), "msg1");
-    }
-
-    /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#log(java.lang.String, java.lang.Throwable)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#log(java.lang.String, java.lang.Throwable)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testLogStringThrowable() {
@@ -233,7 +195,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#removeAttribute(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#removeAttribute(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testRemoveAttribute() {
@@ -241,7 +203,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#setAttribute(java.lang.String, java.lang.Object)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#setAttribute(java.lang.String, java.lang.Object)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testSetAttribute() {
@@ -249,7 +211,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getEffectiveMajorVersion()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getEffectiveMajorVersion()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetEffectiveMajorVersion() {
@@ -257,7 +219,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getEffectiveMinorVersion()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getEffectiveMinorVersion()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetEffectiveMinorVersion() {
@@ -265,7 +227,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#setInitParameter(java.lang.String, java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#setInitParameter(java.lang.String, java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testSetInitParameter() {
@@ -273,7 +235,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addServlet(java.lang.String, java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#addServlet(java.lang.String, java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAddServletStringString() {
@@ -281,31 +243,31 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addServlet(java.lang.String, jakarta.servlet.Servlet)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#addServlet(java.lang.String, jakarta.servlet.Servlet)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAddServletStringServlet() {
-        this.servletContext.addServlet("servletName", new TestServlet());
+        this.servletContext.addServlet("servletName", new JakartaTestServlet());
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addServlet(java.lang.String, java.lang.Class)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#addServlet(java.lang.String, java.lang.Class)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAddServletStringClassOfQextendsServlet() {
-        this.servletContext.addServlet("servletName", TestServlet.class);
+        this.servletContext.addServlet("servletName", JakartaTestServlet.class);
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#createServlet(java.lang.Class)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#createServlet(java.lang.Class)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testCreateServlet() throws ServletException {
-        this.servletContext.createServlet(TestServlet.class);
+        this.servletContext.createServlet(JakartaTestServlet.class);
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getServletRegistration(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getServletRegistration(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetServletRegistration() {
@@ -313,7 +275,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getServletRegistrations()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getServletRegistrations()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetServletRegistrations() {
@@ -321,7 +283,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addFilter(java.lang.String, java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#addFilter(java.lang.String, java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAddFilterStringString() {
@@ -330,7 +292,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addFilter(java.lang.String, jakarta.servlet.Filter)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#addFilter(java.lang.String, jakarta.servlet.Filter)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAddFilterStringFilter() {
@@ -339,7 +301,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addFilter(java.lang.String, java.lang.Class)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#addFilter(java.lang.String, java.lang.Class)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAddFilterStringClassOfQextendsFilter() {
@@ -348,7 +310,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#createFilter(java.lang.Class)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#createFilter(java.lang.Class)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testCreateFilter() throws ServletException {
@@ -357,7 +319,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getFilterRegistration(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getFilterRegistration(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetFilterRegistration() {
@@ -365,7 +327,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getFilterRegistrations()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getFilterRegistrations()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetFilterRegistrations() {
@@ -373,7 +335,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getSessionCookieConfig()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getSessionCookieConfig()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetSessionCookieConfig() {
@@ -381,7 +343,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#setSessionTrackingModes(java.util.Set)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#setSessionTrackingModes(java.util.Set)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testSetSessionTrackingModes() {
@@ -389,7 +351,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getDefaultSessionTrackingModes()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getDefaultSessionTrackingModes()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetDefaultSessionTrackingModes() {
@@ -397,7 +359,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getEffectiveSessionTrackingModes()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getEffectiveSessionTrackingModes()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetEffectiveSessionTrackingModes() {
@@ -405,7 +367,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addListener(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#addListener(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAddListenerString() {
@@ -413,7 +375,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addListener(java.util.EventListener)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#addListener(java.util.EventListener)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAddListenerT() {
@@ -421,7 +383,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addListener(java.lang.Class)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#addListener(java.lang.Class)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAddListenerClassOfQextendsEventListener() {
@@ -429,7 +391,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#createListener(java.lang.Class)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#createListener(java.lang.Class)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testCreateListener() throws ServletException {
@@ -437,7 +399,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getJspConfigDescriptor()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getJspConfigDescriptor()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetJspConfigDescriptor() {
@@ -445,7 +407,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getClassLoader()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getClassLoader()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetClassLoader() {
@@ -453,7 +415,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#declareRoles(java.lang.String[])}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#declareRoles(java.lang.String[])}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testDeclareRoles() {
@@ -461,7 +423,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getVirtualServerName()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getVirtualServerName()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetVirtualServerName() {
@@ -469,8 +431,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addJspFile(java.lang.String,
-     * java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#addJspFile(java.lang.String, java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testAddJspFile() {
@@ -478,7 +439,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getSessionTimeout()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getSessionTimeout()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetSessionTimeout() {
@@ -486,7 +447,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#setSessionTimeout(int)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#setSessionTimeout(int)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testSetSessionTimeout() {
@@ -494,8 +455,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link
-     * org.apache.sling.servlethelpers.MockServletContextTest#getRequestCharacterEncoding()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getRequestCharacterEncoding()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetRequestCharacterEncoding() {
@@ -503,8 +463,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link
-     * org.apache.sling.servlethelpers.MockServletContextTest#setRequestCharacterEncoding(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#setRequestCharacterEncoding(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testSetRequestCharacterEncoding() {
@@ -512,8 +471,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link
-     * org.apache.sling.servlethelpers.MockServletContextTest#getResponseCharacterEncoding()}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#getResponseCharacterEncoding()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetResponseCharacterEncoding() {
@@ -521,8 +479,7 @@ public class MockServletContextTest {
     }
 
     /**
-     * Test method for {@link
-     * org.apache.sling.servlethelpers.MockServletContextTest#setResponseCharacterEncoding(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.MockJakartaServletContext#setResponseCharacterEncoding(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testSetResponseCharacterEncoding() {

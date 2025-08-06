@@ -18,30 +18,25 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
-import javax.servlet.ServletException;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import jakarta.servlet.ServletException;
 import org.apache.commons.io.IOUtils;
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.SlingHttpServletResponse;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletResponse;
 import org.apache.sling.api.request.RequestPathInfo;
-import org.apache.sling.api.servlets.SlingAllMethodsServlet;
+import org.apache.sling.api.servlets.SlingJakartaAllMethodsServlet;
 
-/**
- * @deprecated Use {@link JakartaRequestInfoServlet} instead.
- */
-@Deprecated(since = "2.0.0")
-class RequestInfoServlet extends SlingAllMethodsServlet {
+class JakartaRequestInfoServlet extends SlingJakartaAllMethodsServlet {
     private static final long serialVersionUID = 1L;
     private static final String PREFIX = "TEST_";
     private final String resolutionInfo;
 
-    RequestInfoServlet(SlingHttpServletRequest resolutionRequest) {
+    JakartaRequestInfoServlet(SlingJakartaHttpServletRequest resolutionRequest) {
         final StringBuilder sb = new StringBuilder();
 
         // Verify that we get the usual Sling request
@@ -68,7 +63,7 @@ class RequestInfoServlet extends SlingAllMethodsServlet {
     }
 
     @Override
-    public void service(SlingHttpServletRequest request, SlingHttpServletResponse response)
+    public void service(SlingJakartaHttpServletRequest request, SlingJakartaHttpServletResponse response)
             throws IOException, ServletException {
         if ("/EXCEPTION".equals(request.getResource().getPath())) {
             throw new IOException("Failing as designed");

@@ -18,31 +18,28 @@
  */
 package org.apache.sling.servlethelpers.it;
 
-import javax.servlet.Servlet;
-
 import java.io.IOException;
 
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.servlets.SlingAllMethodsServlet;
+import jakarta.servlet.Servlet;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletResponse;
+import org.apache.sling.api.servlets.SlingJakartaAllMethodsServlet;
 import org.osgi.service.component.annotations.Component;
 
-/** Not all servlets can be called directly from a {@link ServletInternalRequest},
+/** Not all servlets can be called directly from a {@link JakartaServletInternalRequest},
  *  depending on the environment that they expect, request attributes etc.
  *
  *  This is a test one with zero environment requirements.
- *
- * @deprecated Use {@link JakartaTestServlet} instead.
  */
-@Deprecated(since = "2.0.0")
 @Component(
         service = Servlet.class,
-        property = {"sling.servlet.resourceTypes=sling/servlet/default", "sling.servlet.extensions=TestServlet"})
-public class TestServlet extends SlingAllMethodsServlet {
+        property = {"sling.servlet.resourceTypes=sling/servlet/default", "sling.servlet.extensions=JakartaTestServlet"})
+public class JakartaTestServlet extends SlingJakartaAllMethodsServlet {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public void doGet(SlingHttpServletRequest request, SlingHttpServletResponse response) throws IOException {
+    public void doGet(SlingJakartaHttpServletRequest request, SlingJakartaHttpServletResponse response)
+            throws IOException {
         response.getWriter().write(getClass().getName());
     }
 }

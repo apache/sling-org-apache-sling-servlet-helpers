@@ -35,6 +35,7 @@ import java.util.Set;
 import java.util.Vector;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.Strings;
 import org.apache.commons.lang3.math.NumberUtils;
 
 /**
@@ -44,7 +45,7 @@ class HeaderSupport {
 
     private static final DateTimeFormatter RFC_1123_DATE_TIME = DateTimeFormatter.RFC_1123_DATE_TIME;
 
-    private List<HeaderValue> headers = new ArrayList<HeaderValue>();
+    private List<HeaderValue> headers = new ArrayList<>();
 
     private static class HeaderValue {
 
@@ -98,7 +99,7 @@ class HeaderSupport {
 
     private void removeHeaders(String name) {
         for (int i = this.headers.size() - 1; i >= 0; i--) {
-            if (StringUtils.equalsIgnoreCase(this.headers.get(i).getKey(), name)) {
+            if (Strings.CI.contains(this.headers.get(i).getKey(), name)) {
                 headers.remove(i);
             }
         }
@@ -132,9 +133,9 @@ class HeaderSupport {
     }
 
     public Collection<String> getHeaders(String name) {
-        List<String> values = new ArrayList<String>();
+        List<String> values = new ArrayList<>();
         for (HeaderValue entry : headers) {
-            if (StringUtils.equalsIgnoreCase(entry.getKey(), name)) {
+            if (Strings.CI.contains(entry.getKey(), name)) {
                 values.add(entry.getValue());
             }
         }
@@ -142,7 +143,7 @@ class HeaderSupport {
     }
 
     public Collection<String> getHeaderNames() {
-        Set<String> values = new HashSet<String>();
+        Set<String> values = new HashSet<>();
         for (HeaderValue entry : headers) {
             values.add(entry.getKey());
         }

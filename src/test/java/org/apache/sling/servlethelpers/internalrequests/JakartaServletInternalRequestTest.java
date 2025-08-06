@@ -18,13 +18,12 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,19 +34,15 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-/**
- * @deprecated Use {@link JakartaServletInternalRequestTest} instead.
- */
-@Deprecated(since = "2.0.0")
-public class ServletInternalRequestTest {
+public class JakartaServletInternalRequestTest {
     protected ResourceResolver resourceResolver;
 
-    protected final InternalRequest request(String path) {
+    protected final JakartaInternalRequest request(String path) {
         return request(path, null, null);
     }
 
-    protected InternalRequest request(String path, String resourceType, String resourceSuperType) {
-        return new ServletInternalRequest(
+    protected JakartaInternalRequest request(String path, String resourceType, String resourceSuperType) {
+        return new JakartaServletInternalRequest(
                 new MockServletResolver(),
                 new ServletResolutionResource(resourceResolver, path, resourceType, resourceSuperType));
     }
@@ -107,12 +102,12 @@ public class ServletInternalRequestTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void nullParamKey() throws IOException {
+    public void nullParamKey() {
         request("/nullparamKey").withParameter(null, "value");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void nullParamValue() throws IOException {
+    public void nullParamValue() {
         request("/nullparamValue").withParameter("key", null);
     }
 
@@ -140,12 +135,13 @@ public class ServletInternalRequestTest {
 
     @Test
     public void non200Status() throws IOException {
-        final InternalRequest req =
+        final JakartaInternalRequest req =
                 request("/never").withRequestMethod("STATUS").execute();
         try {
             req.checkStatus(200);
             fail("Expecting status check to fail");
         } catch (IOException asExpected) {
+            // expected
         }
         assertTrue(
                 "Expecting non-200 status to return no content",
@@ -164,7 +160,8 @@ public class ServletInternalRequestTest {
 
     @Test
     public void implicitStatusCheck() throws IOException {
-        final InternalRequest r = request("/ignore").withRequestMethod("STATUS").execute();
+        final JakartaInternalRequest r =
+                request("/ignore").withRequestMethod("STATUS").execute();
 
         final String msg = "Expecting an IOException - status wasn't checked and not 200";
 
@@ -178,18 +175,20 @@ public class ServletInternalRequestTest {
             r.getResponseAsString();
             fail(msg);
         } catch (IOException asExpected) {
+            // expected
         }
 
         try {
             r.getResponse();
             fail(msg);
         } catch (IOException asExpected) {
+            // expected
         }
     }
 
     @Test
     public void ignoreNon200Status() throws IOException {
-        final InternalRequest r =
+        final JakartaInternalRequest r =
                 request("/ignore").withRequestMethod("STATUS").execute().checkStatus();
 
         assertEquals(451, r.getStatus());
@@ -201,7 +200,7 @@ public class ServletInternalRequestTest {
 
     @Test
     public void ignoreNon200StatusWithNull() throws IOException {
-        final InternalRequest r =
+        final JakartaInternalRequest r =
                 request("/ignoreAgain").withRequestMethod("STATUS").execute().checkStatus(null);
         assertEquals(451, r.getStatus());
 
@@ -220,11 +219,12 @@ public class ServletInternalRequestTest {
 
     @Test
     public void contentTypeMismatch() throws IOException {
-        final InternalRequest req = request("/contentType").execute().checkResponseContentType("CT_null");
+        final JakartaInternalRequest req = request("/contentType").execute().checkResponseContentType("CT_null");
         try {
             req.checkResponseContentType("not/this");
             fail("Expecting content type check to fail");
         } catch (IOException asExpected) {
+            // expected
         }
     }
 
@@ -245,13 +245,13 @@ public class ServletInternalRequestTest {
 
     @Test
     public void checkStatusCodeReturn() throws IOException {
-        InternalRequest call = request("/NOSERVLET").execute().checkStatus(HttpServletResponse.SC_NOT_FOUND);
+        JakartaInternalRequest call = request("/NOSERVLET").execute().checkStatus(HttpServletResponse.SC_NOT_FOUND);
         assertEquals("Unexpected Status Code", HttpServletResponse.SC_NOT_FOUND, call.getStatus());
     }
 
     @Test
     public void checkMultipleStatusCodeReturn() throws IOException {
-        InternalRequest call =
+        JakartaInternalRequest call =
                 request("/response").execute().checkStatus(HttpServletResponse.SC_OK, HttpServletResponse.SC_NOT_FOUND);
         assertEquals("Unexpected Status Code", HttpServletResponse.SC_OK, call.getStatus());
     }

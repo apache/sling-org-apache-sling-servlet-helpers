@@ -18,295 +18,66 @@
  */
 package org.apache.sling.servlethelpers;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletResponse;
 
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.Locale;
+import java.util.Arrays;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.sling.api.SlingHttpServletResponse;
-import org.apache.sling.api.adapter.SlingAdaptable;
+import org.apache.felix.http.javaxwrappers.CookieWrapper;
+import org.apache.sling.api.wrappers.JakartaToJavaxResponseWrapper;
 import org.osgi.annotation.versioning.ConsumerType;
 
 /**
- * Mock {@link SlingHttpServletResponse} implementation.
+ * Mock {@link org.apache.sling.api.SlingHttpServletResponse} implementation.
+ *
+ * @deprecated Use {@link MockSlingJakartaHttpServletResponse} instead.
  */
 @ConsumerType
-public class MockSlingHttpServletResponse extends SlingAdaptable implements SlingHttpServletResponse {
+@Deprecated(since = "2.0.0")
+public class MockSlingHttpServletResponse extends JakartaToJavaxResponseWrapper {
+    private MockSlingJakartaHttpServletResponse wrappedResponse;
 
-    static final String CHARSET_SEPARATOR = ";charset=";
-
-    private String contentType;
-    private String characterEncoding;
-    private int contentLength;
-    private int status = HttpServletResponse.SC_OK;
-    private String statusMessage;
-    private int bufferSize = 1024 * 8;
-    private boolean isCommitted;
-    private Locale locale = Locale.US;
-    private final HeaderSupport headerSupport = new HeaderSupport();
-    private final ResponseBodySupport bodySupport = new ResponseBodySupport();
-    private final CookieSupport cookieSupport = new CookieSupport();
-
-    @Override
-    public String getContentType() {
-        if (this.contentType == null) {
-            return null;
-        } else {
-            return this.contentType
-                    + (StringUtils.isNotBlank(characterEncoding) ? CHARSET_SEPARATOR + characterEncoding : "");
-        }
-    }
-
-    @Override
-    public void setContentType(String type) {
-        this.contentType = type;
-        if (StringUtils.contains(this.contentType, CHARSET_SEPARATOR)) {
-            this.characterEncoding = StringUtils.substringAfter(this.contentType, CHARSET_SEPARATOR);
-            this.contentType = StringUtils.substringBefore(this.contentType, CHARSET_SEPARATOR);
-        }
-    }
-
-    @Override
-    public void setCharacterEncoding(String charset) {
-        this.characterEncoding = charset;
-    }
-
-    @Override
-    public String getCharacterEncoding() {
-        return this.characterEncoding;
-    }
-
-    @Override
-    public void setContentLength(int len) {
-        this.contentLength = len;
+    public MockSlingHttpServletResponse(MockSlingJakartaHttpServletResponse wrappedResponse) {
+        super(wrappedResponse);
+        this.wrappedResponse = wrappedResponse;
     }
 
     public int getContentLength() {
-        return this.contentLength;
-    }
-
-    @Override
-    public void setStatus(int sc, String sm) {
-        setStatus(sc);
-        this.statusMessage = sm;
-    }
-
-    @Override
-    public void setStatus(int sc) {
-        this.status = sc;
-    }
-
-    @Override
-    public int getStatus() {
-        return this.status;
-    }
-
-    @Override
-    public void sendError(int sc, String msg) {
-        setStatus(sc);
-        this.statusMessage = msg;
-    }
-
-    @Override
-    public void sendError(int sc) {
-        setStatus(sc);
-    }
-
-    @Override
-    public void sendRedirect(String location) {
-        setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
-        setHeader("Location", location);
-    }
-
-    @Override
-    public void addHeader(String name, String value) {
-        headerSupport.addHeader(name, value);
-    }
-
-    @Override
-    public void addIntHeader(String name, int value) {
-        headerSupport.addIntHeader(name, value);
-    }
-
-    @Override
-    public void addDateHeader(String name, long date) {
-        headerSupport.addDateHeader(name, date);
-    }
-
-    @Override
-    public void setHeader(String name, String value) {
-        headerSupport.setHeader(name, value);
-    }
-
-    @Override
-    public void setIntHeader(String name, int value) {
-        headerSupport.setIntHeader(name, value);
-    }
-
-    @Override
-    public void setDateHeader(String name, long date) {
-        headerSupport.setDateHeader(name, date);
-    }
-
-    @Override
-    public boolean containsHeader(String name) {
-        return headerSupport.containsHeader(name);
-    }
-
-    @Override
-    public String getHeader(String name) {
-        return headerSupport.getHeader(name);
-    }
-
-    @Override
-    public Collection<String> getHeaders(String name) {
-        return headerSupport.getHeaders(name);
-    }
-
-    @Override
-    public Collection<String> getHeaderNames() {
-        return headerSupport.getHeaderNames();
-    }
-
-    @Override
-    public PrintWriter getWriter() {
-        return bodySupport.getWriter(getCharacterEncoding());
-    }
-
-    @Override
-    public ServletOutputStream getOutputStream() {
-        return bodySupport.getOutputStream();
-    }
-
-    @Override
-    public void reset() {
-        if (isCommitted()) {
-            throw new IllegalStateException("Response already committed.");
-        }
-        bodySupport.reset();
-        headerSupport.reset();
-        cookieSupport.reset();
-        status = HttpServletResponse.SC_OK;
-        contentLength = 0;
-    }
-
-    @Override
-    public void resetBuffer() {
-        if (isCommitted()) {
-            throw new IllegalStateException("Response already committed.");
-        }
-        bodySupport.reset();
-    }
-
-    @Override
-    public int getBufferSize() {
-        return this.bufferSize;
-    }
-
-    @Override
-    public void setBufferSize(int size) {
-        this.bufferSize = size;
-    }
-
-    @Override
-    public void flushBuffer() {
-        isCommitted = true;
-    }
-
-    @Override
-    public boolean isCommitted() {
-        return isCommitted;
+        return this.wrappedResponse.getContentLength();
     }
 
     public byte[] getOutput() {
-        return bodySupport.getOutput();
+        return this.wrappedResponse.getOutput();
     }
 
     public String getOutputAsString() {
-        return bodySupport.getOutputAsString(getCharacterEncoding());
+        return this.wrappedResponse.getOutputAsString();
     }
 
-    @Override
-    public void addCookie(Cookie cookie) {
-        cookieSupport.addCookie(cookie);
-    }
-
-    /**
-     * Get cookie
-     * @param name Cookie name
-     * @return Cookie or null
-     */
+    @SuppressWarnings({"java:S2092", "java:S3330"})
     public Cookie getCookie(String name) {
-        return cookieSupport.getCookie(name);
+        return new CookieWrapper(this.wrappedResponse.getCookie(name));
     }
 
-    /**
-     * Get cookies
-     * @return Cookies array or null if no cookie defined
-     */
     public Cookie[] getCookies() {
-        return cookieSupport.getCookies();
+        jakarta.servlet.http.Cookie[] cookies = this.wrappedResponse.getCookies();
+        if (cookies == null) {
+            return null; // NOSONAR
+        } else {
+            return Arrays.stream(cookies).map(CookieWrapper::new).toArray(Cookie[]::new);
+        }
     }
 
-    @Override
-    public Locale getLocale() {
-        return locale;
-    }
-
-    @Override
-    public void setLocale(Locale loc) {
-        this.locale = loc;
-    }
-
-    /**
-     * @return status message that was set using {@link #setStatus(int, String)} or {@link #sendError(int, String)}
-     */
     public String getStatusMessage() {
-        return statusMessage;
-    }
-
-    /**
-     * @deprecated As of package version 1.6, use {@link #getStatusMessage()} instead.
-     *
-     * @return status message that was set using {@link #setStatus(int, String)} or {@link #sendError(int, String)}
-     */
-    @Deprecated
-    public String geStatusMessage() {
-        return this.getStatusMessage();
+        return this.wrappedResponse.getStatusMessage();
     }
 
     @Override
-    public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
+    public void setStatus(final int sc, final String sm) {
+        this.wrappedResponse.sendError(sc, sm);
+    }
+
+    @Override
+    public <T> T adaptTo(Class<T> type) {
         return AdaptableUtil.adaptToWithoutCaching(this, type);
-    }
-
-    // --- unsupported operations ---
-    @Override
-    public String encodeRedirectUrl(String url) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String encodeRedirectURL(String url) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String encodeUrl(String url) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String encodeURL(String url) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void setContentLengthLong(long len) {
-        throw new UnsupportedOperationException();
     }
 }

@@ -18,12 +18,11 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
-import javax.servlet.ServletException;
-
 import java.io.IOException;
 
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.SlingHttpServletResponse;
+import jakarta.servlet.ServletException;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.engine.SlingRequestProcessor;
@@ -42,17 +41,14 @@ import org.jetbrains.annotations.NotNull;
  *  Resource is available, as it builds its own Resource
  *  based on the supplied parameters to drive the
  *  Servlet/Script resolution mechanism.
- *
- * @deprecated Use {@link JakartaInternalRequest} instead.
  */
-@Deprecated(since = "2.0.0")
-public class SlingInternalRequest extends InternalRequest {
+public class JakartaSlingInternalRequest extends JakartaInternalRequest {
     private final SlingRequestProcessor processor;
     private String resourceType;
     private String resourceSuperType;
 
     /** Setup an internal request that uses a SlingRequestProcessor */
-    public SlingInternalRequest(
+    public JakartaSlingInternalRequest(
             @NotNull ResourceResolver resourceResolver, @NotNull SlingRequestProcessor p, @NotNull String path) {
         super(resourceResolver, path);
         checkNotNull(SlingRequestProcessor.class, p);
@@ -74,21 +70,23 @@ public class SlingInternalRequest extends InternalRequest {
 
     /** Sets the sling:resourceSuperType of the fake Resource used to resolve
      *  the Script or Servlet used for the internal request */
-    public SlingInternalRequest withResourceSuperType(String resourceSuperType) {
+    public JakartaSlingInternalRequest withResourceSuperType(String resourceSuperType) {
         this.resourceSuperType = resourceSuperType;
         return this;
     }
 
     /** Sets the sling:resourceType of the fake Resource used to resolve
      *  the Script or Servlet used for the internal request */
-    public SlingInternalRequest withResourceType(String resourceType) {
+    public JakartaSlingInternalRequest withResourceType(String resourceType) {
         this.resourceType = resourceType;
         return this;
     }
 
     @Override
     protected void delegateExecute(
-            SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
+            SlingJakartaHttpServletRequest request,
+            SlingJakartaHttpServletResponse response,
+            ResourceResolver resourceResolver)
             throws ServletException, IOException {
         log.debug("Executing request using a SlingRequestProcessor");
         processor.processRequest(request, response, resourceResolver);
