@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Part;
 
-import java.util.List;
 import java.util.ListResourceBundle;
 import java.util.Locale;
 import java.util.Map;
@@ -34,7 +33,6 @@ import org.apache.felix.http.jakartawrappers.CookieWrapper;
 import org.apache.felix.http.jakartawrappers.PartWrapper;
 import org.apache.sling.api.SlingHttpServletRequest;
 import org.apache.sling.api.request.RequestDispatcherOptions;
-import org.apache.sling.api.request.RequestParameter;
 import org.apache.sling.api.request.RequestPathInfo;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.wrappers.JakartaToJavaxRequestWrapper;
@@ -126,12 +124,9 @@ public class MockSlingHttpServletRequest extends JakartaToJavaxRequestWrapper {
         this.wrappedRequest.setDateHeader(name, date);
     }
 
+    @SuppressWarnings({"java:S2092", "java:S3330"})
     public void addCookie(Cookie cookie) {
         this.wrappedRequest.addCookie(new CookieWrapper(cookie));
-    }
-
-    public List<RequestParameter> getRequestParameterList() {
-        return this.wrappedRequest.getRequestParameterList();
     }
 
     public void addRequestParameter(String name, String value) {
@@ -212,10 +207,6 @@ public class MockSlingHttpServletRequest extends JakartaToJavaxRequestWrapper {
 
     public void setPathInfo(String pathInfo) {
         this.wrappedRequest.setPathInfo(pathInfo);
-    }
-
-    public StringBuffer getRequestURL() {
-        return this.wrappedRequest.getRequestURL();
     }
 
     public void setAuthType(String authType) {

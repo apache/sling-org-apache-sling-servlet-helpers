@@ -41,42 +41,52 @@ public class JakartaByteArrayPart implements Part {
         this.name = name;
     }
 
+    @Override
     public InputStream getInputStream() throws IOException { // NOSONAR
         return new ByteArrayInputStream(content);
     }
 
+    @Override
     public String getContentType() {
         return null;
     }
 
+    @Override
     public String getName() {
         return name;
     }
 
+    @Override
     public String getSubmittedFileName() {
         return getName();
     }
 
+    @Override
     public long getSize() {
         return content.length;
     }
 
+    @Override
     public void write(String fileName) throws IOException {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public void delete() throws IOException {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public String getHeader(String name) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public Collection<String> getHeaders(String name) {
         throw new UnsupportedOperationException();
     }
 
+    @Override
     public Collection<String> getHeaderNames() {
         throw new UnsupportedOperationException();
     }

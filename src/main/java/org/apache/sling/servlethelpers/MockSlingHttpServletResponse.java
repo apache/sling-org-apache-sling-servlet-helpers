@@ -53,6 +53,7 @@ public class MockSlingHttpServletResponse extends JakartaToJavaxResponseWrapper 
         return this.wrappedResponse.getOutputAsString();
     }
 
+    @SuppressWarnings({"java:S2092", "java:S3330"})
     public Cookie getCookie(String name) {
         return new CookieWrapper(this.wrappedResponse.getCookie(name));
     }
