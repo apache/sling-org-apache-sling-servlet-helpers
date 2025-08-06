@@ -257,7 +257,7 @@ public class MockSlingJakartaHttpServletResponse extends SlingAdaptable implemen
     }
 
     /**
-     * @return status message that was set using {@link #setStatus(int, String)} or {@link #sendError(int, String)}
+     * @return status message that was set using {@link #sendError(int, String)}
      */
     public String getStatusMessage() {
         return statusMessage;
