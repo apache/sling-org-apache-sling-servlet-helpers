@@ -108,6 +108,21 @@ public class MockSlingHttpServletRequestTest {
     }
 
     @Test
+    public void testMockNewSession() {
+        assertNotNull(request.newMockHttpSession());
+    }
+
+    @Test
+    public void testNewMockRequestPathInfo() {
+        assertNotNull(request.newMockRequestPathInfo());
+    }
+
+    @Test
+    public void testEmptyResourceBundle() {
+        assertFalse(request.EMPTY_RESOURCE_BUNDLE.getKeys().hasMoreElements());
+    }
+
+    @Test
     public void testResourceResolver() {
         assertSame(resourceResolver, request.getResourceResolver());
     }

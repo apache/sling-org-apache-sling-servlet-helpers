@@ -264,7 +264,7 @@ public class MockSlingJakartaHttpServletRequest extends SlingAdaptable implement
                 formatQueryStringParameter(querystring, entry);
             }
         }
-        return querystring.length() > 0 ? querystring.toString() : null;
+        return !querystring.isEmpty() ? querystring.toString() : null;
     }
 
     private static void formatQueryStringParameter(

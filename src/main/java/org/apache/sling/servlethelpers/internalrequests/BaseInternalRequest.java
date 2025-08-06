@@ -106,7 +106,7 @@ public abstract class BaseInternalRequest {
         }
         StringBuilder sb = new StringBuilder();
         Arrays.stream(selectors)
-                .forEach(sel -> sb.append(sb.length() == 0 ? "" : ".").append(sel));
+                .forEach(sel -> sb.append(sb.isEmpty() ? "" : ".").append(sel));
         selectorString = sb.toString();
         return this;
     }

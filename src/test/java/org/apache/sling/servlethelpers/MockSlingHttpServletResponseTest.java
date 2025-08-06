@@ -186,9 +186,9 @@ public class MockSlingHttpServletResponseTest {
 
     @Test
     public void testWriteBinaryContent() throws Exception {
-        final byte[] TEST_DATA = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05};
-        response.getOutputStream().write(TEST_DATA);
-        assertArrayEquals(TEST_DATA, response.getOutput());
+        final byte[] testData = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05};
+        response.getOutputStream().write(testData);
+        assertArrayEquals(testData, response.getOutput());
 
         response.resetBuffer();
         assertEquals(0, response.getOutput().length);
