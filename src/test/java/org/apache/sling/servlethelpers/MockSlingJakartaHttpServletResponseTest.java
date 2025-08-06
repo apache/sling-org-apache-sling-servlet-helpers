@@ -68,7 +68,7 @@ public class MockSlingJakartaHttpServletResponseTest {
     }
 
     @Test
-    public void testContentTypeCharset() throws Exception {
+    public void testContentTypeCharset() {
         assertNull(response.getContentType());
         assertNull(response.getCharacterEncoding());
 

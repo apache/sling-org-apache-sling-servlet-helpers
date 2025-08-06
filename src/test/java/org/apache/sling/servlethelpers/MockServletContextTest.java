@@ -196,7 +196,7 @@ public class MockServletContextTest {
      * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getServletNames()}.
      */
     @Test(expected = UnsupportedOperationException.class)
-    public void testGetServletNames() throws ServletException {
+    public void testGetServletNames() {
         this.servletContext.getServletNames();
     }
 

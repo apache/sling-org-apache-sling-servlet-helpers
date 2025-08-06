@@ -991,13 +991,13 @@ public class MockSlingHttpServletRequestTest {
      */
     @Test
     public void testGetRequestDispatcherResource() {
-        Resource resource = Mockito.mock(Resource.class);
-        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(resource));
+        Resource mockResource = Mockito.mock(Resource.class);
+        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(mockResource));
         MockRequestDispatcherFactory mockFactory = Mockito.mock(MockRequestDispatcherFactory.class);
         RequestDispatcher mockDispatcher = Mockito.mock(RequestDispatcher.class);
-        Mockito.when(mockFactory.getRequestDispatcher(resource, null)).thenReturn(mockDispatcher);
+        Mockito.when(mockFactory.getRequestDispatcher(mockResource, null)).thenReturn(mockDispatcher);
         request.setRequestDispatcherFactory(mockFactory);
-        assertSame(mockDispatcher, request.getRequestDispatcher(resource));
+        assertSame(mockDispatcher, request.getRequestDispatcher(mockResource));
     }
 
     /**
