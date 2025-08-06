@@ -32,12 +32,13 @@ import jakarta.servlet.WriteListener;
 /**
  * Manage response body content.
  */
-class JakartaResponseBodySupport {
-    protected ByteArrayOutputStream outputStream;
-    protected ServletOutputStream servletOutputStream;
-    protected PrintWriter printWriter;
+class ResponseBodySupport {
 
-    protected JakartaResponseBodySupport() {
+    private ByteArrayOutputStream outputStream;
+    private ServletOutputStream servletOutputStream;
+    private PrintWriter printWriter;
+
+    public ResponseBodySupport() {
         reset();
     }
 
@@ -45,6 +46,28 @@ class JakartaResponseBodySupport {
         outputStream = new ByteArrayOutputStream();
         servletOutputStream = null;
         printWriter = null;
+    }
+
+    public ServletOutputStream getOutputStream() {
+        if (servletOutputStream == null) {
+            servletOutputStream = new ServletOutputStream() {
+                @Override
+                public void write(int b) throws IOException {
+                    outputStream.write(b);
+                }
+
+                @Override
+                public boolean isReady() {
+                    return true;
+                }
+
+                @Override
+                public void setWriteListener(WriteListener writeListener) {
+                    throw new UnsupportedOperationException();
+                }
+            };
+        }
+        return servletOutputStream;
     }
 
     public PrintWriter getWriter(String charset) {
@@ -82,27 +105,5 @@ class JakartaResponseBodySupport {
 
     private String defaultCharset(String charset) {
         return Objects.toString(charset, StandardCharsets.UTF_8.name());
-    }
-
-    public ServletOutputStream getOutputStream() {
-        if (servletOutputStream == null) {
-            servletOutputStream = new ServletOutputStream() {
-                @Override
-                public void write(int b) throws IOException {
-                    outputStream.write(b);
-                }
-
-                @Override
-                public boolean isReady() {
-                    return true;
-                }
-
-                @Override
-                public void setWriteListener(WriteListener writeListener) {
-                    throw new UnsupportedOperationException();
-                }
-            };
-        }
-        return servletOutputStream;
     }
 }

@@ -38,12 +38,12 @@ import static org.junit.Assert.fail;
 /**
  *
  */
-public class JakartaResponseBodySupportTest {
+public class ResponseBodySupportTest {
 
-    private JakartaResponseBodySupport responseBodySupport = new JakartaResponseBodySupport();
+    private ResponseBodySupport responseBodySupport = new ResponseBodySupport();
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaResponseBodySupport#reset()}.
+     * Test method for {@link org.apache.sling.servlethelpers.ResponseBodySupport#reset()}.
      */
     @Test
     public void testReset() {
@@ -55,7 +55,7 @@ public class JakartaResponseBodySupportTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaResponseBodySupport#getOutputStream()}.
+     * Test method for {@link org.apache.sling.servlethelpers.ResponseBodySupport#getOutputStream()}.
      */
     @Test
     public void testGetOutputStream() {
@@ -82,7 +82,7 @@ public class JakartaResponseBodySupportTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaResponseBodySupport#getWriter(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.ResponseBodySupport#getWriter(java.lang.String)}.
      */
     @Test
     public void testGetWriter() {
@@ -109,7 +109,7 @@ public class JakartaResponseBodySupportTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaResponseBodySupport#getOutput()}.
+     * Test method for {@link org.apache.sling.servlethelpers.ResponseBodySupport#getOutput()}.
      */
     @Test
     public void testGetOutput() {
@@ -129,7 +129,7 @@ public class JakartaResponseBodySupportTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaResponseBodySupport#getOutputAsString(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.ResponseBodySupport#getOutputAsString(java.lang.String)}.
      */
     @Test
     public void testGetOutputAsString() {

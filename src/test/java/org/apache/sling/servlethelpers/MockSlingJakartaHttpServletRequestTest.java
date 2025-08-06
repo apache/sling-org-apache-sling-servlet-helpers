@@ -592,7 +592,7 @@ public class MockSlingJakartaHttpServletRequestTest {
 
     @Test
     public void testExistingParts() {
-        JakartaByteArrayPart part = JakartaByteArrayPart.builder()
+        ByteArrayPart part = ByteArrayPart.builder()
                 .withName("log.txt")
                 .withContent("hello, world".getBytes(UTF_8))
                 .build();

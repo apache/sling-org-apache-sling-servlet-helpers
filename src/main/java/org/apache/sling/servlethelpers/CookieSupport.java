@@ -28,7 +28,7 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Manages cookies for request and response.
  */
-class JakartaCookieSupport {
+class CookieSupport {
 
     private Map<String, Cookie> cookies = new LinkedHashMap<>();
 

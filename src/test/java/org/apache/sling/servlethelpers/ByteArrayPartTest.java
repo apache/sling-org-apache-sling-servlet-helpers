@@ -27,14 +27,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
-public class JakartaByteArrayPartTest {
+public class ByteArrayPartTest {
 
     private static final String TEST_CONTENT = "test input";
     private static final String PART_NAME = "test_part_name";
 
     @Test
     public void buildPart() throws IOException {
-        JakartaByteArrayPart part = JakartaByteArrayPart.builder()
+        ByteArrayPart part = ByteArrayPart.builder()
                 .withName(PART_NAME)
                 .withContent(TEST_CONTENT.getBytes(UTF_8))
                 .build();
@@ -46,17 +46,17 @@ public class JakartaByteArrayPartTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void emptyBuilderFails() {
-        JakartaByteArrayPart.builder().build();
+        ByteArrayPart.builder().build();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void missingNameFails() {
-        JakartaByteArrayPart.builder().withContent(TEST_CONTENT.getBytes(UTF_8)).build();
+        ByteArrayPart.builder().withContent(TEST_CONTENT.getBytes(UTF_8)).build();
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void emptyNameFails() {
-        JakartaByteArrayPart.builder()
+        ByteArrayPart.builder()
                 .withName("")
                 .withContent(TEST_CONTENT.getBytes(UTF_8))
                 .build();
@@ -64,17 +64,17 @@ public class JakartaByteArrayPartTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void missingContentFails() {
-        JakartaByteArrayPart.builder().withName("test").build();
+        ByteArrayPart.builder().withName("test").build();
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaByteArrayPart#getName()}.
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getName()}.
      */
     @Test
     public void testGetName() {
         assertEquals(
                 "part",
-                JakartaByteArrayPart.builder()
+                ByteArrayPart.builder()
                         .withName("part")
                         .withContent(TEST_CONTENT.getBytes(UTF_8))
                         .build()
@@ -82,11 +82,11 @@ public class JakartaByteArrayPartTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaByteArrayPart#getContentType()}.
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getContentType()}.
      */
     @Test
     public void testGetContentType() {
-        assertNull(JakartaByteArrayPart.builder()
+        assertNull(ByteArrayPart.builder()
                 .withName("part")
                 .withContent(TEST_CONTENT.getBytes(UTF_8))
                 .build()
@@ -94,13 +94,13 @@ public class JakartaByteArrayPartTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaByteArrayPart#getSubmittedFileName()}.
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getSubmittedFileName()}.
      */
     @Test
     public void testGetSubmittedFileName() {
         assertEquals(
                 "part",
-                JakartaByteArrayPart.builder()
+                ByteArrayPart.builder()
                         .withName("part")
                         .withContent(TEST_CONTENT.getBytes(UTF_8))
                         .build()
@@ -108,13 +108,13 @@ public class JakartaByteArrayPartTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaByteArrayPart#getSize()}.
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getSize()}.
      */
     @Test
     public void testGetSize() {
         assertEquals(
                 10,
-                JakartaByteArrayPart.builder()
+                ByteArrayPart.builder()
                         .withName("part")
                         .withContent(TEST_CONTENT.getBytes(UTF_8))
                         .build()
@@ -122,11 +122,11 @@ public class JakartaByteArrayPartTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaByteArrayPart#write(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#write(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testWrite() throws IOException {
-        JakartaByteArrayPart.builder()
+        ByteArrayPart.builder()
                 .withName("part")
                 .withContent(TEST_CONTENT.getBytes(UTF_8))
                 .build()
@@ -134,11 +134,11 @@ public class JakartaByteArrayPartTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaByteArrayPart#delete()}.
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#delete()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testDelete() throws IOException {
-        JakartaByteArrayPart.builder()
+        ByteArrayPart.builder()
                 .withName("part")
                 .withContent(TEST_CONTENT.getBytes(UTF_8))
                 .build()
@@ -146,11 +146,11 @@ public class JakartaByteArrayPartTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaByteArrayPart#getHeader(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getHeader(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetHeader() {
-        JakartaByteArrayPart.builder()
+        ByteArrayPart.builder()
                 .withName("part")
                 .withContent(TEST_CONTENT.getBytes(UTF_8))
                 .build()
@@ -158,11 +158,11 @@ public class JakartaByteArrayPartTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaByteArrayPart#getHeaders(java.lang.String)}.
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getHeaders(java.lang.String)}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetHeaders() {
-        JakartaByteArrayPart.builder()
+        ByteArrayPart.builder()
                 .withName("part")
                 .withContent(TEST_CONTENT.getBytes(UTF_8))
                 .build()
@@ -170,11 +170,11 @@ public class JakartaByteArrayPartTest {
     }
 
     /**
-     * Test method for {@link org.apache.sling.servlethelpers.JakartaByteArrayPart#getHeaderNames()}.
+     * Test method for {@link org.apache.sling.servlethelpers.ByteArrayPart#getHeaderNames()}.
      */
     @Test(expected = UnsupportedOperationException.class)
     public void testGetHeaderNames() {
-        JakartaByteArrayPart.builder()
+        ByteArrayPart.builder()
                 .withName("part")
                 .withContent(TEST_CONTENT.getBytes(UTF_8))
                 .build()

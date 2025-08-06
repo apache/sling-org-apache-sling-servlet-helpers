@@ -596,7 +596,7 @@ public class MockSlingHttpServletRequestTest {
 
     @Test
     public void testExistingParts() throws IOException, ServletException {
-        javax.servlet.http.Part part = new PartWrapper(JakartaByteArrayPart.builder()
+        javax.servlet.http.Part part = new PartWrapper(ByteArrayPart.builder()
                 .withName("log.txt")
                 .withContent("hello, world".getBytes(UTF_8))
                 .build());

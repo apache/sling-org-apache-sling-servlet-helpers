@@ -48,8 +48,8 @@ public class MockSlingJakartaHttpServletResponse extends SlingAdaptable implemen
     private boolean isCommitted;
     private Locale locale = Locale.US;
     private final HeaderSupport headerSupport = new HeaderSupport();
-    private final JakartaResponseBodySupport bodySupport = new JakartaResponseBodySupport();
-    private final JakartaCookieSupport cookieSupport = new JakartaCookieSupport();
+    private final ResponseBodySupport bodySupport = new ResponseBodySupport();
+    private final CookieSupport cookieSupport = new CookieSupport();
 
     @Override
     public String getContentType() {

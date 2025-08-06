@@ -28,11 +28,20 @@ import jakarta.servlet.http.Part;
 /**
  * Simple Part implementation backed by an in-memory byte array
  */
-public class JakartaByteArrayPart implements Part {
+public class ByteArrayPart implements Part {
+    /**
+     * Returns a Builder instance used to create a ByteArrayPart
+     *
+     * @return a new builder instance
+     */
+    public static Builder builder() {
+        return new Builder();
+    }
+
     private final byte[] content;
     private final String name;
 
-    JakartaByteArrayPart(byte[] content, String name) {
+    private ByteArrayPart(byte[] content, String name) {
         if (content == null) throw new IllegalArgumentException("content may not be null");
 
         if (name == null || name.isEmpty()) throw new IllegalArgumentException("name may not be null or empty");
@@ -91,18 +100,10 @@ public class JakartaByteArrayPart implements Part {
         throw new UnsupportedOperationException();
     }
 
-    /**
-     * Returns a Builder instance used to create a ByteArrayPart
-     *
-     * @return a new builder instance
-     */
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public static class Builder {
-        protected byte[] content;
-        protected String name;
+
+        private byte[] content;
+        private String name;
 
         public Builder withContent(byte[] content) {
             this.content = content;
@@ -114,8 +115,8 @@ public class JakartaByteArrayPart implements Part {
             return this;
         }
 
-        public JakartaByteArrayPart build() {
-            return new JakartaByteArrayPart(content, name);
+        public ByteArrayPart build() {
+            return new ByteArrayPart(content, name);
         }
     }
 }

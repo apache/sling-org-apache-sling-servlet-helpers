@@ -99,7 +99,7 @@ public class MockSlingJakartaHttpServletRequest extends SlingAdaptable implement
     private String pathInfo = null;
     private String method = HttpConstants.METHOD_GET;
     private final HeaderSupport headerSupport = new HeaderSupport();
-    private final JakartaCookieSupport cookieSupport = new JakartaCookieSupport();
+    private final CookieSupport cookieSupport = new CookieSupport();
     private String contentType;
     private String characterEncoding;
     private byte[] content;

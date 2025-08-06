@@ -64,6 +64,28 @@ public class MockSlingHttpServletRequest extends JakartaToJavaxRequestWrapper {
         this.wrappedRequest = wrappedRequest;
     }
 
+    protected MockHttpSession newMockHttpSession() {
+        return new MockHttpSession(this.wrappedRequest.newMockHttpSession());
+    }
+
+    protected MockRequestPathInfo newMockRequestPathInfo() {
+        return new MockRequestPathInfo(this.wrappedRequest.getResourceResolver());
+    }
+
+    @Override
+    public HttpSession getSession() {
+        return getSession(true);
+    }
+
+    @Override
+    public HttpSession getSession(boolean create) {
+        final jakarta.servlet.http.HttpSession session = this.wrappedRequest.getSession(create);
+        if (session != null) {
+            return new MockHttpSession((MockJakartaHttpSession) session);
+        }
+        return null;
+    }
+
     public void setResource(Resource resource) {
         this.wrappedRequest.setResource(resource);
     }
@@ -235,19 +257,5 @@ public class MockSlingHttpServletRequest extends JakartaToJavaxRequestWrapper {
     @Override
     public <T> T adaptTo(Class<T> type) {
         return AdaptableUtil.adaptToWithoutCaching(this, type);
-    }
-
-    @Override
-    public HttpSession getSession(boolean create) {
-        final jakarta.servlet.http.HttpSession session = this.wrappedRequest.getSession(create);
-        if (session != null) {
-            return new MockHttpSession((MockJakartaHttpSession) session);
-        }
-        return null;
-    }
-
-    @Override
-    public HttpSession getSession() {
-        return new MockHttpSession((MockJakartaHttpSession) this.wrappedRequest.getSession());
     }
 }
