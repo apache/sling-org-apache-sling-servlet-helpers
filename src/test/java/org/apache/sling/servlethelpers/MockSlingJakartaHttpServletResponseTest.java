@@ -18,6 +18,7 @@
  */
 package org.apache.sling.servlethelpers;
 
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
@@ -56,13 +57,13 @@ public class MockSlingJakartaHttpServletResponseTest {
     private AdapterManager adapterManager;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.response = new MockSlingJakartaHttpServletResponse();
         SlingAdaptable.setAdapterManager(adapterManager);
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         SlingAdaptable.unsetAdapterManager(adapterManager);
     }
 
@@ -85,7 +86,7 @@ public class MockSlingJakartaHttpServletResponseTest {
     }
 
     @Test
-    public void testContentLength() throws Exception {
+    public void testContentLength() {
         assertEquals(0, response.getContentLength());
 
         response.setContentLength(55);
@@ -93,7 +94,7 @@ public class MockSlingJakartaHttpServletResponseTest {
     }
 
     @Test
-    public void testHeaders() throws Exception {
+    public void testHeaders() {
         assertEquals(0, response.getHeaderNames().size());
 
         response.addHeader("header1", "value1");
@@ -126,27 +127,27 @@ public class MockSlingJakartaHttpServletResponseTest {
     }
 
     @Test
-    public void testRedirect() throws Exception {
+    public void testRedirect() {
         response.sendRedirect("/location.html");
         assertEquals(HttpServletResponse.SC_MOVED_TEMPORARILY, response.getStatus());
         assertEquals("/location.html", response.getHeader("Location"));
     }
 
     @Test
-    public void testSendError() throws Exception {
+    public void testSendError() {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
         assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
     }
 
     @Test
-    public void testSendErrorWithMEssage() throws Exception {
+    public void testSendErrorWithMEssage() {
         response.sendError(HttpServletResponse.SC_NOT_FOUND, "my error message");
         assertEquals(HttpServletResponse.SC_NOT_FOUND, response.getStatus());
         assertEquals("my error message", response.getStatusMessage());
     }
 
     @Test
-    public void testSetStatus() throws Exception {
+    public void testSetStatus() {
         assertEquals(HttpServletResponse.SC_OK, response.getStatus());
 
         response.setStatus(HttpServletResponse.SC_BAD_GATEWAY);
@@ -157,7 +158,7 @@ public class MockSlingJakartaHttpServletResponseTest {
     }
 
     @Test
-    public void testWriteStringContent() throws Exception {
+    public void testWriteStringContent() {
         final String TEST_CONTENT = "Der Jodelkaiser äöüß€ ᚠᛇᚻ";
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.getWriter().write(TEST_CONTENT);
@@ -170,7 +171,7 @@ public class MockSlingJakartaHttpServletResponseTest {
     }
 
     @Test
-    public void testWriteBinaryContent() throws Exception {
+    public void testWriteBinaryContent() throws IOException {
         final byte[] TEST_DATA = new byte[] {0x01, 0x02, 0x03, 0x04, 0x05};
         response.getOutputStream().write(TEST_DATA);
         assertArrayEquals(TEST_DATA, response.getOutput());
@@ -180,7 +181,7 @@ public class MockSlingJakartaHttpServletResponseTest {
     }
 
     @Test
-    public void testIsCommitted() throws Exception {
+    public void testIsCommitted() {
         assertFalse(response.isCommitted());
         response.flushBuffer();
         assertTrue(response.isCommitted());

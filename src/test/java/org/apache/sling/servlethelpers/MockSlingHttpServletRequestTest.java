@@ -31,7 +31,6 @@ import javax.servlet.http.HttpUpgradeHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -234,7 +233,7 @@ public class MockSlingHttpServletRequestTest {
     }
 
     @Test
-    public void testQueryString() throws UnsupportedEncodingException {
+    public void testQueryString() {
         assertNull(request.getQueryString());
         assertEquals(0, request.getParameterMap().size());
         assertFalse(request.getParameterNames().hasMoreElements());
@@ -348,7 +347,7 @@ public class MockSlingHttpServletRequestTest {
     }
 
     @Test
-    public void testRequestParameter() throws Exception {
+    public void testRequestParameter() {
         request.setQueryString(
                 "param1=123&param2=" + URLEncoder.encode("äöüß€!:!", StandardCharsets.UTF_8) + "&param3=a&param3=b");
 
@@ -479,7 +478,7 @@ public class MockSlingHttpServletRequestTest {
     @Test
     public void testGetInputStreamIsFinished() throws IOException {
         ServletInputStream inputStream = request.getInputStream();
-        assertThrows(UnsupportedOperationException.class, () -> inputStream.isFinished());
+        assertThrows(UnsupportedOperationException.class, inputStream::isFinished);
     }
 
     @Test
@@ -895,6 +894,7 @@ public class MockSlingHttpServletRequestTest {
      */
     @Test
     public void testGetResponseContentType() {
+        assertNull(request.getResponseContentType());
         request.setResponseContentType("text/html");
         assertEquals("text/html", request.getResponseContentType());
     }
@@ -1005,14 +1005,14 @@ public class MockSlingHttpServletRequestTest {
      */
     @Test
     public void testGetRequestDispatcherResourceRequestDispatcherOptions() {
-        Resource resource = Mockito.mock(Resource.class);
+        Resource mockResource = Mockito.mock(Resource.class);
         RequestDispatcherOptions options = new RequestDispatcherOptions();
-        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(resource, options));
+        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(mockResource, options));
         MockRequestDispatcherFactory mockFactory = Mockito.mock(MockRequestDispatcherFactory.class);
         RequestDispatcher mockDispatcher = Mockito.mock(RequestDispatcher.class);
-        Mockito.when(mockFactory.getRequestDispatcher(resource, options)).thenReturn(mockDispatcher);
+        Mockito.when(mockFactory.getRequestDispatcher(mockResource, options)).thenReturn(mockDispatcher);
         request.setRequestDispatcherFactory(mockFactory);
-        assertSame(mockDispatcher, request.getRequestDispatcher(resource, options));
+        assertSame(mockDispatcher, request.getRequestDispatcher(mockResource, options));
     }
 
     /**

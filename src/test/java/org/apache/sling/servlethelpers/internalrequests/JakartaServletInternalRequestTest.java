@@ -102,12 +102,12 @@ public class JakartaServletInternalRequestTest {
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void nullParamKey() throws IOException {
+    public void nullParamKey() {
         request("/nullparamKey").withParameter(null, "value");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void nullParamValue() throws IOException {
+    public void nullParamValue() {
         request("/nullparamValue").withParameter("key", null);
     }
 
@@ -141,6 +141,7 @@ public class JakartaServletInternalRequestTest {
             req.checkStatus(200);
             fail("Expecting status check to fail");
         } catch (IOException asExpected) {
+            // expected
         }
         assertTrue(
                 "Expecting non-200 status to return no content",
@@ -174,12 +175,14 @@ public class JakartaServletInternalRequestTest {
             r.getResponseAsString();
             fail(msg);
         } catch (IOException asExpected) {
+            // expected
         }
 
         try {
             r.getResponse();
             fail(msg);
         } catch (IOException asExpected) {
+            // expected
         }
     }
 
@@ -221,6 +224,7 @@ public class JakartaServletInternalRequestTest {
             req.checkResponseContentType("not/this");
             fail("Expecting content type check to fail");
         } catch (IOException asExpected) {
+            // expected
         }
     }
 

@@ -24,6 +24,8 @@ import static org.junit.Assert.assertEquals;
 
 /** Run the same tests as the ServletInternalRequestTest but in "sling" mode */
 public class JakartaSlingInternalRequestTest extends JakartaServletInternalRequestTest {
+
+    @Override
     protected JakartaInternalRequest request(String path, String resourceType, String resourceSuperType) {
         return new JakartaSlingInternalRequest(resourceResolver, new MockSlingRequestProcessor(), path)
                 .withResourceType(resourceType)

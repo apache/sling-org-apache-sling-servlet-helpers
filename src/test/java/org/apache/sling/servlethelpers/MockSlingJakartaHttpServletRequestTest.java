@@ -44,6 +44,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.servlet.http.HttpUpgradeHandler;
+import jakarta.servlet.http.Part;
 import org.apache.commons.io.IOUtils;
 import org.apache.sling.api.adapter.AdapterManager;
 import org.apache.sling.api.adapter.SlingAdaptable;
@@ -93,13 +94,13 @@ public class MockSlingJakartaHttpServletRequestTest {
     private MockSlingJakartaHttpServletRequest request;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         request = new MockSlingJakartaHttpServletRequest(resourceResolver);
         SlingAdaptable.setAdapterManager(adapterManager);
     }
 
     @After
-    public void tearDown() throws Exception {
+    public void tearDown() {
         SlingAdaptable.unsetAdapterManager(adapterManager);
     }
 
@@ -229,7 +230,7 @@ public class MockSlingJakartaHttpServletRequestTest {
     }
 
     @Test
-    public void testQueryString() throws UnsupportedEncodingException {
+    public void testQueryString() {
         assertNull(request.getQueryString());
         assertEquals(0, request.getParameterMap().size());
         assertFalse(request.getParameterNames().hasMoreElements());
@@ -343,7 +344,7 @@ public class MockSlingJakartaHttpServletRequestTest {
     }
 
     @Test
-    public void testRequestParameter() throws Exception {
+    public void testRequestParameter() {
         request.setQueryString(
                 "param1=123&param2=" + URLEncoder.encode("äöüß€!:!", StandardCharsets.UTF_8) + "&param3=a&param3=b");
 
@@ -361,7 +362,7 @@ public class MockSlingJakartaHttpServletRequestTest {
     }
 
     @Test
-    public void testFormRequestParameters() throws Exception {
+    public void testFormRequestParameters() throws UnsupportedEncodingException {
         request.addRequestParameter("param1", "value1");
         request.addRequestParameter("param2", "value2".getBytes("UTF-8"), "application/xml");
         request.addRequestParameter("param3", "value3".getBytes("UTF-8"), "application/json", "param3.json");
@@ -401,7 +402,7 @@ public class MockSlingJakartaHttpServletRequestTest {
     }
 
     @Test
-    public void testContentTypeCharset() throws Exception {
+    public void testContentTypeCharset() {
         assertNull(request.getContentType());
         assertNull(request.getCharacterEncoding());
 
@@ -474,7 +475,7 @@ public class MockSlingJakartaHttpServletRequestTest {
     @Test
     public void testGetInputStreamIsFinished() {
         ServletInputStream inputStream = request.getInputStream();
-        assertThrows(UnsupportedOperationException.class, () -> inputStream.isFinished());
+        assertThrows(UnsupportedOperationException.class, inputStream::isFinished);
     }
 
     @Test
@@ -515,7 +516,7 @@ public class MockSlingJakartaHttpServletRequestTest {
     }
 
     @Test
-    public void testGetRemoteAddr() throws Exception {
+    public void testGetRemoteAddr() {
         assertNull(null, request.getRemoteAddr());
 
         request.setRemoteAddr("1.2.3.4");
@@ -523,7 +524,7 @@ public class MockSlingJakartaHttpServletRequestTest {
     }
 
     @Test
-    public void testGetRemoteHost() throws Exception {
+    public void testGetRemoteHost() {
         assertNull(null, request.getRemoteHost());
 
         request.setRemoteHost("host1");
@@ -531,7 +532,7 @@ public class MockSlingJakartaHttpServletRequestTest {
     }
 
     @Test
-    public void testGetRemotePort() throws Exception {
+    public void testGetRemotePort() {
         assertEquals(0, request.getRemotePort());
 
         request.setRemotePort(1234);
@@ -539,17 +540,16 @@ public class MockSlingJakartaHttpServletRequestTest {
     }
 
     @Test
-    public void testServletPathWithPathInfo() throws Exception {
+    public void testServletPathWithPathInfo() {
         request.setServletPath("/my/path");
         request.setPathInfo("/myinfo");
-        ;
 
         assertEquals("/my/path", request.getServletPath());
         assertEquals("/myinfo", request.getPathInfo());
     }
 
     @Test
-    public void testServletPathWithOutPathInfo() throws Exception {
+    public void testServletPathWithOutPathInfo() {
         request.setServletPath("/my/path");
 
         assertEquals("/my/path", request.getServletPath());
@@ -561,10 +561,10 @@ public class MockSlingJakartaHttpServletRequestTest {
         assertNull(request.getRequestPathInfo().getSuffixResource());
 
         ((MockRequestPathInfo) request.getRequestPathInfo()).setSuffix("/suffix");
-        Resource resource = mock(Resource.class);
-        when(resourceResolver.getResource("/suffix")).thenReturn(resource);
+        Resource mockResource = mock(Resource.class);
+        when(resourceResolver.getResource("/suffix")).thenReturn(mockResource);
 
-        assertSame(resource, request.getRequestPathInfo().getSuffixResource());
+        assertSame(mockResource, request.getRequestPathInfo().getSuffixResource());
     }
 
     @Test
@@ -602,7 +602,7 @@ public class MockSlingJakartaHttpServletRequestTest {
         assertThat(request.getParts())
                 .as("request parts")
                 .hasSize(1)
-                .extracting(p -> p.getName())
+                .extracting(Part::getName)
                 .containsExactly("log.txt");
 
         assertThat(request.getPart("log.txt")).as("part looked up by name").isNotNull();
@@ -908,6 +908,7 @@ public class MockSlingJakartaHttpServletRequestTest {
      */
     @Test
     public void testGetResponseContentType() {
+        assertNull(request.getResponseContentType());
         request.setResponseContentType("text/html");
         assertEquals("text/html", request.getResponseContentType());
     }
@@ -1004,13 +1005,13 @@ public class MockSlingJakartaHttpServletRequestTest {
      */
     @Test
     public void testGetRequestDispatcherResource() {
-        Resource resource = Mockito.mock(Resource.class);
-        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(resource));
+        Resource mockResource = Mockito.mock(Resource.class);
+        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(mockResource));
         MockJakartaRequestDispatcherFactory mockFactory = Mockito.mock(MockJakartaRequestDispatcherFactory.class);
         RequestDispatcher mockDispatcher = Mockito.mock(RequestDispatcher.class);
-        Mockito.when(mockFactory.getRequestDispatcher(resource, null)).thenReturn(mockDispatcher);
+        Mockito.when(mockFactory.getRequestDispatcher(mockResource, null)).thenReturn(mockDispatcher);
         request.setRequestDispatcherFactory(mockFactory);
-        assertSame(mockDispatcher, request.getRequestDispatcher(resource));
+        assertSame(mockDispatcher, request.getRequestDispatcher(mockResource));
     }
 
     /**
@@ -1018,14 +1019,14 @@ public class MockSlingJakartaHttpServletRequestTest {
      */
     @Test
     public void testGetRequestDispatcherResourceRequestDispatcherOptions() {
-        Resource resource = Mockito.mock(Resource.class);
+        Resource mockResource = Mockito.mock(Resource.class);
         RequestDispatcherOptions options = new RequestDispatcherOptions();
-        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(resource, options));
+        assertThrows(IllegalStateException.class, () -> request.getRequestDispatcher(mockResource, options));
         MockJakartaRequestDispatcherFactory mockFactory = Mockito.mock(MockJakartaRequestDispatcherFactory.class);
         RequestDispatcher mockDispatcher = Mockito.mock(RequestDispatcher.class);
-        Mockito.when(mockFactory.getRequestDispatcher(resource, options)).thenReturn(mockDispatcher);
+        Mockito.when(mockFactory.getRequestDispatcher(mockResource, options)).thenReturn(mockDispatcher);
         request.setRequestDispatcherFactory(mockFactory);
-        assertSame(mockDispatcher, request.getRequestDispatcher(resource, options));
+        assertSame(mockDispatcher, request.getRequestDispatcher(mockResource, options));
     }
 
     /**

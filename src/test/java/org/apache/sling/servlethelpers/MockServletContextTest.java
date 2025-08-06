@@ -24,6 +24,7 @@ import javax.servlet.ServletException;
 import javax.servlet.SessionTrackingMode;
 
 import java.net.MalformedURLException;
+import java.nio.charset.StandardCharsets;
 import java.util.EventListener;
 import java.util.Set;
 
@@ -46,7 +47,7 @@ public class MockServletContextTest {
     private ServletContext servletContext;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.servletContext = new MockServletContext(new MockJakartaServletContext());
     }
 
@@ -203,7 +204,7 @@ public class MockServletContextTest {
      * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getServlets()}.
      */
     @Test(expected = UnsupportedOperationException.class)
-    public void testGetServlets() throws ServletException {
+    public void testGetServlets() {
         this.servletContext.getServlets();
     }
 
@@ -467,64 +468,64 @@ public class MockServletContextTest {
         this.servletContext.getVirtualServerName();
     }
 
-    //    /**
-    //     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addJspFile(java.lang.String,
-    // java.lang.String)}.
-    //     */
-    //    @Test(expected = UnsupportedOperationException.class)
-    //    public void testAddJspFile() {
-    //        this.servletContext.addJspFile("servletNanme", "/jspFile.jsp");
-    //    }
-    //
-    //    /**
-    //     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getSessionTimeout()}.
-    //     */
-    //    @Test(expected = UnsupportedOperationException.class)
-    //    public void testGetSessionTimeout() {
-    //        this.servletContext.getSessionTimeout();
-    //    }
-    //
-    //    /**
-    //     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#setSessionTimeout(int)}.
-    //     */
-    //    @Test(expected = UnsupportedOperationException.class)
-    //    public void testSetSessionTimeout() {
-    //        this.servletContext.setSessionTimeout(100);
-    //    }
-    //
-    //    /**
-    //     * Test method for {@link
-    // org.apache.sling.servlethelpers.MockServletContextTest#getRequestCharacterEncoding()}.
-    //     */
-    //    @Test(expected = UnsupportedOperationException.class)
-    //    public void testGetRequestCharacterEncoding() {
-    //        this.servletContext.getRequestCharacterEncoding();
-    //    }
-    //
-    //    /**
-    //     * Test method for {@link
-    // org.apache.sling.servlethelpers.MockServletContextTest#setRequestCharacterEncoding(java.lang.String)}.
-    //     */
-    //    @Test(expected = UnsupportedOperationException.class)
-    //    public void testSetRequestCharacterEncoding() {
-    //        this.servletContext.setRequestCharacterEncoding(StandardCharsets.UTF_8.name());
-    //    }
-    //
-    //    /**
-    //     * Test method for {@link
-    // org.apache.sling.servlethelpers.MockServletContextTest#getResponseCharacterEncoding()}.
-    //     */
-    //    @Test(expected = UnsupportedOperationException.class)
-    //    public void testGetResponseCharacterEncoding() {
-    //        this.servletContext.getResponseCharacterEncoding();
-    //    }
-    //
-    //    /**
-    //     * Test method for {@link
-    // org.apache.sling.servlethelpers.MockServletContextTest#setResponseCharacterEncoding(java.lang.String)}.
-    //     */
-    //    @Test(expected = UnsupportedOperationException.class)
-    //    public void testSetResponseCharacterEncoding() {
-    //        this.servletContext.setResponseCharacterEncoding(StandardCharsets.UTF_16.name());
-    //    }
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#addJspFile(java.lang.String,
+     * java.lang.String)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testAddJspFile() {
+        this.servletContext.addJspFile("servletNanme", "/jspFile.jsp");
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#getSessionTimeout()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetSessionTimeout() {
+        this.servletContext.getSessionTimeout();
+    }
+
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockServletContextTest#setSessionTimeout(int)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testSetSessionTimeout() {
+        this.servletContext.setSessionTimeout(100);
+    }
+
+    /**
+     * Test method for {@link
+     * org.apache.sling.servlethelpers.MockServletContextTest#getRequestCharacterEncoding()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetRequestCharacterEncoding() {
+        this.servletContext.getRequestCharacterEncoding();
+    }
+
+    /**
+     * Test method for {@link
+     * org.apache.sling.servlethelpers.MockServletContextTest#setRequestCharacterEncoding(java.lang.String)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testSetRequestCharacterEncoding() {
+        this.servletContext.setRequestCharacterEncoding(StandardCharsets.UTF_8.name());
+    }
+
+    /**
+     * Test method for {@link
+     * org.apache.sling.servlethelpers.MockServletContextTest#getResponseCharacterEncoding()}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testGetResponseCharacterEncoding() {
+        this.servletContext.getResponseCharacterEncoding();
+    }
+
+    /**
+     * Test method for {@link
+     * org.apache.sling.servlethelpers.MockServletContextTest#setResponseCharacterEncoding(java.lang.String)}.
+     */
+    @Test(expected = UnsupportedOperationException.class)
+    public void testSetResponseCharacterEncoding() {
+        this.servletContext.setResponseCharacterEncoding(StandardCharsets.UTF_16.name());
+    }
 }

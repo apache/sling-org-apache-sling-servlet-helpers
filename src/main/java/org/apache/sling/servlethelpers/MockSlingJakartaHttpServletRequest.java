@@ -270,7 +270,7 @@ public class MockSlingJakartaHttpServletRequest extends SlingAdaptable implement
     private static void formatQueryStringParameter(
             StringBuilder querystring, Map.Entry<String, MockRequestParameter[]> entry) {
         for (MockRequestParameter value : entry.getValue()) {
-            if (querystring.length() != 0) {
+            if (!querystring.isEmpty()) {
                 querystring.append('&');
             }
             querystring.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8));

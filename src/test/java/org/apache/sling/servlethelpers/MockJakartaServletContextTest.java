@@ -41,7 +41,7 @@ public class MockJakartaServletContextTest {
     private ServletContext servletContext;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.servletContext = new MockJakartaServletContext();
     }
 
