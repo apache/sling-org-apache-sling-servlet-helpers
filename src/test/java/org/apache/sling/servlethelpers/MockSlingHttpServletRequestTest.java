@@ -119,7 +119,7 @@ public class MockSlingHttpServletRequestTest {
 
     @Test
     public void testEmptyResourceBundle() {
-        assertFalse(request.EMPTY_RESOURCE_BUNDLE.getKeys().hasMoreElements());
+        assertFalse(MockSlingHttpServletRequest.EMPTY_RESOURCE_BUNDLE.getKeys().hasMoreElements());
     }
 
     @Test
