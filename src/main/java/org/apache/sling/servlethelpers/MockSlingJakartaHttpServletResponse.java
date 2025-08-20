@@ -18,6 +18,7 @@
  */
 package org.apache.sling.servlethelpers;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Collection;
 import java.util.Locale;
@@ -113,6 +114,13 @@ public class MockSlingJakartaHttpServletResponse extends SlingAdaptable implemen
     @Override
     public void sendRedirect(String location) {
         setStatus(HttpServletResponse.SC_MOVED_TEMPORARILY);
+        setHeader("Location", location);
+    }
+
+    @Override
+    public void sendRedirect(String location, int sc, boolean clearBuffer) throws IOException {
+        resetBuffer();
+        setStatus(sc);
         setHeader("Location", location);
     }
 
