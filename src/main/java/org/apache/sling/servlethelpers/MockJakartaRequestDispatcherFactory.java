@@ -18,8 +18,7 @@
  */
 package org.apache.sling.servlethelpers;
 
-import javax.servlet.RequestDispatcher;
-
+import jakarta.servlet.RequestDispatcher;
 import org.apache.sling.api.request.RequestDispatcherOptions;
 import org.apache.sling.api.resource.Resource;
 import org.osgi.annotation.versioning.ConsumerType;
@@ -27,12 +26,9 @@ import org.osgi.annotation.versioning.ConsumerType;
 /**
  * Interface to create a mock {@link RequestDispatcher} when calling the getRequestDispatcher methods
  * on {@link MockSlingHttpServletRequest} instances.
- *
- * @deprecated Use {@link MockJakartaRequestDispatcherFactory} instead.
  */
 @ConsumerType
-@Deprecated(since = "2.0.0")
-public interface MockRequestDispatcherFactory {
+public interface MockJakartaRequestDispatcherFactory {
 
     /**
      * Get request dispatcher for given path.

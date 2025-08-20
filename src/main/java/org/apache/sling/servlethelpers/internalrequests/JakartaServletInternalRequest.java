@@ -18,14 +18,13 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
-import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.SlingHttpServletResponse;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.api.servlets.ServletResolver;
@@ -41,18 +40,15 @@ import org.jetbrains.annotations.NotNull;
  *  That's more efficient than the {@link SlingInternalRequest}
  *  variant, but less faithful to the way Sling processes HTTP
  *  requests.
- *
- * @deprecated Use {@link JakartaServletInternalRequest} instead.
  */
-@Deprecated(since = "2.0.0")
-public class ServletInternalRequest extends InternalRequest {
+public class JakartaServletInternalRequest extends JakartaInternalRequest {
     protected final ServletResolver servletResolver;
     private final Resource resource;
 
     /** Setup an internal request to the supplied Resource, using
      *  the supplied servlet/script resolver.
      */
-    public ServletInternalRequest(@NotNull ServletResolver servletResolver, @NotNull Resource resource) {
+    public JakartaServletInternalRequest(@NotNull ServletResolver servletResolver, @NotNull Resource resource) {
         super(resource.getResourceResolver(), resource.getPath());
         checkNotNull(ServletResolver.class, servletResolver);
         checkNotNull(Resource.class, resource);
@@ -80,9 +76,11 @@ public class ServletInternalRequest extends InternalRequest {
 
     @Override
     protected void delegateExecute(
-            SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
+            SlingJakartaHttpServletRequest request,
+            SlingJakartaHttpServletResponse response,
+            ResourceResolver resourceResolver)
             throws ServletException, IOException {
-        final Servlet s = servletResolver.resolveServlet(request);
+        final Servlet s = servletResolver.resolve(request);
         log.debug("ServletResolver provides servlet '{}'", s);
         if (s == null) {
             response.sendError(

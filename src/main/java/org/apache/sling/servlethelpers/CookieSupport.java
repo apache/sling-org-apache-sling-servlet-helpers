@@ -18,27 +18,29 @@
  */
 package org.apache.sling.servlethelpers;
 
-import javax.servlet.http.Cookie;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import jakarta.servlet.http.Cookie;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 /**
  * Manages cookies for request and response.
  */
 class CookieSupport {
 
-    private Map<String, Cookie> cookies = new LinkedHashMap<String, Cookie>();
+    private Map<String, Cookie> cookies = new LinkedHashMap<>();
 
-    public void addCookie(Cookie cookie) {
+    public void addCookie(@NotNull Cookie cookie) {
         cookies.put(cookie.getName(), cookie);
     }
 
-    public Cookie getCookie(String name) {
+    public @Nullable Cookie getCookie(@NotNull String name) {
         return cookies.get(name);
     }
 
-    public Cookie[] getCookies() {
+    public @Nullable Cookie[] getCookies() {
         if (cookies.isEmpty()) {
             return null;
         } else {

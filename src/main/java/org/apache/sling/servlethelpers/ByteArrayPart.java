@@ -18,19 +18,17 @@
  */
 package org.apache.sling.servlethelpers;
 
-import javax.servlet.http.Part;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 
+import jakarta.servlet.http.Part;
+
 /**
  * Simple Part implementation backed by an in-memory byte array
- *
  */
 public class ByteArrayPart implements Part {
-
     /**
      * Returns a Builder instance used to create a ByteArrayPart
      *
@@ -53,7 +51,7 @@ public class ByteArrayPart implements Part {
     }
 
     @Override
-    public InputStream getInputStream() throws IOException {
+    public InputStream getInputStream() throws IOException { // NOSONAR
         return new ByteArrayInputStream(content);
     }
 

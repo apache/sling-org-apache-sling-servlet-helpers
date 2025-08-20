@@ -53,7 +53,7 @@ class ServletResolutionResource implements Resource {
     }
 
     @Override
-    public <AdapterType> AdapterType adaptTo(Class<AdapterType> type) {
+    public <T> T adaptTo(Class<T> type) {
         throw new NotImplementedException();
     }
 

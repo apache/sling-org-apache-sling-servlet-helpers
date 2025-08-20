@@ -18,17 +18,16 @@
  */
 package org.apache.sling.servlethelpers;
 
-import javax.servlet.ServletOutputStream;
-import javax.servlet.WriteListener;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
-import org.apache.commons.lang3.CharEncoding;
-import org.apache.commons.lang3.StringUtils;
+import jakarta.servlet.ServletOutputStream;
+import jakarta.servlet.WriteListener;
 
 /**
  * Manage response body content.
@@ -105,6 +104,6 @@ class ResponseBodySupport {
     }
 
     private String defaultCharset(String charset) {
-        return StringUtils.defaultString(charset, CharEncoding.UTF_8);
+        return Objects.toString(charset, StandardCharsets.UTF_8.name());
     }
 }

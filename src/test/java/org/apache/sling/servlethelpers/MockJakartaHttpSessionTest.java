@@ -27,17 +27,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @deprecated Use {@link MockJakartaHttpSessionTest} instead.
- */
-@Deprecated(since = "2.0.0")
-public class MockHttpSessionTest {
+public class MockJakartaHttpSessionTest {
 
-    private MockHttpSession httpSession;
+    private MockJakartaHttpSession httpSession;
 
     @Before
-    public void setUp() throws Exception {
-        httpSession = new MockHttpSession(new MockJakartaHttpSession());
+    public void setUp() {
+        httpSession = new MockJakartaHttpSession();
     }
 
     @Test
@@ -63,15 +59,6 @@ public class MockHttpSessionTest {
         assertEquals("value1", httpSession.getAttribute("attr1"));
         httpSession.removeAttribute("attr1");
         assertFalse(httpSession.getAttributeNames().hasMoreElements());
-    }
-
-    @Test
-    public void testValues() {
-        httpSession.putValue("attr1", "value1");
-        assertEquals(1, httpSession.getValueNames().length);
-        assertEquals("value1", httpSession.getValue("attr1"));
-        httpSession.removeValue("attr1");
-        assertEquals(0, httpSession.getValueNames().length);
     }
 
     @Test
@@ -104,10 +91,5 @@ public class MockHttpSessionTest {
         assertTrue(httpSession.getMaxInactiveInterval() > 0);
         httpSession.setMaxInactiveInterval(123);
         assertEquals(123, httpSession.getMaxInactiveInterval());
-    }
-
-    @Test(expected = UnsupportedOperationException.class)
-    public void testGetSessionContext() {
-        httpSession.getSessionContext();
     }
 }

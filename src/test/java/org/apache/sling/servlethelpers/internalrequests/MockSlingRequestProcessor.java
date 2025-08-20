@@ -24,22 +24,46 @@ import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-import org.apache.sling.api.SlingHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.engine.SlingRequestProcessor;
 
 class MockSlingRequestProcessor implements SlingRequestProcessor {
 
+    /**
+     * @deprecated Use {@link #resolve(SlingJakartaHttpServletRequest)} instead.
+     */
+    @Deprecated(since = "2.0.0")
     @Override
     public void processRequest(
             HttpServletRequest httpRequest, HttpServletResponse response, ResourceResolver resourceResolver)
             throws ServletException, IOException {
-        final SlingHttpServletRequest request = (SlingHttpServletRequest) httpRequest;
+        final org.apache.sling.api.SlingHttpServletRequest request =
+                (org.apache.sling.api.SlingHttpServletRequest) httpRequest;
         if (request.getResource() != null
                 && "/NOSERVLET".equals(request.getResource().getPath())) {
             response.sendError(404);
         } else {
-            new RequestInfoServlet((SlingHttpServletRequest) request).service(request, response);
+            new RequestInfoServlet((org.apache.sling.api.SlingHttpServletRequest) request).service(request, response);
+        }
+    }
+
+    @Override
+    public void processRequest(
+            jakarta.servlet.http.HttpServletRequest httpRequest,
+            jakarta.servlet.http.HttpServletResponse response,
+            ResourceResolver resourceResolver)
+            throws IOException {
+        final SlingJakartaHttpServletRequest request = (SlingJakartaHttpServletRequest) httpRequest;
+        if (request.getResource() != null
+                && "/NOSERVLET".equals(request.getResource().getPath())) {
+            response.sendError(404);
+        } else {
+            try {
+                new JakartaRequestInfoServlet((SlingJakartaHttpServletRequest) request).service(request, response);
+            } catch (jakarta.servlet.ServletException e) {
+                throw new IOException(e);
+            }
         }
     }
 }

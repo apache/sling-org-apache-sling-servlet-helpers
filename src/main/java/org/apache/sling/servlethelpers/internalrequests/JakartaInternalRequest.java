@@ -18,21 +18,18 @@
  */
 package org.apache.sling.servlethelpers.internalrequests;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletResponse;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.util.Map;
 
-import org.apache.sling.api.SlingHttpServletRequest;
-import org.apache.sling.api.SlingHttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletResponse;
+import org.apache.sling.api.SlingJakartaHttpServletRequest;
+import org.apache.sling.api.SlingJakartaHttpServletResponse;
 import org.apache.sling.api.resource.Resource;
 import org.apache.sling.api.resource.ResourceResolver;
 import org.apache.sling.servlethelpers.MockRequestPathInfo;
-import org.apache.sling.servlethelpers.MockSlingHttpServletRequest;
-import org.apache.sling.servlethelpers.MockSlingHttpServletResponse;
 import org.apache.sling.servlethelpers.MockSlingJakartaHttpServletRequest;
 import org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse;
 import org.jetbrains.annotations.NotNull;
@@ -45,52 +42,49 @@ import org.slf4j.MDC;
  *  internal requests, one that's very similar to the way Sling
  *  executes an HTTP request and another one that's faster by
  *  calling Servlets or Scripts directly.
- *
- * @deprecated Use {@link JakartaInternalRequest} instead.
  */
-@Deprecated(since = "2.0.0")
-public abstract class InternalRequest extends BaseInternalRequest {
-    private MockSlingHttpServletRequest request;
-    private MockSlingHttpServletResponse response;
+public abstract class JakartaInternalRequest extends BaseInternalRequest {
+    private MockSlingJakartaHttpServletRequest request;
+    private MockSlingJakartaHttpServletResponse response;
 
     /** Clients use subclasses of this one  */
-    protected InternalRequest(@NotNull ResourceResolver resourceResolver, @NotNull String path) {
+    protected JakartaInternalRequest(@NotNull ResourceResolver resourceResolver, @NotNull String path) {
         super(resourceResolver, path);
     }
 
     @Override
-    public InternalRequest withRequestMethod(String method) {
-        return (InternalRequest) super.withRequestMethod(method);
+    public JakartaInternalRequest withRequestMethod(String method) {
+        return (JakartaInternalRequest) super.withRequestMethod(method);
     }
 
     @Override
-    public InternalRequest withContentType(String contentType) {
-        return (InternalRequest) super.withContentType(contentType);
+    public JakartaInternalRequest withContentType(String contentType) {
+        return (JakartaInternalRequest) super.withContentType(contentType);
     }
 
     @Override
-    public InternalRequest withBody(Reader bodyContent) {
-        return (InternalRequest) super.withBody(bodyContent);
+    public JakartaInternalRequest withBody(Reader bodyContent) {
+        return (JakartaInternalRequest) super.withBody(bodyContent);
     }
 
     @Override
-    public InternalRequest withSelectors(String... selectors) {
-        return (InternalRequest) super.withSelectors(selectors);
+    public JakartaInternalRequest withSelectors(String... selectors) {
+        return (JakartaInternalRequest) super.withSelectors(selectors);
     }
 
     @Override
-    public InternalRequest withExtension(String extension) {
-        return (InternalRequest) super.withExtension(extension);
+    public JakartaInternalRequest withExtension(String extension) {
+        return (JakartaInternalRequest) super.withExtension(extension);
     }
 
     @Override
-    public InternalRequest withParameter(String key, Object value) {
-        return (InternalRequest) super.withParameter(key, value);
+    public JakartaInternalRequest withParameter(String key, Object value) {
+        return (JakartaInternalRequest) super.withParameter(key, value);
     }
 
     @Override
-    public InternalRequest withParameters(Map<String, Object> additionalParameters) {
-        return (InternalRequest) super.withParameters(additionalParameters);
+    public JakartaInternalRequest withParameters(Map<String, Object> additionalParameters) {
+        return (JakartaInternalRequest) super.withParameters(additionalParameters);
     }
 
     /** Execute the internal request. Can be called right after
@@ -99,13 +93,12 @@ public abstract class InternalRequest extends BaseInternalRequest {
      *  @throws IOException if the request was already executed,
      *      or if an error occurs during execution.
      */
-    @Override
-    public final InternalRequest execute() throws IOException {
+    public final JakartaInternalRequest execute() throws IOException {
         if (request != null) {
             throw new IOException("Request was already executed");
         }
         final Resource resource = getExecutionResource();
-        request = new MockSlingHttpServletRequest(new MockSlingJakartaHttpServletRequest(resourceResolver) {
+        request = new MockSlingJakartaHttpServletRequest(resourceResolver) {
             @Override
             protected MockRequestPathInfo newMockRequestPathInfo() {
                 MockRequestPathInfo rpi = super.newMockRequestPathInfo();
@@ -123,13 +116,13 @@ public abstract class InternalRequest extends BaseInternalRequest {
                     return super.getReader();
                 }
             }
-        });
+        };
         request.setMethod(requestMethod);
         request.setContentType(contentType);
         request.setResource(resource);
         request.setParameterMap(parameters);
 
-        response = new MockSlingHttpServletResponse(new MockSlingJakartaHttpServletResponse());
+        response = new MockSlingJakartaHttpServletResponse();
 
         MDC.put(MDC_KEY, toString());
         try {
@@ -142,7 +135,9 @@ public abstract class InternalRequest extends BaseInternalRequest {
 
     /** Execute the supplied Request */
     protected abstract void delegateExecute(
-            SlingHttpServletRequest request, SlingHttpServletResponse response, ResourceResolver resourceResolver)
+            SlingJakartaHttpServletRequest request,
+            SlingJakartaHttpServletResponse response,
+            ResourceResolver resourceResolver)
             throws ServletException, IOException;
 
     protected void assertRequestExecuted() throws IOException {
@@ -152,8 +147,8 @@ public abstract class InternalRequest extends BaseInternalRequest {
     }
 
     @Override
-    public InternalRequest checkStatus(int... acceptableValues) throws IOException {
-        return (InternalRequest) super.checkStatus(acceptableValues);
+    public JakartaInternalRequest checkStatus(int... acceptableValues) throws IOException {
+        return (JakartaInternalRequest) super.checkStatus(acceptableValues);
     }
 
     /** If response status hasn't been explicitly checked, ensure it's 200 */
@@ -172,8 +167,7 @@ public abstract class InternalRequest extends BaseInternalRequest {
      *
      *  @throws IOException if the actual content-type doesn't match the expected one
      */
-    @Override
-    public InternalRequest checkResponseContentType(String contentType) throws IOException {
+    public JakartaInternalRequest checkResponseContentType(String contentType) throws IOException {
         assertRequestExecuted();
         if (!contentType.equals(response.getContentType())) {
             throw new IOException("Expected content type " + contentType + " but got " + response.getContentType());
@@ -184,7 +178,6 @@ public abstract class InternalRequest extends BaseInternalRequest {
     /** Return the response status. The execute method must be called before this one.
      *  @throws IOException if the request hasn't been executed yet
      */
-    @Override
     public int getStatus() throws IOException {
         assertRequestExecuted();
         return response.getStatus();
@@ -197,7 +190,7 @@ public abstract class InternalRequest extends BaseInternalRequest {
      *  @throws IOException if the request hasn't been executed yet or if the status
      *      check fails.
      */
-    public SlingHttpServletResponse getResponse() throws IOException {
+    public SlingJakartaHttpServletResponse getResponse() throws IOException {
         assertRequestExecuted();
         maybeCheckOkStatus();
         return response;

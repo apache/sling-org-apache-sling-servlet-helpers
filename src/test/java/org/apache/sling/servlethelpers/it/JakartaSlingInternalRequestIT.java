@@ -20,7 +20,7 @@ package org.apache.sling.servlethelpers.it;
 
 import java.io.IOException;
 
-import org.apache.sling.servlethelpers.internalrequests.SlingInternalRequest;
+import org.apache.sling.servlethelpers.internalrequests.JakartaSlingInternalRequest;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -29,20 +29,16 @@ import org.ops4j.pax.exam.spi.reactors.PerClass;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @deprecated Use {@link JakartaSlingInternalRequestIT} instead.
- */
-@Deprecated(since = "2.0.0")
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerClass.class)
-public class SlingInternalRequestIT extends ServletHelpersTestSupport {
+public class JakartaSlingInternalRequestIT extends ServletHelpersTestSupport {
     @Test
     public void testRequest() throws IOException {
-        final String content = new SlingInternalRequest(adminResourceResolver, slingRequestProcessor, "/")
-                .withExtension("TestServlet")
+        final String content = new JakartaSlingInternalRequest(adminResourceResolver, slingRequestProcessor, "/")
+                .withExtension("JakartaTestServlet")
                 .execute()
                 .checkStatus(200)
                 .getResponseAsString();
-        assertEquals(TestServlet.class.getName(), content);
+        assertEquals(JakartaTestServlet.class.getName(), content);
     }
 }

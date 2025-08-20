@@ -22,27 +22,25 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * Run the same tests as the ServletInternalRequestTest but in "sling" mode
- * @deprecated Use {@link JakartaSlingInternalRequestTest} instead.
- */
-@Deprecated(since = "2.0.0")
-public class SlingInternalRequestTest extends ServletInternalRequestTest {
-    protected InternalRequest request(String path, String resourceType, String resourceSuperType) {
-        return new SlingInternalRequest(resourceResolver, new MockSlingRequestProcessor(), path)
+/** Run the same tests as the ServletInternalRequestTest but in "sling" mode */
+public class JakartaSlingInternalRequestTest extends JakartaServletInternalRequestTest {
+
+    @Override
+    protected JakartaInternalRequest request(String path, String resourceType, String resourceSuperType) {
+        return new JakartaSlingInternalRequest(resourceResolver, new MockSlingRequestProcessor(), path)
                 .withResourceType(resourceType)
                 .withResourceSuperType(resourceSuperType);
     }
 
     @Test
     public void verifyClassUnderTestNoParams() {
-        assertEquals(SlingInternalRequest.class, request("unused").getClass());
+        assertEquals(JakartaSlingInternalRequest.class, request("unused").getClass());
     }
 
     @Test
     public void verifyClassUnderTestWithParams() {
         assertEquals(
-                SlingInternalRequest.class,
+                JakartaSlingInternalRequest.class,
                 request("unused", "with", "resourceType").getClass());
     }
 }

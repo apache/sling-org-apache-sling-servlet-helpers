@@ -31,7 +31,7 @@ import org.apache.sling.api.request.RequestParameterMap;
  */
 class MockRequestParameterMap implements RequestParameterMap {
 
-    private final Map<String, RequestParameter[]> delegate = new HashMap<String, RequestParameter[]>();
+    private final Map<String, RequestParameter[]> delegate = new HashMap<>();
 
     public RequestParameter getValue(String name) {
         RequestParameter[] params = getValues(name);
