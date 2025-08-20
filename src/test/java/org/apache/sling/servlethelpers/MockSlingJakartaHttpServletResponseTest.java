@@ -133,6 +133,19 @@ public class MockSlingJakartaHttpServletResponseTest {
         assertEquals("/location.html", response.getHeader("Location"));
     }
 
+    /**
+     * Test method for {@link org.apache.sling.servlethelpers.MockSlingJakartaHttpServletResponse#sendRedirect(java.lang.String, int, boolean)}.
+     */
+    @Test
+    public void testSendRedirectStringIntBoolean() throws IOException {
+        response.getWriter().print("Hello");
+        assertEquals("Hello", response.getOutputAsString());
+        response.sendRedirect("/location.html", HttpServletResponse.SC_PERMANENT_REDIRECT, true);
+        assertEquals(HttpServletResponse.SC_PERMANENT_REDIRECT, response.getStatus());
+        assertEquals("/location.html", response.getHeader("Location"));
+        assertEquals("", response.getOutputAsString());
+    }
+
     @Test
     public void testSendError() {
         response.sendError(HttpServletResponse.SC_NOT_FOUND);
